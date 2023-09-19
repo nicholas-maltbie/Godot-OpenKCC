@@ -1,5 +1,14 @@
+# SConstruct
+*.dblite
+__pycache__
+*.pyc
+
 # Godot 4+ specific ignores
 openkcc/.godot/
+
+# Binairy addons
+openkcc/addons/debug_draw_3d/libs/~*
+openkcc/addons/debug_draw_3d/csharp/*
 
 # Ignore Exports
 builds/
