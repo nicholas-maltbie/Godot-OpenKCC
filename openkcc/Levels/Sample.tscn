@@ -2,7 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://dj26sacnhty4r" path="res://addons/devblocks/blocks/basic_block.tscn" id="2_f1atv"]
 [ext_resource type="PackedScene" uid="uid://dwpmuwlxa4cqr" path="res://player.tscn" id="2_krmja"]
-[ext_resource type="Texture2D" uid="uid://bbuseusvmmxbh" path="res://icon.svg" id="3_beoxa"]
+[ext_resource type="Texture2D" uid="uid://bbuseusvmmxbh" path="res://icon.svg" id="3_l54gw"]
 
 [node name="Node3D" type="Node3D"]
 
@@ -34,5 +34,5 @@ transform = Transform3D(0.957732, 0.151114, -0.244775, 0.265484, -0.136684, 0.95
 floor_snap_length = 0.15
 
 [node name="GDExample" type="GDExample" parent="."]
-position = Vector2(19.9986, 19.2854)
-texture = ExtResource("3_beoxa")
+position = Vector2(0.133351, 5.07188)
+texture = ExtResource("3_l54gw")

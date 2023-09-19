@@ -18,18 +18,15 @@ for details.
 
 ```PowerShell
 git submodule update --init
-
-cd godot-cpp
 godot --dump-extension-api extension_api.json
-mv -Force extension_api.json ../extension_api.json
 
-# Setup build platform tools for windows
-#   -j16 flag for multi threading, use -jN where N is number of processors available
-scons platform=windows custom_api_file=../extension_api.json -j16
+# Setup build platform tools for windows and javascript environment
+scons --directory godot-cpp platform=windows custom_api_file=../extension_api.json
+scons --directory godot-cpp platform=javascript custom_api_file=../extension_api.json
 
-# Setup build platform tools for javascript (including WebGL)
-#   make sure you have Emscripten 1.39.9 installed and activated
-scons platform=javascript custom_api_file=../extension_api.json -j16
+# Build openkcc libraries for your development platform.
+scons platform=windows
+scons platform=javascript
 ```
 
 ## Build
@@ -39,29 +36,35 @@ or via the editor.
 
 ### Build Windows Platform
 
+See setup guide [Compiling for Windows](https://docs.godotengine.org/en/stable/contributing/development/compiling/compiling_for_windows.html)
+with godot.
+
 ```PowerShell
 # Build libraries for openkcc
-scons platform=windows
-godot --path openkcc --headless --export-debug windows-desktop ../builds/WebGL/OpenKCC
+scons platform=windows custom_api_file=../extension_api.json
 
-# Release build
-scons platform=windows target=template_release
-godot --path openkcc --headless --export-release windows-desktop ../builds/Windows/OpenKCC.exe
+# Export debug windows-desktop build
+mkdir -p builds/Windows
+godot --path openkcc --headless --export-debug windows-desktop ../builds/Windows/OpenKCC.exe
 ```
 
 ### Build Web Platform
 
-Note, the web export uses the [Export Template](https://docs.godotengine.org/en/stable/tutorials/export/exporting_projects.html#export-templates)
-for web v4.1.1 (not the mono version).
+See setup guide [Compiling for Web](https://docs.godotengine.org/en/stable/contributing/development/compiling/compiling_for_web.html)
+with godot.
+
+Requires a custom extension built [Compiling for the Web: GDExtension](https://docs.godotengine.org/en/stable/contributing/development/compiling/compiling_for_web.html#gdextension)
+
+> The default export templates do not include GDExtension support for performance and compatibility reasons. See the [export page](https://docs.godotengine.org/en/stable/tutorials/export/exporting_for_web.html#doc-javascript-export-options) for more info.
+> You can build the export templates using the option `dlink_enabled=yes` to enable GDExtension support:
 
 ```PowerShell
 # Build libraries for openkcc
-scons platform=javascript
-godot --path openkcc --headless --export-debug web ../builds/WebGL/OpenKCC.html
+scons platform=javascript target=template_debug
 
-# Release build
-scons platform=javascript target=template_release
-godot --path openkcc --headless --export-release web ../builds/WebGL/OpenKCC.html
+# Export debug web build
+mkdir -p builds/WebGL
+godot --path openkcc --headless --export-debug web ../builds/WebGL/OpenKCC.html
 ```
 
 Host website for local testing via [npx](https://docs.npmjs.com/cli/v7/commands/npx)

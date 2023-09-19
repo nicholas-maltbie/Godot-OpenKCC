@@ -5,8 +5,8 @@ compatibility_minimum = 4.1
 
 [libraries]
 
-wasm32.debug = "res://bin/libopenkcc.javascript.template_debug.wasm32.wasm"
-wasm32.release = "res://bin/libopenkcc.javascript.template_release.wasm32.wasm"
+web.wasm32.debug = "res://bin/libopenkcc.javascript.template_debug.wasm32.wasm"
+web.wasm32.release = "res://bin/libopenkcc.javascript.template_release.wasm32.wasm"
 macos.debug = "res://bin/libopenkcc.macos.template_debug.framework"
 macos.release = "res://bin/libopenkcc.macos.template_release.framework"
 windows.debug.x86_32 = "res://bin/libopenkcc.windows.template_debug.x86_32.dll"
