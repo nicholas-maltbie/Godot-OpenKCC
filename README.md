@@ -23,6 +23,8 @@ godot --dump-extension-api extension_api.json
 # Setup godot-cpp
 cd godot-cpp
 git submodule update --init
+git apply --ignore-space-change --ignore-whitespace ../patches/always_build_fix.patch
+git apply --ignore-space-change --ignore-whitespace ../patches/1165.patch
 git apply --ignore-space-change --ignore-whitespace ../patches/webgl-support.patch
 
 # Setup build platform tools for windows and javascript environment
@@ -46,11 +48,11 @@ with godot.
 
 ```PowerShell
 # Build libraries for openkcc
-scons platform=windows custom_api_file=../extension_api.json
+scons platform=windows
 
 # Export debug windows-desktop build
 mkdir -p builds/Windows
-godot --path openkcc --headless --export-debug windows-desktop ../builds/Windows/OpenKCC.exe
+godot --path openkcc --headless --export-debug windows-desktop
 ```
 
 ### Build Web Platform
@@ -69,7 +71,7 @@ scons platform=javascript target=template_debug
 
 # Export debug web build
 mkdir -p builds/WebGL
-godot --path openkcc --headless --export-debug web ../builds/WebGL/OpenKCC.html
+godot --path openkcc --headless --export-debug web
 ```
 
 Host website for local testing via [npx](https://docs.npmjs.com/cli/v7/commands/npx)

@@ -1,7 +1,7 @@
-#ifndef GDEXAMPLE_REGISTER_TYPES_H
-#define GDEXAMPLE_REGISTER_TYPES_H
+#ifndef NICKGDEXAMPLE_REGISTER_TYPES_H
+#define NICKGDEXAMPLE_REGISTER_TYPES_H
 
-void initialize_example_module();
-void uninitialize_example_module();
+void initialize_openkcc_module();
+void uninitialize_openkcc_module();
 
 #endif // GDEXAMPLE_REGISTER_TYPES_H

@@ -7,7 +7,7 @@ __pycache__
 openkcc/.godot/
 
 # Binairy addons
-openkcc/addons/debug_draw_3d/libs/~*
+openkcc/addons/debug_draw_3d/libs/*
 openkcc/addons/debug_draw_3d/csharp/*
 
 # Ignore Exports
@@ -23,15 +23,15 @@ src/*.bc
 
 # Ignore generated extension files
 # Windows generated files
-openkcc/bin/*.dll
-openkcc/bin/*.exp
-openkcc/bin/*.lib
+openkcc/addons/openkcc/libs/*.dll
+openkcc/addons/openkcc/libs/*.exp
+openkcc/addons/openkcc/libs/*.lib
 
 # Linux so failes
-openkcc/bin/*.so
+openkcc/addons/openkcc/libs/*.so
 
 # Mac framework files
-openkcc/bin/*.framework
+openkcc/addons/openkcc/libs/*.framework
 
 # Javascript wasm files
-openkcc/bin/*.wasm
+openkcc/addons/openkcc/libs/*.wasm
