@@ -17,8 +17,13 @@ Using the GDExtensions to develop with C++, see [GDExtension C++ example](https:
 for details.
 
 ```PowerShell
-git submodule update --init
+# Setup extensions files
 godot --dump-extension-api extension_api.json
+
+# Setup godot-cpp
+cd godot-cpp
+git submodule update --init
+git apply --ignore-space-change --ignore-whitespace ../patches/webgl-support.patch
 
 # Setup build platform tools for windows and javascript environment
 scons --directory godot-cpp platform=windows custom_api_file=../extension_api.json
