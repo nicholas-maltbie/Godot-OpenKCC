@@ -1,0 +1,28 @@
+# Godot 4+ specific ignores
+openkcc/.godot/
+
+# Ignore Exports
+builds/
+
+# Ignore extensions api file
+extension_api.json
+
+# Ignore scons working files
+.sconsign.dblite
+src/*.obj
+src/*.bc
+
+# Ignore generated extension files
+# Windows generated files
+openkcc/bin/*.dll
+openkcc/bin/*.exp
+openkcc/bin/*.lib
+
+# Linux so failes
+openkcc/bin/*.so
+
+# Mac framework files
+openkcc/bin/*.framework
+
+# Javascript wasm files
+openkcc/bin/*.wasm
