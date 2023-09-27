@@ -19,14 +19,7 @@ for details.
 ```PowerShell
 # Setup godot-cpp
 git -C godot-cpp submodule update --init
-git -C godot-cpp apply --ignore-space-change --ignore-whitespace ../patches/always_build_fix.patch
-git -C godot-cpp apply --ignore-space-change --ignore-whitespace ../patches/1165.patch
 
-# Optional
-## Build only the necessary classes
-git -C godot-cpp apply --ignore-space-change --ignore-whitespace ../patches/godot_cpp_exclude_unused_classes.patch
-## Faster build
-git -C godot-cpp apply --ignore-space-change --ignore-whitespace ../patches/unity_build.patch
 ## Fixes for JavaScript/Web support
 git -C godot-cpp apply --ignore-space-change --ignore-whitespace ../patches/fixed_javascript_build.patch
 
@@ -35,8 +28,8 @@ scons --directory godot-cpp
 scons --directory godot-cpp platform=javascript
 
 # Build openkcc libraries for your development platform.
+scons target=editor
 scons
-scons platform=javascript
 ```
 
 ## Build
@@ -54,6 +47,7 @@ with godot.
 scons platform=windows
 
 # Export debug windows-desktop build
+godot -v -e --path openkcc --headless --quit
 mkdir -p builds/Windows
 godot --path openkcc --headless --export-debug windows-desktop
 ```
@@ -73,6 +67,7 @@ Requires a custom extension built [Compiling for the Web: GDExtension](https://d
 scons platform=javascript
 
 # Export debug web build
+godot -v -e --path openkcc --headless --quit
 mkdir -p builds/WebGL
 godot --path openkcc --headless --export-debug web
 ```

@@ -1,6 +1,32 @@
 #!/usr/bin/env python
+import os
+import sys
 
-import lib_utils
 env = SConscript("godot-cpp/SConstruct")
-new_env = lib_utils.get_library_object(env.Clone(), ARGUMENTS, lambda e, o: Help(o.GenerateHelpText(e)))
-Return("new_env")
+
+# For the reference:
+# - CCFLAGS are compilation flags shared between C and C++
+# - CFLAGS are for C-specific compilation flags
+# - CXXFLAGS are for C++-specific compilation flags
+# - CPPFLAGS are for pre-processor flags
+# - CPPDEFINES are for pre-processor defines
+# - LINKFLAGS are for linking flags
+
+# tweak this if you want to use different folders, or more folders, to store your source code in.
+env.Append(CPPPATH=["src/"])
+sources = Glob("src/*.cpp")
+
+if env["platform"] == "macos":
+    library = env.SharedLibrary(
+        "openkcc/addons/openkcc/lib/libopenkcc.{}.{}.framework/libopenkcc.{}.{}".format(
+            env["platform"], env["target"], env["platform"], env["target"]
+        ),
+        source=sources,
+    )
+else:
+    library = env.SharedLibrary(
+        "openkcc/addons/openkcc/lib/libopenkcc{}{}".format(env["suffix"], env["SHLIBSUFFIX"]),
+        source=sources,
+    )
+
+Default(library)
