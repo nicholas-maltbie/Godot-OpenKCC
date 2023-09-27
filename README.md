@@ -71,7 +71,7 @@ scons platform=javascript
 godot -v -e --path openkcc --headless --quit
 mkdir -p builds/WebGL
 godot --path openkcc --headless --export-debug web
-cp web/coi-serviceworker.min.js builds/WebGL/coi-serviceworker.min.js
+cp openkcc/coi-serviceworker.min.js builds/WebGL/coi-serviceworker.min.js
 ```
 
 Host website for local testing via [python -m http.server](https://docs.python.org/3/library/http.server.html)

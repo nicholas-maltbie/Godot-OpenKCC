@@ -1,0 +1,104 @@
+name: Build GDExtension
+description: Build GDExtension library
+inputs:
+  platform:
+    description: Target platform (linux|macos|windows|android|ios|javascript)
+    required: true
+  target:
+    description: Compilation target (editor|template_release|template_debug)
+    default: "release"
+  arch:
+    description: Arch (universal|x86_32|x86_64|arm32|arm64|rv64|ppc32|ppc64|wasm32)
+    default: ""
+  additional:
+    description: Any additional arguments
+    default: ""
+  artifact:
+    description: Artifact name
+    default: "bin"
+  output_libs_path:
+    description: Path to compiled libraries
+    default: "openkcc/addons/openkcc/libs"
+runs:
+  using: "composite"
+  steps:
+    - name: Get godot-cpp SHA
+      shell: bash
+      id: get_godot_cpp_sha
+      run: |
+        echo "sha=$(git rev-parse @:./godot-cpp)" >> $GITHUB_OUTPUT
+
+    - name: Restore .scons_cache directory
+      uses: actions/cache/restore@v3
+      with:
+        path: ${{env.SCONS_CACHE}}
+        key: ${{github.job}}-${{inputs.arch}}_${{inputs.target}}-${{steps.get_godot_cpp_sha.outputs.sha}}-${{github.ref}}-${{github.sha}}
+        restore-keys: |
+          ${{github.job}}-${{inputs.arch}}_${{inputs.target}}-${{steps.get_godot_cpp_sha.outputs.sha}}-${{github.ref}}
+          ${{github.job}}-${{inputs.arch}}_${{inputs.target}}-${{steps.get_godot_cpp_sha.outputs.sha}}
+      continue-on-error: true
+
+    - name: Set up Python 3.x
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.x"
+        architecture: "x64"
+
+    - name: Configuring Python packages
+      shell: bash
+      run: |
+        if [ "$RUNNER_OS" == "Windows" ]; then
+          python -m pip install pywin32
+        fi
+        python -m pip install scons
+        python --version
+        scons --version
+
+    - name: Linux dependencies
+      shell: bash
+      if: runner.os == 'Linux'
+      run: |
+        sudo apt-get update
+        if [[ "${{inputs.arch}}" == *"32" ]];then
+          sudo apt-get install gcc-multilib g++-multilib
+        fi
+
+    - name: Compilation
+      shell: bash
+      run: |
+        echo "::group::🛠️ GDExtesion Compilation 🛠️"
+        scons platform=${{inputs.platform}} arch=${{inputs.arch}} target=${{inputs.target}} ${{inputs.additional}}
+        if [ "${{inputs.target}}" == "template_release" ] && [ "${{inputs.platform}}" != "android" ]; then
+          scons platform=${{inputs.platform}} arch=${{inputs.arch}} target=${{inputs.target}} force_enabled_dd3d=yes ${{inputs.additional}}
+        fi
+        echo "::endgroup::"
+
+    - name: Prepare artifact Unix
+      if: runner.os != 'Windows' && inputs.platform != 'android' && inputs.platform != 'javascript'
+      shell: bash
+      run: |
+        if [ "$RUNNER_OS" == "macOS" ]; then
+          strip -u $(find -L ${{inputs.output_libs_path}} -type f)
+        else
+          strip $(find -L ${{inputs.output_libs_path}} -type f)
+        fi
+
+    - name: Prepare artifact Windows
+      if: runner.os == 'Windows'
+      shell: powershell
+      run: |
+        Remove-Item ${{inputs.output_libs_path}}/* -Recurse -Include *.exp,*.lib,*.pdb -Force
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: ${{inputs.artifact}}
+        retention-days: 7
+        path: ${{inputs.output_libs_path}}/*
+
+    - name: Save .scons_cache directory
+      uses: actions/cache/save@v3
+      with:
+        path: ${{env.SCONS_CACHE}}
+        key: ${{github.job}}-${{inputs.arch}}_${{inputs.target}}-${{steps.get_godot_cpp_sha.outputs.sha}}-${{github.ref}}-${{github.sha}}
+      continue-on-error: true
