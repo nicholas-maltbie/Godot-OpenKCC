@@ -1,0 +1,14 @@
+[configuration]
+
+entry_symbol = "openkcc_library_init"
+compatibility_minimum = "4.1"
+
+[libraries]
+
+windows.x86_64 = "libs/libopenkcc.windows.editor.x86_64.dll"
+
+web.wasm32 = "libs/libopenkcc.javascript.template_debug.wasm32.wasm"
+web.template_release.wasm32 = "libs/libopenkcc.javascript.template_release.wasm32.wasm"
+
+windows.template_debug.x86_64 = "libs/libopenkcc.windows.template_debug.x86_64.dll"
+windows.template_release.x86_64 = "libs/libopenkcc.windows.template_release.x86_64.dll"

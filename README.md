@@ -17,22 +17,25 @@ Using the GDExtensions to develop with C++, see [GDExtension C++ example](https:
 for details.
 
 ```PowerShell
-# Setup extensions files
-godot --dump-extension-api extension_api.json
-
 # Setup godot-cpp
-cd godot-cpp
-git submodule update --init
-git apply --ignore-space-change --ignore-whitespace ../patches/always_build_fix.patch
-git apply --ignore-space-change --ignore-whitespace ../patches/1165.patch
-git apply --ignore-space-change --ignore-whitespace ../patches/webgl-support.patch
+git -C godot-cpp submodule update --init
+git -C godot-cpp apply --ignore-space-change --ignore-whitespace ../patches/always_build_fix.patch
+git -C godot-cpp apply --ignore-space-change --ignore-whitespace ../patches/1165.patch
+
+# Optional
+## Build only the necessary classes
+git -C godot-cpp apply --ignore-space-change --ignore-whitespace ../patches/godot_cpp_exclude_unused_classes.patch
+## Faster build
+git -C godot-cpp apply --ignore-space-change --ignore-whitespace ../patches/unity_build.patch
+## Fixes for JavaScript/Web support
+git -C godot-cpp apply --ignore-space-change --ignore-whitespace ../patches/fixed_javascript_build.patch
 
 # Setup build platform tools for windows and javascript environment
-scons --directory godot-cpp platform=windows custom_api_file=../extension_api.json
-scons --directory godot-cpp platform=javascript custom_api_file=../extension_api.json
+scons --directory godot-cpp
+scons --directory godot-cpp platform=javascript
 
 # Build openkcc libraries for your development platform.
-scons platform=windows
+scons
 scons platform=javascript
 ```
 
@@ -67,7 +70,7 @@ Requires a custom extension built [Compiling for the Web: GDExtension](https://d
 
 ```PowerShell
 # Build libraries for openkcc
-scons platform=javascript target=template_debug
+scons platform=javascript
 
 # Export debug web build
 mkdir -p builds/WebGL

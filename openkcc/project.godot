@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="godot-openkcc"
-run/main_scene="res://examples_dd3d/DebugDrawDemoScene.tscn"
+run/main_scene="res://Levels/Sample.tscn"
 config/features=PackedStringArray("4.1", "GL Compatibility")
 config/icon="res://icon.svg"
 

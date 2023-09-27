@@ -24,9 +24,6 @@ def setup_options(env, arguments, gen_help):
 def setup_defines_and_flags(env):
     env.Append(CPPDEFINES=["GDEXTENSION_LIBRARY"])
 
-    if "release" in env["target"] and not env["force_enabled_dd3d"]:
-        env.Append(CPPDEFINES=["DISABLE_DEBUG_RENDERING"])
-
     if env["lto"]:
         if env.get("is_msvc", False):
             env.AppendUnique(CCFLAGS=["/GL"])
@@ -69,8 +66,6 @@ def get_library_object(env, arguments=None, gen_help=None):
 
     # some additional tags
     additional_tags = ""
-    if "release" in env["target"] and env["force_enabled_dd3d"]:
-        additional_tags += ".enabled"
 
     library_full_name = "lib" + lib_name + ".{}.{}.{}{}{}".format(
         env["platform"], env["target"], env["arch"], additional_tags,env["SHLIBSUFFIX"])
