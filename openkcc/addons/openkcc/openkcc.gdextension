@@ -5,9 +5,18 @@ compatibility_minimum = "4.1"
 
 [libraries]
 
+linux.x86_64 = "libs/libopenkcc.linux.editor.x86_64.so"
+macos = "libs/libopenkcc.macos.editor.universal.dylib"
+web.wasm32 = "libs/libopenkcc.javascript.editor.wasm32.wasm"
 windows.x86_64 = "libs/libopenkcc.windows.editor.x86_64.dll"
 
-web.wasm32 = "libs/libopenkcc.javascript.template_debug.wasm32.wasm"
+macos.template_debug = "libs/libopenkcc.macos.template_debug.universal.dylib"
+macos.template_release = "libs/libopenkcc.macos.template_release.universal.dylib"
+
+linux.template_debug.x86_64 = "libs/libopenkcc.linux.template_debug.x86_64.so"
+linux.template_release.x86_64 = "libs/libopenkcc.linux.template_release.x86_64.so"
+
+web.template_debug.wasm32 = "libs/libopenkcc.javascript.template_debug.wasm32.wasm"
 web.template_release.wasm32 = "libs/libopenkcc.javascript.template_release.wasm32.wasm"
 
 windows.template_debug.x86_64 = "libs/libopenkcc.windows.template_debug.x86_64.dll"

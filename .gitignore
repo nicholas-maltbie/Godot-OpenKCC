@@ -40,10 +40,10 @@ openkcc/addons/openkcc/libs/*.wasm
 .DS_Store
 *.obj
 *.iobj
-#*.so
-#*.dll
+*.so
+*.dll
 *.o
-#*.dylib
+*.dylib
 *.pdb
 *.ipdb
 *.ilk

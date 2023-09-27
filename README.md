@@ -10,7 +10,7 @@ Style guides used for project by language:
 
 ## Project Setup
 
-Install Godot v4.1.1, then make sure to setup the build tools for the project.
+Install Godot v4.1.1-stable, then make sure to setup the build tools for the project.
 Setup guide for required tools by platform: [Building from Source](https://docs.godotengine.org/en/stable/contributing/development/compiling/index.html)
 
 Using the GDExtensions to develop with C++, see [GDExtension C++ example](https://docs.godotengine.org/en/stable/tutorials/scripting/gdextension/gdextension_cpp_example.html)
@@ -20,16 +20,12 @@ for details.
 # Setup godot-cpp
 git -C godot-cpp submodule update --init
 
-## Fixes for JavaScript/Web support
-git -C godot-cpp apply --ignore-space-change --ignore-whitespace ../patches/fixed_javascript_build.patch
-
 # Setup build platform tools for windows and javascript environment
 scons --directory godot-cpp
-scons --directory godot-cpp platform=javascript
 
 # Build openkcc libraries for your development platform.
-scons target=editor
 scons
+scons target=editor
 ```
 
 ## Build
@@ -44,6 +40,7 @@ with godot.
 
 ```PowerShell
 # Build libraries for openkcc
+scons --directory godot-cpp platform=windows
 scons platform=windows
 
 # Export debug windows-desktop build
@@ -63,20 +60,22 @@ Requires a custom extension built [Compiling for the Web: GDExtension](https://d
 > You can build the export templates using the option `dlink_enabled=yes` to enable GDExtension support:
 
 ```PowerShell
+## Fixes for JavaScript/Web support
+git -C godot-cpp apply --ignore-space-change --ignore-whitespace ../patches/fixed_javascript_build.patch
+
 # Build libraries for openkcc
+scons --directory godot-cpp platform=javascript
 scons platform=javascript
 
 # Export debug web build
 godot -v -e --path openkcc --headless --quit
 mkdir -p builds/WebGL
 godot --path openkcc --headless --export-debug web
+cp web/coi-serviceworker.min.js builds/WebGL/coi-serviceworker.min.js
 ```
 
-Host website for local testing via [npx](https://docs.npmjs.com/cli/v7/commands/npx)
+Host website for local testing via [python -m http.server](https://docs.python.org/3/library/http.server.html)
 
 ```PowerShell
-npx local-web-server `
-  --cors.embedder-policy "require-corp" `
-  --cors.opener-policy "same-origin" `
-  --directory builds/WebGL
+python -m http.server --directory builds/WebGL
 ```
