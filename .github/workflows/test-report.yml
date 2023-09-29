@@ -1,0 +1,22 @@
+name: ✅ Test Report
+on:
+  workflow_run:
+    workflows: ["🧪 GUT Tests"]                     # runs after CI workflow
+    types:
+      - completed
+
+permissions:
+  contents: read
+  actions: read
+  checks: write
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: dorny/test-reporter@v1
+      with:
+        artifact: test-results 
+        name: GUT Tests
+        path: '*.xml'
+        reporter: jest-junit

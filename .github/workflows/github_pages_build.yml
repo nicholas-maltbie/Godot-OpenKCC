@@ -99,10 +99,10 @@ jobs:
 
       - name: 🕸 Web Build
         run: |
-          run: godot -v -e --headless --path ${PROJECT_PATH} --quit || true
+          run: godot -v -e --headless --path ${{env.PROJECT_PATH}} --quit || true
           mkdir ${GITHUB_WORKSPACE}/_site
-          godot -v --headless --path ${PROJECT_PATH} --export-release web ${GITHUB_WORKSPACE}/_site/index.html
-          cp ${PROJECT_PATH}/coi-serviceworker.min.js ${GITHUB_WORKSPACE}/_site/coi-serviceworker.min.js
+          godot -v --headless --path ${{env.PROJECT_PATH}} --export-release web ${GITHUB_WORKSPACE}/_site/index.html
+          cp ${{env.PROJECT_PATH}}/coi-serviceworker.min.js ${GITHUB_WORKSPACE}/_site/coi-serviceworker.min.js
 
       - name: Fix Permissions
         run: |

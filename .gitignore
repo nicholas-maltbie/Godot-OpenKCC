@@ -63,3 +63,6 @@ used_classes.json
 obj/
 bin/
 /libs/
+
+# Ignore results of test runs
+test_results/

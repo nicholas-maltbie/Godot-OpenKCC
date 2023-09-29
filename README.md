@@ -28,6 +28,14 @@ scons
 scons target=editor
 ```
 
+## Tests
+
+Run tests for project with [GUT](https://github.com/bitwes/Gut)
+
+```PowerShell
+godot -d -s --path openkcc addons/gut/gut_cmdln.gd
+```
+
 ## Build
 
 Build project export using godot via [cli](https://docs.godotengine.org/en/stable/tutorials/editor/command_line_tutorial.html)
