@@ -34,5 +34,5 @@ transform = Transform3D(0.957732, 0.151114, -0.244775, 0.265484, -0.136684, 0.95
 floor_snap_length = 0.15
 
 [node name="NickGDExample" type="NickGDExample" parent="."]
-position = Vector2(14.8448, 0.710843)
+position = Vector2(1.22716, 10.1723)
 texture = ExtResource("3_dng0u")

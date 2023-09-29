@@ -8,6 +8,57 @@ Style guides used for project by language:
 * C# : [C# Style Guide](https://docs.godotengine.org/en/stable/tutorials/scripting/c_sharp/c_sharp_style_guide.html)
 * C++ : [Code Style Guides : C++ and Objective-C](https://docs.godotengine.org/en/stable/contributing/development/code_style_guidelines.html#c-and-objective-c)
 
+### Linting
+
+C++ formatting via [clang-format](https://clang.llvm.org/docs/ClangFormat.html).
+Can be installed format via pip.
+
+```PowerShell
+# Install
+python -m pip install clang-format
+
+# Find formatting via clang-format
+clang-format src/*.cpp --dry-run
+clang-format src/*.h --dry-run
+
+# Fix formatting via clang-format
+clang-format src/*.cpp -i
+clang-format src/*.h -i
+```
+
+GDScript linting via [godot-gdscript-toolkit](https://github.com/Scony/godot-gdscript-toolkit)
+with the `gdlint` command
+
+```PowerShell
+# Install gdlint via pip
+pip3 install gdtoolkit
+
+# Run gdlint on openkcc files
+gdlint openkcc/addons/openkcc openkcc/scripts openkcc/tests
+```
+
+_Note: still in progress_ C# linting via [dotnet format](https://github.com/dotnet/format)
+can be installed via dotnet in repo.
+
+```PowerShell
+# Install via dotnet, uses .config/dotnet-tools.json
+dotnet tool restore
+
+# Run dotnet-format command via dotnet tool run
+dotnet tool run dotnet-format .\openkcc\GodotOpenKCC.sln --check
+```
+
+_Note: still in progress_ Markdown linting via [markdownlint](https://github.com/DavidAnson/markdownlint)
+can be installed via npm.
+
+```PowerShell
+# Install cli version via npm
+npm install -g markdownlint-cli
+
+# Run on local repo
+markdownlint .
+```
+
 ## Project Setup
 
 Install Godot v4.1.1-stable, then make sure to setup the build tools for the project.
@@ -64,8 +115,12 @@ with godot.
 
 Requires a custom extension built [Compiling for the Web: GDExtension](https://docs.godotengine.org/en/stable/contributing/development/compiling/compiling_for_web.html#gdextension)
 
-> The default export templates do not include GDExtension support for performance and compatibility reasons. See the [export page](https://docs.godotengine.org/en/stable/tutorials/export/exporting_for_web.html#doc-javascript-export-options) for more info.
-> You can build the export templates using the option `dlink_enabled=yes` to enable GDExtension support:
+> The default export templates do not include GDExtension support for
+> performance and compatibility reasons. See the [export page](https://docs.godotengine.org/en/stable/tutorials/export/exporting_for_web.html#doc-javascript-export-options)
+> for more info.
+>
+> You can build the export templates using the option `dlink_enabled=yes` to
+> enable GDExtension support:
 
 ```PowerShell
 ## Fixes for JavaScript/Web support

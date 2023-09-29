@@ -17,7 +17,7 @@ config/icon="res://icon.svg"
 
 [dotnet]
 
-project/assembly_name="Open Kcc Godot"
+project/assembly_name="GodotOpenKCC"
 
 [editor_plugins]
 

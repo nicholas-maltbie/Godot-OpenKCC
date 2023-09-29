@@ -1,7 +1,7 @@
 name: ✅ Test Report
 on:
   workflow_run:
-    workflows: ["🧪 GUT Tests"]                     # runs after CI workflow
+    workflows: ["🔃 Pull Request", "🧪 GUT Tests"]
     types:
       - completed
 
