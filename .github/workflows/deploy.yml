@@ -1,0 +1,51 @@
+name: Build and Deploy WebGL and Documentation
+
+on:
+  # Runs on pushes targeting the default branch
+  push:
+    branches: ['main']
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+# Allow one concurrent deployment
+concurrency:
+  group: production-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  compile:
+    uses: ./.github/workflows/gdextension_build.yml
+    with:
+      buildWindows: true
+      buildLinux: true
+      buildMacos: true
+      buildAndroid: true
+      buildWeb: true
+
+  deploy:
+    needs: compile
+    uses: ./.github/workflows/github_pages_deploy.yml
+    with:
+      buildArtifact: false
+
+  test:
+    uses: ./.github/workflows/gut_tests.yml
+    needs: compile
+    with:
+      buildArtifact: false
+
+  package:
+    uses: ./.github/workflows/create_package.yml
+    needs: compile
+    with:
+      buildArtifact: false
+
+  lint:
+    uses: ./.github/workflows/format_validation.yml

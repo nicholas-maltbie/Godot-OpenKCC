@@ -2,6 +2,6 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <EnableDynamicLoading>true</EnableDynamicLoading>
-    <RootNamespace>OpenKccGodot</RootNamespace>
+    <RootNamespace>com.nickmaltbie.openkcc.godot</RootNamespace>
   </PropertyGroup>
 </Project>
