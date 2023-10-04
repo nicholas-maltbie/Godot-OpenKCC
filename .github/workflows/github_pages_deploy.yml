@@ -24,6 +24,7 @@ jobs:
   build:
     uses: ./.github/workflows/web_build.yml
     with:
+      buildArtifact: ${{ inputs.buildArtifact }}
       uploadArtifact: true
 
   deploy:
