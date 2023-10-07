@@ -1,0 +1,60 @@
+name: ↗️ Update GDExtension Binaries
+on:
+  workflow_call:
+  workflow_dispatch:
+
+jobs:
+  compile:
+    uses: ./.github/workflows/gdextension_build.yml
+    with:
+      buildLinux: true
+      buildWindows: true
+      buildMacos: true
+
+  update:
+    name: Update Extensions
+    runs-on: ubuntu-20.04
+    needs: compile
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/setvars
+      - uses: nschloe/action-cached-lfs-checkout@v1
+
+      - name: Download Binaries
+        uses: actions/download-artifact@v3
+        with:
+          path: extracted_files
+          name: gdextension_libs
+
+      - name: Replace with new files
+        run: |
+          mkdir -p ${{env.ADDON_LIBS_PATH}}
+          ls -R extracted_files
+          declare -a libs=("libopenkcc.linux.editor.x86_64.so" "libopenkcc.macos.editor.framework" "libopenkcc.windows.editor.x86_64.dll")
+          for lib in "${libs[@]}"
+          do
+            new_lib="extracted_files/${lib}"
+            existing_lib="${{env.ADDON_LIBS_PATH}}/${lib}"
+
+            new_sha=$(tar cvf - $new_lib | sha1sum)
+            existing_sha=$(tar cvf - $existing_lib | sha1sum)
+
+            if [ "$new_sha" = "$existing_sha" ]; then
+              echo "No diff for libs found, not replacing files for $lib"
+            else
+              echo "Replacing $existing_lib with $new_lib"
+              rm -rf $existing_lib
+              mv -f $new_lib $existing_lib
+              git add -f $existing_lib
+            fi
+          done
+
+      - name: Commit report
+        run: |
+          git config --global user.name 'Auto Updater'
+          git config --global user.email 'auto-updater@users.noreply.github.com'
+          git diff --cached
+          echo "# Changed files:" >> $GITHUB_STEP_SUMMARY
+          git diff --cached --name-only >> $GITHUB_STEP_SUMMARY
+          git commit -am "[CI] ↗️ Updated Binaries"
+          git push
