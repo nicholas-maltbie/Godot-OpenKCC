@@ -10,6 +10,9 @@ openkcc/.godot/
 openkcc/addons/debug_draw_3d/libs/*
 openkcc/addons/debug_draw_3d/csharp/*
 
+# Temporary asset list for building
+.lfs-assets-id
+
 # Ignore Exports
 builds/
 

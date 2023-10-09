@@ -9,11 +9,6 @@ on:
         type: boolean
   workflow_dispatch:
 
-# Environment variables for the job
-env:
-  ADDON_PATH: openkcc/addons/openkcc
-  ADDON_LIBS_PATH: openkcc/addons/openkcc/libs
-
 jobs:
   compile:
     if: ${{ github.event_name == 'workflow_dispatch' || inputs.buildArtifact }}
@@ -33,10 +28,8 @@ jobs:
       always() &&
       (needs.compile.result == 'success' || needs.compile.result == 'skipped')
     steps:
-      - name: Check out code
-        uses: actions/checkout@v3
-        with:
-          lfs: true
+      - uses: nschloe/action-cached-lfs-checkout@v1
+      - uses: ./.github/actions/setvars
 
       - name: Download Binaries
         uses: actions/download-artifact@v3

@@ -47,14 +47,15 @@ jobs:
       fail-fast: false
       matrix:
         arch: [x86_64]
-        target: [editor, template_release]
+        target: [editor, template_debug, template_release]
 
     steps:
       - name: Checkout
         uses: actions/checkout@v3
         with:
-          lfs: true
           submodules: recursive
+      - uses: ./.github/actions/setvars
+      - uses: nschloe/action-cached-lfs-checkout@v1
 
       - name: Compile GDExtension
         uses: ./.github/actions/compile_gdextension
@@ -81,8 +82,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
         with:
-          lfs: true
           submodules: recursive
+      - uses: ./.github/actions/setvars
+      - uses: nschloe/action-cached-lfs-checkout@v1
 
       - name: Compile GDExtension
         uses: ./.github/actions/compile_gdextension
@@ -103,14 +105,15 @@ jobs:
       fail-fast: false
       matrix:
         arch: [universal]
-        target: [editor, template_release]
+        target: [editor, template_debug, template_release]
 
     steps:
       - name: Checkout
         uses: actions/checkout@v3
         with:
-          lfs: true
           submodules: recursive
+      - uses: ./.github/actions/setvars
+      - uses: nschloe/action-cached-lfs-checkout@v1
 
       - name: Compile GDExtension
         uses: ./.github/actions/compile_gdextension
@@ -141,8 +144,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
         with:
-          lfs: true
           submodules: recursive
+      - uses: ./.github/actions/setvars
+      - uses: nschloe/action-cached-lfs-checkout@v1
 
       - name: Compile GDExtension
         uses: ./.github/actions/compile_gdextension
@@ -163,17 +167,15 @@ jobs:
       fail-fast: false
       matrix:
         arch: [wasm32]
-        target: [template_release]
-
-    env:
-      EM_VERSION: 3.1.46
+        target: [template_release]      
 
     steps:
       - name: Checkout
         uses: actions/checkout@v3
         with:
-          lfs: true
           submodules: recursive
+      - uses: ./.github/actions/setvars
+      - uses: nschloe/action-cached-lfs-checkout@v1
 
       - uses: mymindstorm/setup-emsdk@v11
         with:
@@ -231,7 +233,7 @@ jobs:
           declare -a platforms=("windows" "linux" "macos" "android" "javascript")
           for platform in "${platforms[@]}"
           do
-            if [ -n "$(ls -A $platform 2>/dev/null)" ]; then
+            if [ -n "$(ls -A extracted_files/$platform 2>/dev/null)" ]; then
               echo "Extract files for $platform"
               mv -f extracted_files/$platform/* extracted_files
               rm -r extracted_files/$platform
