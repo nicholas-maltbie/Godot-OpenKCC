@@ -21,7 +21,7 @@ jobs:
     name: 🧪 Run Tests
     runs-on: ubuntu-20.04
     container:
-      image: barichello/godot-ci:4.1.1
+      image: barichello/godot-ci:4.1.2
     if: |
       always() &&
       (needs.compile.result == 'success' || needs.compile.result == 'skipped')

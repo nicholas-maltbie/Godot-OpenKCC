@@ -61,11 +61,15 @@ markdownlint .
 
 ## Project Setup
 
-Install Godot v4.1.1-stable, then make sure to setup the build tools for the project.
+Install Godot v4.1.2-stable, then make sure to setup the build tools for the project.
 Setup guide for required tools by platform: [Building from Source](https://docs.godotengine.org/en/stable/contributing/development/compiling/index.html)
 
 Using the GDExtensions to develop with C++, see [GDExtension C++ example](https://docs.godotengine.org/en/stable/tutorials/scripting/gdextension/gdextension_cpp_example.html)
 for details.
+
+_Note_ install godot via [Scoop](https://scoop.sh/) for windows, see
+[Command Line Tutorial](https://docs.godotengine.org/en/stable/tutorials/editor/command_line_tutorial.html#path)
+from Godot's docs for more details.
 
 ```PowerShell
 # Setup godot-cpp
@@ -100,12 +104,17 @@ with godot.
 ```PowerShell
 # Build libraries for openkcc
 scons --directory godot-cpp platform=windows
-scons platform=windows
+scons platform=windows target=template_release
+
+# Optional: Download redit tool
+$url = "https://github.com/electron/rcedit/releases/download/v1.1.1/rcedit-x64.exe"
+$out = "external\rcedit-x64.exe"
+Invoke-WebRequest -Uri $url -OutFile $out
 
 # Export debug windows-desktop build
 godot -v -e --path openkcc --headless --quit
 mkdir -p builds/Windows
-godot --path openkcc --headless --export-debug windows-desktop
+godot --path openkcc --headless --export-release windows-desktop
 ```
 
 ### Build Web Platform
@@ -123,17 +132,14 @@ Requires a custom extension built [Compiling for the Web: GDExtension](https://d
 > enable GDExtension support:
 
 ```PowerShell
-## Fixes for JavaScript/Web support
-git -C godot-cpp apply --ignore-space-change --ignore-whitespace ../patches/fixed_javascript_build.patch
-
 # Build libraries for openkcc
 scons --directory godot-cpp platform=javascript
-scons platform=javascript
+scons platform=javascript target=template_release
 
 # Export debug web build
 godot -v -e --path openkcc --headless --quit
 mkdir -p builds/WebGL
-godot --path openkcc --headless --export-debug web
+godot --path openkcc --headless --export-release web
 cp openkcc/coi-serviceworker.min.js builds/WebGL/coi-serviceworker.min.js
 ```
 
