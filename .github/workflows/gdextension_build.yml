@@ -41,7 +41,7 @@ jobs:
   windows-gdextension:
     name: 🏁 Windows
     runs-on: "windows-latest"
-    if: ${{ inputs.buildWindows }}
+    if: ${{ inputs.buildWindows || github.event_name == 'workflow_dispatch' }}
 
     strategy:
       fail-fast: false
@@ -70,7 +70,7 @@ jobs:
   linux-gdextension:
     name: 🐧 Linux
     runs-on: "ubuntu-20.04"
-    if: ${{ inputs.buildLinux }}
+    if: ${{ inputs.buildLinux || github.event_name == 'workflow_dispatch' }}
 
     strategy:
       fail-fast: false
@@ -99,7 +99,7 @@ jobs:
   macos-gdextension:
     name: 🍏 MacOS
     runs-on: "macos-latest"
-    if: ${{ inputs.buildMacos }}
+    if: ${{ inputs.buildMacos || github.event_name == 'workflow_dispatch' }}
 
     strategy:
       fail-fast: false
@@ -129,7 +129,7 @@ jobs:
   android-gdextension:
     name: 🤖 Android
     runs-on: "ubuntu-latest"
-    if: ${{ inputs.buildAndroid }}
+    if: ${{ inputs.buildAndroid || github.event_name == 'workflow_dispatch' }}
 
     strategy:
       fail-fast: false
@@ -161,7 +161,7 @@ jobs:
   web-gdextension:
     name: 🕸 Web
     runs-on: "ubuntu-latest"
-    if: ${{ inputs.buildWeb }}
+    if: ${{ inputs.buildWeb || github.event_name == 'workflow_dispatch' }}
 
     strategy:
       fail-fast: false
@@ -181,11 +181,11 @@ jobs:
         with:
           version: ${{env.EM_VERSION}}
 
-      - shell: bash
-        run: |
-          cd godot-cpp
-          git apply --ignore-space-change --ignore-whitespace ../patches/fixed_javascript_build.patch
-          cd ..
+      # - shell: bash
+      #   run: |
+      #     cd godot-cpp
+      #     git apply --ignore-space-change --ignore-whitespace ../patches/fixed_javascript_build.patch
+      #     cd ..
 
       - name: Compile GDExtension
         uses: ./.github/actions/compile_gdextension

@@ -10,10 +10,14 @@ jobs:
       buildLinux: true
       buildWindows: true
       buildMacos: true
+      buildAndroid: true
+      buildWeb: true
 
   update:
     name: Update Extensions
     runs-on: ubuntu-20.04
+    permissions:
+      contents: write
     needs: compile
     steps:
       - uses: actions/checkout@v3
@@ -30,31 +34,43 @@ jobs:
         run: |
           mkdir -p ${{env.ADDON_LIBS_PATH}}
           ls -R extracted_files
-          declare -a libs=("libopenkcc.linux.editor.x86_64.so" "libopenkcc.macos.editor.framework" "libopenkcc.windows.editor.x86_64.dll")
+          declare -a libs=( \
+            "libopenkcc.linux.editor.x86_64.so" \
+            "libopenkcc.linux.template_release.x86_64.so" \
+            "libopenkcc.macos.editor.framework/libopenkcc.macos.editor" \
+            "libopenkcc.macos.template_release.framework/libopenkcc.macos.template_release" \
+            "libopenkcc.windows.editor.x86_64.dll" \
+            "libopenkcc.windows.template_release.x86_64.dll" \
+            "libopenkcc.javascript.template_release.wasm32.wasm" \
+            "libopenkcc.android.template_release.arm32.so" \
+            "libopenkcc.android.template_release.arm64.so" \
+            "libopenkcc.android.template_release.x86_32.so" \
+            "libopenkcc.android.template_release.x86_64.so" \
+          )
           for lib in "${libs[@]}"
           do
             new_lib="extracted_files/${lib}"
             existing_lib="${{env.ADDON_LIBS_PATH}}/${lib}"
 
-            new_sha=$(tar cvf - $new_lib | sha1sum)
-            existing_sha=$(tar cvf - $existing_lib | sha1sum)
-
-            if [ "$new_sha" = "$existing_sha" ]; then
-              echo "No diff for libs found, not replacing files for $lib"
-            else
-              echo "Replacing $existing_lib with $new_lib"
-              rm -rf $existing_lib
-              mv -f $new_lib $existing_lib
-              git add -f $existing_lib
-            fi
+            echo "Replacing $existing_lib with $new_lib"
+            mkdir -p $(dirname "$existing_lib")
+            rm -rf $existing_lib
+            mv -f $new_lib $existing_lib
+            git add -f $existing_lib
           done
+
+          rm -rf extracted_files
 
       - name: Commit report
         run: |
-          git config --global user.name 'Auto Updater'
-          git config --global user.email 'auto-updater@users.noreply.github.com'
-          git diff --cached
-          echo "# Changed files:" >> $GITHUB_STEP_SUMMARY
-          git diff --cached --name-only >> $GITHUB_STEP_SUMMARY
-          git commit -am "[CI] ↗️ Updated Binaries"
-          git push
+          if [[ `git status --untracked-files --porcelain` ]]; then
+            git config --global user.name 'Auto Updater'
+            git config --global user.email 'auto-updater@users.noreply.github.com'
+            git diff --cached
+            echo "# Changed files:" >> $GITHUB_STEP_SUMMARY
+            git diff --cached --name-only >> $GITHUB_STEP_SUMMARY
+            git commit -am "[CI] ↗️ Updated Binaries"
+            git push
+          else
+            echo "No changes found"
+          fi

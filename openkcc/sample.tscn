@@ -1,0 +1,38 @@
+[gd_scene load_steps=4 format=3 uid="uid://ibio3sqc8sw4"]
+
+[ext_resource type="PackedScene" uid="uid://dj26sacnhty4r" path="res://addons/devblocks/blocks/basic_block.tscn" id="1_3c4qc"]
+[ext_resource type="PackedScene" uid="uid://dwpmuwlxa4cqr" path="res://player.tscn" id="2_28x1w"]
+[ext_resource type="Texture2D" uid="uid://bbuseusvmmxbh" path="res://icon.svg" id="3_uwduv"]
+
+[node name="Node3D" type="Node3D"]
+
+[node name="BasicBlock" parent="." instance=ExtResource("1_3c4qc")]
+transform = Transform3D(100, 0, 0, 0, 1, 0, 0, 0, 100, 0, -0.5, 0)
+block_style = 6
+
+[node name="BasicBlock2" parent="." instance=ExtResource("1_3c4qc")]
+transform = Transform3D(-6.9282, 5.23065e-07, -1.5, -1.20797e-06, -4, 0, -4, 3.01992e-07, 2.59808, 5, 2, -12)
+
+[node name="BasicBlock3" parent="." instance=ExtResource("1_3c4qc")]
+transform = Transform3D(3.4641, -1, 2.59808, 4, 3.4641, 0, -6, 1.73205, 1.5, 1, 0, -10)
+
+[node name="Stairs" type="Node3D" parent="."]
+
+[node name="BasicBlock4" parent="Stairs" instance=ExtResource("1_3c4qc")]
+transform = Transform3D(8, 0, 0, 0, 0.2, 0, 0, 0, 3, 6.563, 0.1, -0.098)
+
+[node name="BasicBlock5" parent="Stairs" instance=ExtResource("1_3c4qc")]
+transform = Transform3D(8, 0, 0, 0, 0.2, 0, 0, 0, 3, 7.363, 0.3, -0.098)
+
+[node name="BasicBlock6" parent="Stairs" instance=ExtResource("1_3c4qc")]
+transform = Transform3D(8, 0, 0, 0, 0.2, 0, 0, 0, 3, 8.163, 0.5, -0.098)
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.957732, 0.151114, -0.244775, 0.265484, -0.136684, 0.954377, 0.110763, -0.979021, -0.171025, 0, 0, 0)
+
+[node name="Player" parent="." instance=ExtResource("2_28x1w")]
+floor_snap_length = 0.15
+
+[node name="NickGDExample" type="NickGDExample" parent="."]
+position = Vector2(3.13312, 18.4314)
+texture = ExtResource("3_uwduv")

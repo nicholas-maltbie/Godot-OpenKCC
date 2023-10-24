@@ -62,6 +62,11 @@ runs:
         if [[ "${{inputs.arch}}" == *"32" ]];then
           sudo apt-get install gcc-multilib g++-multilib
         fi
+    
+    - name: Prepare Export
+      shell: bash
+      run:
+        rm -rf ${{inputs.output_libs_path}}
 
     - name: Compilation
       shell: bash
@@ -69,7 +74,7 @@ runs:
         echo "::group::🛠️ GDExtesion Compilation 🛠️"
         scons platform=${{inputs.platform}} arch=${{inputs.arch}} target=${{inputs.target}} ${{inputs.additional}}
         if [ "${{inputs.target}}" == "template_release" ] && [ "${{inputs.platform}}" != "android" ]; then
-          scons platform=${{inputs.platform}} arch=${{inputs.arch}} target=${{inputs.target}} force_enabled_dd3d=yes ${{inputs.additional}}
+          scons platform=${{inputs.platform}} arch=${{inputs.arch}} target=${{inputs.target}} ${{inputs.additional}}
         fi
         echo "::endgroup::"
 
