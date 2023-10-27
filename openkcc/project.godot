@@ -13,7 +13,8 @@ config_version=5
 config/name="godot-openkcc"
 run/main_scene="res://sample.tscn"
 config/features=PackedStringArray("4.1", "GL Compatibility")
-config/icon="res://icon.svg"
+config/icon="res://logo/bunny logo.svg"
+config/windows_native_icon="res://logo/icon.ico"
 
 [dotnet]
 
