@@ -2,50 +2,69 @@ name: 📦 Create Addon Package
 on:
   workflow_call:
     inputs:
-      buildArtifact:
-        description: 'Should artifacts be compiled'
+      version-name:
         required: false
-        default: true
+        type: string
+        default: ""
+      release-publish:
+        required: false
         type: boolean
+        default: false
+      latest-publish:
+        required: false
+        type: boolean
+        default: true
+    secrets:
+      token:
+        required: false
   workflow_dispatch:
 
 jobs:
-  compile:
-    if: ${{ github.event_name == 'workflow_dispatch' || inputs.buildArtifact }}
-    uses: ./.github/workflows/gdextension_build.yml
-    with:
-      buildWindows: true
-      buildLinux: true
-      buildMacos: true
-      buildAndroid: true
-      buildWeb: true
-
   create_package:
     runs-on: "ubuntu-20.04"
     name: 📦 Build Package
-    needs: compile
-    if: |
-      always() &&
-      (needs.compile.result == 'success' || needs.compile.result == 'skipped')
+    env:
+      BRANCH_PREFIX: release
     steps:
       - uses: nschloe/action-cached-lfs-checkout@v1
       - uses: ./.github/actions/setvars
 
-      - name: Download Binaries
-        uses: actions/download-artifact@v3
+      - name: Setup Package
+        run: ./setup-package.sh -p ${{ env.ADDON_PATH }}
+
+      # Deploy build to release/${version-name} branch
+      - name: Push package to git branch ${{ env.BRANCH_PREFIX }}/${{ inputs.version-name }}
+        if: ${{ inputs.release-publish }}
+        uses: ad-m/github-push-action@master
         with:
-          path: extracted_files
-          name: gdextension_libs
+          github_token: ${{ secrets.token }}
+          branch: ${{ env.BRANCH_PREFIX }}/${{ inputs.version-name }}
+          force: true
 
-      - name: Replace with new files
-        run: |
-          ls -R extracted_files
-          rm -rf ${{env.ADDON_LIBS_PATH}}
-          mv -f extracted_files ${{env.ADDON_LIBS_PATH}}
+      # Deploy build to release/latest branch
+      - name: Push package to git branch ${{ env.BRANCH_PREFIX }}/latest
+        if: ${{ inputs.latest-publish }}
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.token }}
+          branch: ${{ env.BRANCH_PREFIX }}/latest
+          force: true
+      
+      # Pull lfs assets if needed
+      - name: Git lfs Pull
+        run: git lfs pull
+        shell: bash
 
+      # Upload package as zip
       - name: Upload Package
         uses: actions/upload-artifact@v3
         with:
           name: godot-openkcc
           retention-days: 7
-          path: ${{env.ADDON_PATH}}/*
+          path: |
+            .
+            !.git
+      
+      # Restore back to original branch
+      - uses: actions/checkout@v3
+        if: always()
