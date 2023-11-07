@@ -42,7 +42,7 @@ jobs:
       buildArtifact: false
 
   package:
-    uses: ./.github/workflows/create-package.yml
+    uses: ./.github/workflows/create_package.yml
     with:
       version-name: ""
       release-publish: false
