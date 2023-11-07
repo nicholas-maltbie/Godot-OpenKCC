@@ -64,8 +64,8 @@ jobs:
       - name: Commit report
         run: |
           if [[ `git status --untracked-files --porcelain` ]]; then
-            git config --global user.name 'Auto Updater'
-            git config --global user.email 'auto-updater@users.noreply.github.com'
+            git config --global user.name 'github-actions[bot]'
+            git config --global user.email 'github-actions[bot]@users.noreply.github.com'
             git diff --cached
             echo "# Changed files:" >> $GITHUB_STEP_SUMMARY
             git diff --cached --name-only >> $GITHUB_STEP_SUMMARY
