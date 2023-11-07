@@ -42,10 +42,13 @@ jobs:
       buildArtifact: false
 
   package:
-    uses: ./.github/workflows/create_package.yml
-    needs: compile
+    uses: ./.github/workflows/create-package.yml
     with:
-      buildArtifact: false
+      version-name: ""
+      release-publish: false
+      latest-publish: true
+    secrets:
+      token: ${{ secrets.GITHUB_TOKEN }}
 
   lint:
     uses: ./.github/workflows/format_validation.yml
