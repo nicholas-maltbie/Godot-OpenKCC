@@ -5,9 +5,16 @@ on:
     tags:
       - '*'
 
+# Sets permissions of the GITHUB_TOKEN
+permissions:
+  contents: write
+  id-token: write
+
 jobs:
   create-release-package:
     uses: ./.github/workflows/create_package.yml
+    secrets:
+      token: ${{ secrets.GITHUB_TOKEN }}
     with:
       latest-publish: false
       release-publish: true
