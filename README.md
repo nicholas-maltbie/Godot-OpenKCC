@@ -61,7 +61,7 @@ markdownlint .
 
 ## Project Setup
 
-Install Godot v4.1.2-stable, then make sure to setup the build tools for the project.
+Install Godot v4.2-stable, then make sure to setup the build tools for the project.
 Setup guide for required tools by platform: [Building from Source](https://docs.godotengine.org/en/stable/contributing/development/compiling/index.html)
 
 Using the GDExtensions to develop with C++, see [GDExtension C++ example](https://docs.godotengine.org/en/stable/tutorials/scripting/gdextension/gdextension_cpp_example.html)
@@ -75,7 +75,7 @@ from Godot's docs for more details.
 # Setup godot-cpp
 git -C godot-cpp submodule update --init
 
-# Setup build platform tools for windows and javascript environment
+# Setup build platform tools for windows and web environment
 scons --directory godot-cpp
 
 # Build openkcc libraries for your development platform.
@@ -125,7 +125,7 @@ with godot.
 Requires a custom extension built [Compiling for the Web: GDExtension](https://docs.godotengine.org/en/stable/contributing/development/compiling/compiling_for_web.html#gdextension)
 
 > The default export templates do not include GDExtension support for
-> performance and compatibility reasons. See the [export page](https://docs.godotengine.org/en/stable/tutorials/export/exporting_for_web.html#doc-javascript-export-options)
+> performance and compatibility reasons. See the [export page](https://docs.godotengine.org/en/stable/tutorials/export/exporting_for_web.html#export-options)
 > for more info.
 >
 > You can build the export templates using the option `dlink_enabled=yes` to
@@ -133,8 +133,8 @@ Requires a custom extension built [Compiling for the Web: GDExtension](https://d
 
 ```PowerShell
 # Build libraries for openkcc
-scons --directory godot-cpp platform=javascript
-scons platform=javascript target=template_release
+scons --directory godot-cpp platform=web
+scons platform=web target=template_release
 
 # Export debug web build
 godot -v -e --path openkcc --headless --quit
