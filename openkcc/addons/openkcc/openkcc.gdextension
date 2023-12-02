@@ -18,9 +18,9 @@ linux.template_release.x86_64 = "libs/libopenkcc.linux.template_release.x86_64.s
 windows.template_debug.x86_64 = "libs/libopenkcc.windows.template_debug.x86_64.dll"
 windows.template_release.x86_64 = "libs/libopenkcc.windows.template_release.x86_64.dll"
 
-web.wasm32 = "libs/libopenkcc.javascript.editor.wasm32.wasm"
-web.template_debug.wasm32 = "libs/libopenkcc.javascript.template_debug.wasm32.wasm"
-web.template_release.wasm32 = "libs/libopenkcc.javascript.template_release.wasm32.wasm"
+web.wasm32 = "libs/libopenkcc.web.editor.wasm32.wasm"
+web.template_debug.wasm32 = "libs/libopenkcc.web.template_debug.wasm32.wasm"
+web.template_release.wasm32 = "libs/libopenkcc.web.template_release.wasm32.wasm"
 
 android.template_debug.arm32 = "libs/libopenkcc.android.template_debug.arm32.so"
 android.template_debug.arm64 = "libs/libopenkcc.android.template_debug.arm64.so"
