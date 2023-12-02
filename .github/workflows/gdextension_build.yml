@@ -135,10 +135,7 @@ jobs:
       fail-fast: false
       matrix:
         arch: [arm32, arm64, x86_32, x86_64]
-        target: [template_release]
-
-    env:
-      ANDROID_NDK_ROOT: /usr/local/lib/android/sdk/ndk/23.2.8568313
+        target: [template_debug, template_release]
 
     steps:
       - name: Checkout
@@ -148,6 +145,26 @@ jobs:
       - uses: ./.github/actions/setvars
       - uses: nschloe/action-cached-lfs-checkout@v1
 
+      - name: Install Android NDK r23c
+        uses: nttld/setup-ndk@v1.4.1
+        id: setup-ndk
+        with:
+          ndk-version: r23c
+          link-to-sdk: true
+          local-cache: true
+
+      # TODO revisit after some updates of nttld/setup-ndk
+      - name: Restore Android Symlinks
+        run: |
+          directory="${{ steps.setup-ndk.outputs.ndk-path }}/toolchains/llvm/prebuilt/linux-x86_64/bin"
+
+          find "$directory" -type l | while read link; do
+              current_target=$(readlink "$link")
+              new_target="$directory/$(basename "$current_target")"
+              ln -sf "$new_target" "$link"
+              echo "Changed $(basename "$link") from $current_target to $new_target"
+          done
+
       - name: Compile GDExtension
         uses: ./.github/actions/compile_gdextension
         with:
@@ -155,8 +172,6 @@ jobs:
           target: ${{matrix.target}}
           arch: ${{matrix.arch}}
           artifact: android
-
-  # ============================================
 
   web-gdextension:
     name: 🕸 Web
@@ -181,19 +196,13 @@ jobs:
         with:
           version: ${{env.EM_VERSION}}
 
-      # - shell: bash
-      #   run: |
-      #     cd godot-cpp
-      #     git apply --ignore-space-change --ignore-whitespace ../patches/fixed_javascript_build.patch
-      #     cd ..
-
       - name: Compile GDExtension
         uses: ./.github/actions/compile_gdextension
         with:
-          platform: javascript
+          platform: web
           target: ${{matrix.target}}
           arch: ${{matrix.arch}}
-          artifact: javascript
+          artifact: web
 
   # ============================================
 
@@ -230,7 +239,7 @@ jobs:
       - name: Store all libraries in one directory
         run: |
           ls -R extracted_files/
-          declare -a platforms=("windows" "linux" "macos" "android" "javascript")
+          declare -a platforms=("windows" "linux" "macos" "android" "web")
           for platform in "${platforms[@]}"
           do
             if [ -n "$(ls -A extracted_files/$platform 2>/dev/null)" ]; then

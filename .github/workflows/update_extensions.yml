@@ -41,7 +41,7 @@ jobs:
             "libopenkcc.macos.template_release.framework/libopenkcc.macos.template_release" \
             "libopenkcc.windows.editor.x86_64.dll" \
             "libopenkcc.windows.template_release.x86_64.dll" \
-            "libopenkcc.javascript.template_release.wasm32.wasm" \
+            "libopenkcc.web.template_release.wasm32.wasm" \
             "libopenkcc.android.template_release.arm32.so" \
             "libopenkcc.android.template_release.arm64.so" \
             "libopenkcc.android.template_release.x86_32.so" \

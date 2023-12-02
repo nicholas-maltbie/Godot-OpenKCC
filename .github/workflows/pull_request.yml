@@ -12,7 +12,10 @@ jobs:
   compile:
     uses: ./.github/workflows/gdextension_build.yml
     with:
+      buildWindows: true
       buildLinux: true
+      buildMacos: true
+      buildAndroid: true
       buildWeb: true
 
   test:
