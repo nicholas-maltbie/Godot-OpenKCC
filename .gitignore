@@ -69,3 +69,6 @@ bin/
 
 # Ignore results of test runs
 test_results/
+
+# Temporary files
+*.tmp
