@@ -36,11 +36,15 @@ jobs:
           ls -R extracted_files
           declare -a libs=( \
             "libopenkcc.linux.editor.x86_64.so" \
+            "libopenkcc.linux.template_debug.x86_64.so" \
             "libopenkcc.linux.template_release.x86_64.so" \
             "libopenkcc.macos.editor.framework/libopenkcc.macos.editor" \
+            "libopenkcc.macos.template_debug.framework/libopenkcc.macos.template_debug" \
             "libopenkcc.macos.template_release.framework/libopenkcc.macos.template_release" \
             "libopenkcc.windows.editor.x86_64.dll" \
+            "libopenkcc.windows.template_debug.x86_64.dll" \
             "libopenkcc.windows.template_release.x86_64.dll" \
+            "libopenkcc.web.template_debug.wasm32.wasm" \
             "libopenkcc.web.template_release.wasm32.wasm" \
             "libopenkcc.android.template_release.arm32.so" \
             "libopenkcc.android.template_release.arm64.so" \
