@@ -34,5 +34,15 @@ transform = Transform3D(0.957732, 0.151114, -0.244775, 0.265484, -0.136684, 0.95
 floor_snap_length = 0.15
 
 [node name="NickGDExample" type="NickGDExample" parent="."]
-position = Vector2(1.40067, 10.0904)
+position = Vector2(0.0790618, 7.06079)
 texture = ExtResource("3_uwduv")
+
+[node name="Label" type="Label" parent="."]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -191.0
+offset_bottom = 23.0
+grow_horizontal = 0
+pivot_offset = Vector2(1, 0)
+text = "Press Esc or P to Toggle Input"
