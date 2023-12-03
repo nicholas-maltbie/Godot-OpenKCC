@@ -29,15 +29,15 @@ jobs:
       buildAndroid: true
       buildWeb: true
 
-  deploy:
-    needs: compile
-    uses: ./.github/workflows/github_pages_deploy.yml
-    with:
-      buildArtifact: false
-
   test:
     uses: ./.github/workflows/gut_tests.yml
     needs: compile
+    with:
+      buildArtifact: false
+
+  deploy:
+    needs: test
+    uses: ./.github/workflows/github_pages_deploy.yml
     with:
       buildArtifact: false
 
