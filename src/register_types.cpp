@@ -1,6 +1,6 @@
 #include "register_types.h"
 
-#include "nickgdexample.h"
+#include "openkcc_body_3d.h"
 
 #include <gdextension_interface.h>
 #include <godot_cpp/core/class_db.hpp>
@@ -8,13 +8,14 @@
 #include <godot_cpp/godot.hpp>
 
 using namespace godot;
+using namespace openkcc;
 
 void initialize_openkcc_module(ModuleInitializationLevel p_level) {
 	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
 		return;
 	}
 
-	ClassDB::register_class<NickGDExample>();
+	ClassDB::register_class<OpenKCCBody3D>();
 }
 
 void uninitialize_openkcc_module(ModuleInitializationLevel p_level) {

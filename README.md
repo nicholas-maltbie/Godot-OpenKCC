@@ -81,6 +81,10 @@ scons --directory godot-cpp
 # Build openkcc libraries for your development platform.
 scons
 scons target=editor
+
+# Note, I ran into some issues with the build and multi threading and
+#  some of the build dependencies attaching a flag such as -j1 at the end
+#  seemed to resolve those errors.
 ```
 
 ## Tests

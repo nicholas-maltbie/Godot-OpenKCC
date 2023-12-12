@@ -1,3 +1,11 @@
 {
-    "gut-extension.additionalOptions": "-d --path ./openkcc"
+    "gut-extension.additionalOptions": "-d --path ./openkcc",
+    "files.associations": {
+        "type_traits": "cpp",
+        "ostream": "cpp",
+        "xlocale": "cpp",
+        "xstring": "cpp",
+        "cmath": "cpp",
+        "algorithm": "cpp"
+    }
 }
