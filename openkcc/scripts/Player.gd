@@ -1,4 +1,4 @@
-extends CharacterBody3D
+extends OpenKCCBody3D
 
 const SPEED = 5.0
 const JUMP_VELOCITY = 4.5
@@ -7,8 +7,7 @@ const JUMP_VELOCITY = 4.5
 var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
 
 var mouse_sensibility = 1200
-var mouse_relative_x = 0
-var mouse_relative_y = 0
+var velocity = Vector3.ZERO
 
 var allow_movement = true
 
@@ -27,8 +26,8 @@ func _physics_process(delta):
 	var direction = Vector3(0, 0, 0)
 	if allow_movement:
 		# Handle Jump.
-		if Input.is_action_just_pressed("Jump") and is_on_floor():
-			velocity.y = JUMP_VELOCITY
+		#if Input.is_action_just_pressed("Jump") and is_on_floor():
+			#velocity.y = JUMP_VELOCITY
 
 		# Get the input direction and handle the movement/deceleration.
 		# As good practice, you should replace UI actions with custom gameplay actions.
@@ -42,7 +41,7 @@ func _physics_process(delta):
 		velocity.x = move_toward(velocity.x, 0, SPEED)
 		velocity.z = move_toward(velocity.z, 0, SPEED)
 
-	move_and_slide()
+	move_and_slide(velocity * delta)
 
 func capture_mouse():
 	if allow_movement:
@@ -71,5 +70,3 @@ func _input(event):
 			rotation.y -= event.relative.x / mouse_sensibility
 			$Head/Camera3d.rotation.x -= event.relative.y / mouse_sensibility
 			$Head/Camera3d.rotation.x = clamp($Head/Camera3d.rotation.x, deg_to_rad(-90), deg_to_rad(90))
-			mouse_relative_x = clamp(event.relative.x, -50, 50)
-			mouse_relative_y = clamp(event.relative.y, -50, 10)
