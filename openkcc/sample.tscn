@@ -29,8 +29,6 @@ transform = Transform3D(8, 0, 0, 0, 0.2, 0, 0, 0, 3, 8.163, 0.5, -0.098)
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.957732, 0.151114, -0.244775, 0.265484, -0.136684, 0.954377, 0.110763, -0.979021, -0.171025, 0, 0, 0)
 
-[node name="Player" parent="." instance=ExtResource("2_28x1w")]
-
 [node name="Label" type="Label" parent="."]
 anchors_preset = 1
 anchor_left = 1.0
@@ -40,3 +38,5 @@ offset_bottom = 23.0
 grow_horizontal = 0
 pivot_offset = Vector2(1, 0)
 text = "Press Esc or P to Toggle Input"
+
+[node name="Player" parent="." instance=ExtResource("2_28x1w")]

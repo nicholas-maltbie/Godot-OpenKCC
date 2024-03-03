@@ -26,7 +26,7 @@ func _ready():
 	collision = KinematicCollision3D.new();
 
 func is_on_floor():
-	var hit:bool = test_move(global_transform, Vector3.DOWN * GROUNDED_HEIGHT, collision, EPSILON, true)
+	var hit:bool = test_move(global_transform, Vector3.DOWN * GROUNDED_HEIGHT, collision, EPSILON)
 	if not hit:
 		return false;
 	
@@ -66,11 +66,11 @@ func move_and_slide(movement):
 
 	position = start.origin
 
-func _physics_process(delta):
+func _physics_process(_delta):
 	# Add the gravity.
 	var grounded = is_on_floor();
 	if not grounded:
-		velocity.y -= gravity * delta
+		velocity.y -= gravity * _delta
 	elif Vector3.UP.dot(velocity) <= 0:
 		velocity.y = 0
 
@@ -93,7 +93,7 @@ func _physics_process(delta):
 		velocity.x = move_toward(velocity.x, 0, SPEED)
 		velocity.z = move_toward(velocity.z, 0, SPEED)
 
-	move_and_slide(velocity * delta)
+	move_and_slide(velocity * _delta)
 
 func capture_mouse():
 	if allow_movement:
