@@ -3,7 +3,9 @@
 
 #include <godot_cpp/classes/static_body3d.hpp>
 
-namespace godot {
+using namespace godot;
+
+namespace openkcc {
 
 class OpenKCCBody3D : public StaticBody3D {
 	GDCLASS(OpenKCCBody3D, StaticBody3D)

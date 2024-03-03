@@ -1,7 +1,13 @@
-extends OpenKCCBody3D
+extends StaticBody3D
 
 const SPEED = 5.0
 const JUMP_VELOCITY = 4.5
+
+const MAX_BOUNCES:int = 5
+const NINETY_DEGREES_RADIANS:float = PI / 2
+const EPSILON:float = 0.001
+const GROUNDED_HEIGHT = 0.1
+const MAX_WALK_ANGLE = 60
 
 # Get the gravity from the project settings to be synced with RigidBody nodes.
 var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
@@ -10,24 +16,70 @@ var mouse_sensibility = 1200
 var velocity = Vector3.ZERO
 
 var allow_movement = true
+var collision:KinematicCollision3D
 
 @onready var cam = $Head/Camera3d as Camera3D
 
 func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	allow_movement = true
+	collision = KinematicCollision3D.new();
+
+func is_on_floor():
+	var hit:bool = test_move(global_transform, Vector3.DOWN * GROUNDED_HEIGHT, collision, EPSILON, true)
+	if not hit:
+		return false;
+	
+	var angle:float = collision.get_normal().angle_to(Vector3.UP)
+	return hit && angle <= MAX_WALK_ANGLE
+
+func move_and_slide(movement):
+	var bounce:int = 0;
+	var remaining:Vector3 = movement;
+	var start:Transform3D = global_transform
+	
+	# Compute movement due to each bounce
+	while remaining.length() > EPSILON and bounce < MAX_BOUNCES:
+		# Check if player collides with anything due to bounce
+		var hit:bool = test_move(start, remaining, collision, EPSILON)
+		if not hit:
+			position = start.origin + remaining
+			return
+		
+		# Move player by distance traveled if colliding
+		start.origin += collision.get_travel()
+		var remainingDist:float = collision.get_remainder().length()
+		
+		# Get angle between surface normal and remaining movement
+		var angleBetween:float = collision.get_normal().angle_to(remaining) - NINETY_DEGREES_RADIANS
+		
+		# Normalize angle between to be between 0 and 1
+		var normalizedAngle:float = min(NINETY_DEGREES_RADIANS, abs(angleBetween)) / NINETY_DEGREES_RADIANS
+		
+		# Reduce the remaining movement by the remaining movement that ocurred
+		remainingDist *= pow(1 - normalizedAngle, 0.5)
+		
+		# Rotate the remaining movement to be projected along the plane
+		# of the surface hit (emulate 'sliding' against the object)
+		remaining = Plane(collision.get_normal()).project(collision.get_remainder()).normalized() * remainingDist
+		bounce += 1
+
+	position = start.origin
 
 func _physics_process(delta):
 	# Add the gravity.
-	if not is_on_floor():
+	var grounded = is_on_floor();
+	if not grounded:
 		velocity.y -= gravity * delta
+	elif Vector3.UP.dot(velocity) <= 0:
+		velocity.y = 0
 
 	# If we allow input, let the player jump and move.
 	var direction = Vector3(0, 0, 0)
 	if allow_movement:
 		# Handle Jump.
-		#if Input.is_action_just_pressed("Jump") and is_on_floor():
-			#velocity.y = JUMP_VELOCITY
+		if Input.is_action_just_pressed("Jump") and grounded:
+			velocity.y = JUMP_VELOCITY
 
 		# Get the input direction and handle the movement/deceleration.
 		# As good practice, you should replace UI actions with custom gameplay actions.

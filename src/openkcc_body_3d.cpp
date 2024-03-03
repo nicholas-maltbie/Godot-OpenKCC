@@ -4,22 +4,12 @@
 #include <godot_cpp/classes/engine.hpp>
 
 using namespace godot;
+using namespace openkcc;
 
 void OpenKCCBody3D::move_and_slide(Vector3 movement) {
-	Vector3 position = this->get_position();
-	Ref<KinematicCollision3D> collision = this->move_and_collide(movement);
-	if (collision.is_null())
-	{
-		this->set_position(position + movement);
-	}
-	else
-	{
-		this->set_position(position + collision->get_travel());
-	}
 }
 
 bool OpenKCCBody3D::is_on_floor() {
-	return true;
 }
 
 void OpenKCCBody3D::_bind_methods() {

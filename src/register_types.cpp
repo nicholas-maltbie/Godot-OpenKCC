@@ -8,6 +8,7 @@
 #include <godot_cpp/godot.hpp>
 
 using namespace godot;
+using namespace openkcc;
 
 void initialize_openkcc_module(ModuleInitializationLevel p_level) {
 	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {

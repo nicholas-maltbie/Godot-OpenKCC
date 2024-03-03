@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://scripts/Player.gd" id="1_51613"]
 
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_gvmvl"]
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_gyyi2"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_qge1p"]
 
@@ -11,9 +11,9 @@
 [node name="Player" type="OpenKCCBody3D"]
 script = ExtResource("1_51613")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+[node name="CollisionBody3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
-shape = SubResource("CapsuleShape3D_gvmvl")
+shape = SubResource("CapsuleShape3D_gyyi2")
 
 [node name="CSGMesh3D" type="CSGMesh3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
