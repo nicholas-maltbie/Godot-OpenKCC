@@ -42,7 +42,6 @@ func before_each():
 func after_each():
 	_sender.release_all()
 	_sender.clear()
-
 	_character.free()
 	_ground.free()
 
