@@ -10,6 +10,7 @@ void OpenKCCBody3D::move_and_slide(Vector3 movement) {
 }
 
 bool OpenKCCBody3D::is_on_floor() {
+	return true;
 }
 
 void OpenKCCBody3D::_bind_methods() {
