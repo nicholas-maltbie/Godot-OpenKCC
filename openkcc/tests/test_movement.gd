@@ -14,20 +14,20 @@ func before_each():
 	var head:Node3D = Node3D.new()
 	var camera:Camera3D = Camera3D.new()
 	var capsule_shape:CapsuleShape3D = CapsuleShape3D.new()
-	
+
 	_character.set_name("Character")
 	collision_body.set_name("CollisionBody3D")
 	head.set_name("Head")
 	camera.set_name("Camera3d")
-	
+
 	collision_body.set_shape(capsule_shape)
 	collision_body.position = Vector3(0, 1, 0)
-	
+
 	_character.add_child(collision_body)
 	_character.add_child(head)
 	head.add_child(camera)
 	add_child(_character)
-	
+
 	_ground = StaticBody3D.new()
 	var collision_shape:CollisionShape3D = CollisionShape3D.new()
 	var box_shape:BoxShape3D = BoxShape3D.new()
