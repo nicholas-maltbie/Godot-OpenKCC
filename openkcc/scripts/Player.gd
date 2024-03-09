@@ -4,7 +4,8 @@ const SPEED = 5.0
 const JUMP_VELOCITY = 4.5
 
 const MAX_BOUNCES:int = 5
-const NINETY_DEGREES_RADIANS:float = PI / 2
+const BUFFER_SHOVE_RADIANS:float = PI
+const MAX_SHOVE_RADIANS:float = PI/2
 const EPSILON:float = 0.001
 const GROUNDED_HEIGHT = 0.1
 const MAX_WALK_ANGLE = 60
@@ -43,7 +44,7 @@ func move_and_slide(movement):
 		# Check if player collides with anything due to bounce
 		var hit:bool = test_move(start, remaining, collision, EPSILON)
 		if not hit:
-			position = start.origin + remaining
+			global_position = start.origin + remaining
 			return
 		
 		# Move player by distance traveled if colliding
@@ -51,20 +52,20 @@ func move_and_slide(movement):
 		var remainingDist:float = collision.get_remainder().length()
 		
 		# Get angle between surface normal and remaining movement
-		var angleBetween:float = collision.get_normal().angle_to(remaining) - NINETY_DEGREES_RADIANS
-		
+		var angleBetween:float = collision.get_normal().angle_to(remaining)
+
 		# Normalize angle between to be between 0 and 1
-		var normalizedAngle:float = min(NINETY_DEGREES_RADIANS, abs(angleBetween)) / NINETY_DEGREES_RADIANS
+		var normalizedAngle:float = clamp(abs(angleBetween - BUFFER_SHOVE_RADIANS) / MAX_SHOVE_RADIANS, 0, 1)
 		
 		# Reduce the remaining movement by the remaining movement that ocurred
-		remainingDist *= pow(1 - normalizedAngle, 0.5)
+		remainingDist *= pow(normalizedAngle, 0.5)
 		
 		# Rotate the remaining movement to be projected along the plane
 		# of the surface hit (emulate 'sliding' against the object)
 		remaining = Plane(collision.get_normal()).project(collision.get_remainder()).normalized() * remainingDist
 		bounce += 1
 
-	position = start.origin
+	global_position = start.origin
 
 func _physics_process(_delta):
 	# Add the gravity.
