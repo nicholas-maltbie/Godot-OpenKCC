@@ -2,13 +2,14 @@ extends StaticBody3D
 
 const SPEED = 5.0
 const JUMP_VELOCITY = 4.5
+const GROUNDED_HEIGHT = 0.1
+const MAX_WALK_ANGLE = 60
 
 const MAX_BOUNCES:int = 5
+
 const BUFFER_SHOVE_RADIANS:float = PI
 const MAX_SHOVE_RADIANS:float = PI/2
 const EPSILON:float = 0.001
-const GROUNDED_HEIGHT = 0.1
-const MAX_WALK_ANGLE = 60
 
 # Get the gravity from the project settings to be synced with RigidBody nodes.
 var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
@@ -59,7 +60,7 @@ func move_and_slide(movement):
 		
 		# Reduce the remaining movement by the remaining movement that ocurred
 		remainingDist *= pow(normalizedAngle, 0.5)
-		
+
 		# Rotate the remaining movement to be projected along the plane
 		# of the surface hit (emulate 'sliding' against the object)
 		remaining = Plane(collision.get_normal()).project(collision.get_remainder()).normalized() * remainingDist
