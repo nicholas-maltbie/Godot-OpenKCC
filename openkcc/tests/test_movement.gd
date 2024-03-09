@@ -5,6 +5,23 @@ var _sender = InputSender.new(Input)
 var _character:Player
 var _ground:StaticBody3D
 
+var slide_params = [
+	[ 30, Vector3.LEFT,  [4.65, 0.1], [0.95, 0.1]],
+	[-30, Vector3.RIGHT, [4.65, 0.1], [0.95, 0.1]],
+	[ 15, Vector3.LEFT,  [4.25, 0.1], [0.67, 0.1]],
+	[-15, Vector3.RIGHT, [4.25, 0.1], [0.67, 0.1]],
+	[  0, Vector3.RIGHT, [4.00, 0.1], [0.00, 0.1]]]
+
+var move_params = [
+	[["Forward"], Vector3.FORWARD],
+	[["Back"], Vector3.BACK],
+	[["Left"], Vector3.LEFT],
+	[["Right"], Vector3.RIGHT],
+	[["Forward", "Left"], Vector3.FORWARD + Vector3.LEFT],
+	[["Forward", "Right"], Vector3.FORWARD + Vector3.RIGHT],
+	[["Back", "Left"], Vector3.BACK + Vector3.LEFT],
+	[["Back", "Right"], Vector3.BACK + Vector3.RIGHT]]
+
 func before_all():
 	pass
 
@@ -48,23 +65,6 @@ func after_each():
 
 func after_all():
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-
-var slide_params = [
-	[ 30, Vector3.LEFT,  [4.65, 0.1], [0.95, 0.1]],
-	[-30, Vector3.RIGHT, [4.65, 0.1], [0.95, 0.1]],
-	[ 15, Vector3.LEFT,  [4.25, 0.1], [0.67, 0.1]],
-	[-15, Vector3.RIGHT, [4.25, 0.1], [0.67, 0.1]],
-	[  0, Vector3.RIGHT, [4.00, 0.1], [0.00, 0.1]]]
-
-var move_params = [
-	[["Forward"], Vector3.FORWARD],
-	[["Back"], Vector3.BACK],
-	[["Left"], Vector3.LEFT],
-	[["Right"], Vector3.RIGHT],
-	[["Forward", "Left"], Vector3.FORWARD + Vector3.LEFT],
-	[["Forward", "Right"], Vector3.FORWARD + Vector3.RIGHT],
-	[["Back", "Left"], Vector3.BACK + Vector3.LEFT],
-	[["Back", "Right"], Vector3.BACK + Vector3.RIGHT]]
 
 func add_wall(size:Vector3, offset:Vector3, position:Vector3, rotation:Vector3):
 	var wall = StaticBody3D.new()
