@@ -122,3 +122,11 @@ func test_player_slide(params=use_parameters(slide_params)):
 	var delta:Vector3 = current - start
 	assert_almost_eq(delta.dot(Vector3.FORWARD), forward_bounds[0], forward_bounds[1])
 	assert_almost_eq(delta.dot(expected_slide_dir), slide_bounds[0], slide_bounds[1])
+
+func test_player_jump():
+	simulate(_character, 1, 1.0/30.0)
+	assert_almost_eq(_character.velocity.length(), 0.0, 0.01)
+	Input.action_press("Jump")
+	simulate(_character, 1, 1.0/30.0)
+	assert_almost_eq(_character.velocity.dot(Vector3.UP), Player.JUMP_VELOCITY, 0.01)
+	Input.action_release("Jump")
