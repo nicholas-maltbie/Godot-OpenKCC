@@ -1,26 +1,27 @@
 extends GutTest
 
 const Player = preload("res://scripts/Player.gd")
+
+const SLIDE_PARAMS = [ \
+	[ 30, Vector3.LEFT,  [4.65, 0.1], [0.95, 0.1]], \
+	[-30, Vector3.RIGHT, [4.65, 0.1], [0.95, 0.1]], \
+	[ 15, Vector3.LEFT,  [4.25, 0.1], [0.67, 0.1]], \
+	[-15, Vector3.RIGHT, [4.25, 0.1], [0.67, 0.1]], \
+	[  0, Vector3.RIGHT, [4.00, 0.1], [0.00, 0.1]]]
+
+const MOVE_PARAMS = [ \
+	[["Forward"], Vector3.FORWARD], \
+	[["Back"], Vector3.BACK], \
+	[["Left"], Vector3.LEFT], \
+	[["Right"], Vector3.RIGHT], \
+	[["Forward", "Left"], Vector3.FORWARD + Vector3.LEFT], \
+	[["Forward", "Right"], Vector3.FORWARD + Vector3.RIGHT], \
+	[["Back", "Left"], Vector3.BACK + Vector3.LEFT], \
+	[["Back", "Right"], Vector3.BACK + Vector3.RIGHT]]
+
 var _sender = InputSender.new(Input)
 var _character:Player
 var _ground:StaticBody3D
-
-var slide_params = [
-	[ 30, Vector3.LEFT,  [4.65, 0.1], [0.95, 0.1]],
-	[-30, Vector3.RIGHT, [4.65, 0.1], [0.95, 0.1]],
-	[ 15, Vector3.LEFT,  [4.25, 0.1], [0.67, 0.1]],
-	[-15, Vector3.RIGHT, [4.25, 0.1], [0.67, 0.1]],
-	[  0, Vector3.RIGHT, [4.00, 0.1], [0.00, 0.1]]]
-
-var move_params = [
-	[["Forward"], Vector3.FORWARD],
-	[["Back"], Vector3.BACK],
-	[["Left"], Vector3.LEFT],
-	[["Right"], Vector3.RIGHT],
-	[["Forward", "Left"], Vector3.FORWARD + Vector3.LEFT],
-	[["Forward", "Right"], Vector3.FORWARD + Vector3.RIGHT],
-	[["Back", "Left"], Vector3.BACK + Vector3.LEFT],
-	[["Back", "Right"], Vector3.BACK + Vector3.RIGHT]]
 
 func before_all():
 	pass
@@ -82,7 +83,7 @@ func add_wall(size:Vector3, offset:Vector3, position:Vector3, rotation:Vector3):
 	add_child_autofree(wall)
 	return wall
 
-func test_player_move(params=use_parameters(move_params)):
+func test_player_move(params=use_parameters(MOVE_PARAMS)):
 	var start:Vector3 = _character.global_position
 	var dirs = params[0]
 	var expected = params[1]
@@ -110,7 +111,7 @@ func test_player_fall():
 	var delta:Vector3 = current - start
 	assert_almost_eq(delta.dot(Vector3.DOWN), 10.0, 0.1)
 
-func test_player_slide(params=use_parameters(slide_params)):
+func test_player_slide(params=use_parameters(SLIDE_PARAMS)):
 	var wall_rotation = params[0]
 	var expected_slide_dir = params[1]
 	var forward_bounds = params[2]
