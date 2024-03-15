@@ -2,8 +2,8 @@ extends StaticBody3D
 
 const SPEED = 5.0
 const JUMP_VELOCITY = 4.5
-const GROUNDED_HEIGHT = 0.1
-const MAX_WALK_ANGLE = 60
+const DEFAULT_GROUNDED_HEIGHT = 0.01
+const DEFAULT_MAX_WALK_ANGLE = 60
 
 const MAX_BOUNCES:int = 5
 
@@ -18,22 +18,48 @@ var mouse_sensibility = 1200
 var velocity = Vector3.ZERO
 
 var allow_movement = true
-var collision:KinematicCollision3D
+
+# Grounded configuration
+var grounded_dist = DEFAULT_GROUNDED_HEIGHT
+var max_walk_angle = DEFAULT_MAX_WALK_ANGLE
+
+# Grounded state
+var _ground_hit:bool = false
+var _ground_object:Object = null
+var _ground_dist:float = 0
+var _ground_angle:float = 0
+var _ground_normal:Vector3 = Vector3.ZERO
+var _ground_position:Vector3 = Vector3.ZERO
+
+# Internal variable for computing collisions
+var _collision:KinematicCollision3D
 
 @onready var cam = $Head/Camera3d as Camera3D
 
 func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	allow_movement = true
-	collision = KinematicCollision3D.new();
+	_collision = KinematicCollision3D.new();
+
+func check_grounded():
+	_ground_hit = test_move(global_transform, Vector3.DOWN * grounded_dist, _collision, EPSILON)
+	if _ground_hit:
+		_ground_object = _collision.get_collider()
+		_ground_dist = _collision.get_travel().length()
+		_ground_angle = _collision.get_angle()
+		_ground_normal = _collision.get_normal()
+		_ground_position = _collision.get_position()
+		return is_on_floor()
+
+	_ground_object = null
+	_ground_dist = 0
+	_ground_angle = 0
+	_ground_normal = Vector3.ZERO
+	_ground_position = Vector3.ZERO
+	return false
 
 func is_on_floor():
-	var hit:bool = test_move(global_transform, Vector3.DOWN * GROUNDED_HEIGHT, collision, EPSILON)
-	if not hit:
-		return false;
-
-	var angle:float = collision.get_normal().angle_to(Vector3.UP)
-	return hit && angle <= MAX_WALK_ANGLE
+	return _ground_hit and _ground_dist <= grounded_dist and _ground_angle <= max_walk_angle
 
 func move_and_slide(movement):
 	var bounce:int = 0;
@@ -43,17 +69,17 @@ func move_and_slide(movement):
 	# Compute movement due to each bounce
 	while remaining.length() > EPSILON and bounce < MAX_BOUNCES:
 		# Check if player collides with anything due to bounce
-		var hit:bool = test_move(start, remaining, collision, EPSILON)
+		var hit:bool = test_move(start, remaining, _collision, EPSILON)
 		if not hit:
 			global_position = start.origin + remaining
 			return
 
 		# Move player by distance traveled if colliding
-		start.origin += collision.get_travel()
-		var remaining_dist:float = collision.get_remainder().length()
+		start.origin += _collision.get_travel()
+		var remaining_dist:float = _collision.get_remainder().length()
 
 		# Get angle between surface normal and remaining movement
-		var angle_between:float = collision.get_normal().angle_to(remaining)
+		var angle_between:float = _collision.get_normal().angle_to(remaining)
 
 		# Normalize angle between to be between 0 and 1
 		var normalized_angle:float = clamp( \
@@ -64,14 +90,14 @@ func move_and_slide(movement):
 
 		# Rotate the remaining movement to be projected along the plane
 		# of the surface hit (emulate 'sliding' against the object)
-		remaining = Plane(collision.get_normal()).project(collision.get_remainder()).normalized() * remaining_dist
+		remaining = Plane(_collision.get_normal()).project(_collision.get_remainder()).normalized() * remaining_dist
 		bounce += 1
 
 	global_position = start.origin
 
 func _physics_process(_delta):
 	# Add the gravity.
-	var grounded = is_on_floor();
+	var grounded = check_grounded()
 	if not grounded:
 		velocity.y -= gravity * _delta
 	elif Vector3.UP.dot(velocity) <= 0:
