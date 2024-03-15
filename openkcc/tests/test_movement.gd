@@ -2,22 +2,52 @@ extends GutTest
 
 const Player = preload("res://scripts/Player.gd")
 
-const SLIDE_PARAMS = [ \
-	[ 30, Vector3.LEFT,  [4.65, 0.1], [0.95, 0.1]], \
-	[-30, Vector3.RIGHT, [4.65, 0.1], [0.95, 0.1]], \
-	[ 15, Vector3.LEFT,  [4.25, 0.1], [0.67, 0.1]], \
-	[-15, Vector3.RIGHT, [4.25, 0.1], [0.67, 0.1]], \
-	[  0, Vector3.RIGHT, [4.00, 0.1], [0.00, 0.1]]]
+const MOVE_VECTOR_TESTS = [ \
+	[Vector3.FORWARD], \
+	[Vector3.LEFT], \
+	[Vector3.BACK], \
+	[Vector3.RIGHT], \
+	[Vector3.UP], \
+	[Vector3.DOWN], \
+	[Vector3.FORWARD + Vector3.LEFT], \
+	[Vector3.FORWARD + Vector3.RIGHT], \
+	[Vector3.BACK + Vector3.LEFT], \
+	[Vector3.BACK + Vector3.RIGHT]]
 
-const MOVE_PARAMS = [ \
-	[["Forward"], Vector3.FORWARD], \
-	[["Back"], Vector3.BACK], \
-	[["Left"], Vector3.LEFT], \
-	[["Right"], Vector3.RIGHT], \
-	[["Forward", "Left"], Vector3.FORWARD + Vector3.LEFT], \
-	[["Forward", "Right"], Vector3.FORWARD + Vector3.RIGHT], \
-	[["Back", "Left"], Vector3.BACK + Vector3.LEFT], \
-	[["Back", "Right"], Vector3.BACK + Vector3.RIGHT]]
+var slide_params = ParameterFactory.named_parameters(
+	['wall_rotation', 'expected_slide_dir', 'forward_bounds', 'slide_bounds'],
+	[
+		[ 30, Vector3.LEFT,  [4.65, 0.1], [0.95, 0.1]],
+		[-30, Vector3.RIGHT, [4.65, 0.1], [0.95, 0.1]],
+		[ 15, Vector3.LEFT,  [4.25, 0.1], [0.67, 0.1]],
+		[-15, Vector3.RIGHT, [4.25, 0.1], [0.67, 0.1]],
+		[  0, Vector3.RIGHT, [4.00, 0.1], [0.00, 0.1]]
+	])
+
+var move_params = ParameterFactory.named_parameters(
+	['input_array', 'movement_dir'],
+	[
+		[["Forward"], Vector3.FORWARD],
+		[["Back"], Vector3.BACK],
+		[["Left"], Vector3.LEFT],
+		[["Right"], Vector3.RIGHT],
+		[["Forward", "Left"], Vector3.FORWARD + Vector3.LEFT],
+		[["Forward", "Right"], Vector3.FORWARD + Vector3.RIGHT],
+		[["Back", "Left"], Vector3.BACK + Vector3.LEFT],
+		[["Back", "Right"], Vector3.BACK + Vector3.RIGHT]
+	])
+
+var ground_params = ParameterFactory.named_parameters(
+	["invalid_ground_hit", "invalid_ground_angle", "invalid_ground_dist"],
+	[
+		[true, true, true],
+		[true, true, false],
+		[true, false, true],
+		[true, false, false],
+		[false, true, true],
+		[false, true, false],
+		[false, false, true]
+	])
 
 var _sender = InputSender.new(Input)
 var _character:Player
@@ -61,8 +91,10 @@ func before_each():
 func after_each():
 	_sender.release_all()
 	_sender.clear()
-	_character.free()
-	_ground.free()
+	if is_instance_valid(_character):
+		_character.free()
+	if is_instance_valid(_ground):
+		_ground.free()
 
 func after_all():
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
@@ -83,18 +115,16 @@ func add_wall(size:Vector3, offset:Vector3, position:Vector3, rotation:Vector3):
 	add_child_autofree(wall)
 	return wall
 
-func test_player_move(params=use_parameters(MOVE_PARAMS)):
+func test_player_move(params=use_parameters(move_params)):
 	var start:Vector3 = _character.global_position
-	var dirs = params[0]
-	var expected = params[1]
-	for dir in dirs:
+	for dir in params.input_array:
 		Input.action_press(dir)
 	simulate(_character, 30, 1.0/30)
-	for dir in dirs:
+	for dir in params.input_array:
 		Input.action_release(dir)
 	var current:Vector3 = _character.global_position
 	var delta:Vector3 = current - start
-	assert_almost_eq(delta.dot(expected.normalized()), Player.SPEED, 0.1)
+	assert_almost_eq(delta.dot(params.movement_dir.normalized()), Player.SPEED, 0.1)
 
 func test_player_idle():
 	var start:Vector3 = _character.global_position
@@ -111,18 +141,26 @@ func test_player_fall():
 	var delta:Vector3 = current - start
 	assert_almost_eq(delta.dot(Vector3.DOWN), 10.0, 0.1)
 
-func test_player_slide(params=use_parameters(SLIDE_PARAMS)):
-	var wall_rotation = params[0]
-	var expected_slide_dir = params[1]
-	var forward_bounds = params[2]
-	var slide_bounds = params[3]
-	var wall = add_wall(Vector3(10, 3, 1), Vector3(0, 1.5, 0), Vector3(0, 0, -5), Vector3(0, wall_rotation, 0))
+func test_player_slide(params=use_parameters(slide_params)):
+	var wall = add_wall(Vector3(10, 3, 1), Vector3(0, 1.5, 0), Vector3(0, 0, -5), Vector3(0, params.wall_rotation, 0))
 	var start:Vector3 = _character.global_position
 	_character.move_and_slide(Vector3.FORWARD * 5)
 	var current:Vector3 = _character.global_position
 	var delta:Vector3 = current - start
-	assert_almost_eq(delta.dot(Vector3.FORWARD), forward_bounds[0], forward_bounds[1])
-	assert_almost_eq(delta.dot(expected_slide_dir), slide_bounds[0], slide_bounds[1])
+	assert_almost_eq(delta.dot(Vector3.FORWARD), params.forward_bounds[0], params.forward_bounds[1])
+	assert_almost_eq(delta.dot(params.expected_slide_dir), params.slide_bounds[0], params.slide_bounds[1])
+
+func test_player_move_and_slide(params=use_parameters(MOVE_VECTOR_TESTS)):
+	var move = params[0]
+
+	# Move the floor to allow for up or down movement
+	_ground.free()
+
+	var start:Vector3 = _character.global_position
+	_character.move_and_slide(move)
+	var current:Vector3 = _character.global_position
+	var delta:Vector3 = current - start
+	assert_almost_eq((move - delta).length(), 0.0, 0.01)
 
 func test_player_jump():
 	simulate(_character, 1, 1.0/30.0)
@@ -131,3 +169,17 @@ func test_player_jump():
 	simulate(_character, 1, 1.0/30.0)
 	assert_almost_eq(_character.velocity.dot(Vector3.UP), Player.JUMP_VELOCITY, 0.01)
 	Input.action_release("Jump")
+
+func test_player_grounded(params=use_parameters(ground_params)):
+	# Player should be grounded on the floor
+	_character.check_grounded()
+	assert_true(_character.is_on_floor())
+
+	# Manually modify value for grounded dist for grounded to set as not on floor
+	if params.invalid_ground_hit:
+		_character._ground_hit = false
+	if params.invalid_ground_angle:
+		_character._ground_angle = _character.DEFAULT_MAX_WALK_ANGLE + 10
+	if params.invalid_ground_dist:
+		_character._ground_dist = _character.DEFAULT_GROUNDED_HEIGHT + 10
+	assert_false(_character.is_on_floor())
