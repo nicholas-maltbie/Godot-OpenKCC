@@ -15,6 +15,18 @@ transform = Transform3D(-6.9282, 5.23065e-07, -1.5, -1.20797e-06, -4, 0, -4, 3.0
 [node name="BasicBlock3" parent="." instance=ExtResource("1_3c4qc")]
 transform = Transform3D(3.4641, -1, 2.59808, 4, 3.4641, 0, -6, 1.73205, 1.5, 1, 0, -10)
 
+[node name="BasicBlock4" parent="." instance=ExtResource("1_3c4qc")]
+transform = Transform3D(4.82143, -3.64008e-07, -2.39395, -1.20797e-06, -4, -1.84605e-14, -6.38387, 4.81969e-07, -1.80804, -15.5484, 2, -10.5022)
+
+[node name="BasicBlock5" parent="." instance=ExtResource("1_3c4qc")]
+transform = Transform3D(-3.22606, 2.43561e-07, -2.74526, -1.20797e-06, -4, 2.2793e-14, -7.32069, 5.52697e-07, 1.20978, -12.0294, 2, -10.3799)
+
+[node name="BasicBlock6" parent="." instance=ExtResource("1_3c4qc")]
+transform = Transform3D(5.51788, 0.655134, -2.11589, 5.72396, -1.21431, 1.88764, -0.888453, -3.7545, -0.979722, -18.2478, -1.5927, -0.634968)
+
+[node name="BasicBlock7" parent="." instance=ExtResource("1_3c4qc")]
+transform = Transform3D(-7.7452, 0.57151, 0.616796, -1.69443, -0.118042, -2.9306, -1.06804, -3.9572, 0.176498, -13.9279, -0.574744, -0.768172)
+
 [node name="Stairs" type="Node3D" parent="."]
 
 [node name="BasicBlock4" parent="Stairs" instance=ExtResource("1_3c4qc")]
@@ -28,6 +40,8 @@ transform = Transform3D(8, 0, 0, 0, 0.2, 0, 0, 0, 3, 8.163, 0.5, -0.098)
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.957732, 0.151114, -0.244775, 0.265484, -0.136684, 0.954377, 0.110763, -0.979021, -0.171025, 0, 0, 0)
+light_angular_distance = 30.0
+light_bake_mode = 1
 
 [node name="Label" type="Label" parent="."]
 anchors_preset = 1
