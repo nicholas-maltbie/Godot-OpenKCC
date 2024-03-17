@@ -27,6 +27,30 @@ transform = Transform3D(5.51788, 0.655134, -2.11589, 5.72396, -1.21431, 1.88764,
 [node name="BasicBlock7" parent="." instance=ExtResource("1_3c4qc")]
 transform = Transform3D(-7.7452, 0.57151, 0.616796, -1.69443, -0.118042, -2.9306, -1.06804, -3.9572, 0.176498, -13.9279, -0.574744, -0.768172)
 
+[node name="BasicBlock8" parent="." instance=ExtResource("1_3c4qc")]
+transform = Transform3D(-6.88895, -0.0999495, -1.52337, -4.06513, 0.040799, 2.58364, -0.130721, 3.99854, -0.064441, -20.99, 4.98555, 5.1721)
+
+[node name="BasicBlock9" parent="." instance=ExtResource("1_3c4qc")]
+transform = Transform3D(-5.91472, -0.0892935, 2.01889, 5.38242, 0.060672, 2.219, -0.213755, 3.99854, 0.011415, -21.992, 1.61012, 5.20095)
+
+[node name="BasicBlock14" parent="." instance=ExtResource("1_3c4qc")]
+transform = Transform3D(-1.00189, -0.0934407, -2.97556, -7.93594, -0.0540675, 0.376714, -0.130721, 3.99854, -0.064441, -24.6173, 4.98555, -0.942217)
+
+[node name="BasicBlock15" parent="." instance=ExtResource("1_3c4qc")]
+transform = Transform3D(-5.91472, -0.0892935, 2.01889, 5.38242, 0.060672, 2.219, -0.213755, 3.99854, 0.011415, -21.992, 1.61012, -0.913375)
+
+[node name="BasicBlock10" parent="." instance=ExtResource("1_3c4qc")]
+transform = Transform3D(-6.88895, -0.0999495, -1.52337, -4.06513, 0.040799, 2.58364, -0.130721, 3.99854, -0.064441, -21.0423, 5.08399, 14.4397)
+
+[node name="BasicBlock11" parent="." instance=ExtResource("1_3c4qc")]
+transform = Transform3D(-5.91472, -0.0892935, 2.01889, 5.38242, 0.060672, 2.219, -0.213755, 3.99854, 0.011415, -21.992, 1.61012, 14.5953)
+
+[node name="BasicBlock12" parent="." instance=ExtResource("1_3c4qc")]
+transform = Transform3D(-6.88895, -0.0999495, -1.52337, -0.447571, 3.98953, 0.137386, 4.04253, 0.271378, -2.58079, -20.99, 3.41517, 12.8972)
+
+[node name="BasicBlock13" parent="." instance=ExtResource("1_3c4qc")]
+transform = Transform3D(-5.91472, -0.0892935, 2.01889, 0.206949, 3.99108, 0.184554, -5.38268, 0.251565, -2.21134, -21.992, 3.1805, 16.2646)
+
 [node name="Stairs" type="Node3D" parent="."]
 
 [node name="BasicBlock4" parent="Stairs" instance=ExtResource("1_3c4qc")]

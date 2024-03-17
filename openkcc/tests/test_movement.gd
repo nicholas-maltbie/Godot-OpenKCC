@@ -55,6 +55,17 @@ var wall_slide_params = ParameterFactory.named_parameters(
 		[Vector3.FORWARD * 20 + Vector3.UP * 10 + Vector3.LEFT * 5, Vector3(-5.7, 2, -4), Vector3(0.1, 0.2, 0.2)],
 	])
 
+var jitter_parms = ParameterFactory.named_parameters(
+	["movement", "expected"],
+	[
+		[Vector3.FORWARD *   5, Vector3(-0.1, 0.0, 2.0)],
+		[Vector3.FORWARD *  10, Vector3(-0.1, 0.0, 2.0)],
+		[Vector3.FORWARD *  20, Vector3(-0.1, 0.0, 2.0)],
+		[Vector3.FORWARD *  40, Vector3(-0.1, 0.0, 2.0)],
+		[Vector3.FORWARD *  50, Vector3(-0.1, 0.0, 2.0)],
+		[Vector3.FORWARD * 100, Vector3(-0.1, 0.0, 2.0)],
+	])
+
 var ground_params = ParameterFactory.named_parameters(
 	[
 		"invalid_ground_hit",
@@ -124,14 +135,14 @@ func after_each():
 func after_all():
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 
-func add_wall(size:Vector3, offset:Vector3, position:Vector3, rotation:Vector3):
+func add_wall(size:Vector3, offset:Vector3, position:Vector3, rotation:Vector3, name:String="Wall"):
 	var wall = StaticBody3D.new()
 	var collision_shape:CollisionShape3D = CollisionShape3D.new()
 	var box_shape:BoxShape3D = BoxShape3D.new()
 	box_shape.size = size
 	collision_shape.shape = box_shape
 	collision_shape.position = offset
-	wall.set_name("Wall")
+	wall.set_name(name)
 	collision_shape.set_name("CollisionShape3D")
 
 	wall.position = position
@@ -177,7 +188,7 @@ func test_player_fall():
 ## walk into the wall and assert how far the player will
 ## bounce based on their rotation.
 func test_player_slide(params=use_parameters(slide_params)):
-	add_wall(Vector3(10, 3, 1), Vector3(0, 1.5, 0), Vector3(0, 0, -5), Vector3(0, params.wall_rotation, 0))
+	add_wall(Vector3(10, 10, 1), Vector3(0, 0, 0), Vector3(0, 0, -5), Vector3(0, params.wall_rotation, 0))
 	var start:Vector3 = _character.global_position
 	_character.move_and_slide(Vector3.FORWARD * 5)
 	var current:Vector3 = _character.global_position
@@ -230,7 +241,7 @@ func test_player_grounded(params=use_parameters(ground_params)):
 ## they will stop before sliding up the wall.
 func test_player_no_slide_up_walls(params=use_parameters(wall_slide_params)):
 	# Add a vertical wall in front of the player
-	add_wall(Vector3(10, 3, 1), Vector3(0, 1.5, 0), Vector3(0, 0, -5), Vector3(0, 0, 0))
+	add_wall(Vector3(10, 10, 1), Vector3(0, 0, 0), Vector3(0, 0, -5), Vector3(0, 0, 0))
 
 	# Move the player up vertically towards the wall
 	_character.check_grounded()
@@ -240,3 +251,16 @@ func test_player_no_slide_up_walls(params=use_parameters(wall_slide_params)):
 	assert_almost_eq(_character.global_position.x, params.expected.x, params.error.x)
 	assert_almost_eq(_character.global_position.y, params.expected.y, params.error.y)
 	assert_almost_eq(_character.global_position.z, params.expected.z, params.error.z)
+
+## Validate player won't bounce backwards when they hit a wall
+## and could slide backwards in the original direction they were moving
+func test_player_no_jitter_backwards(params=use_parameters(jitter_parms)):
+	# Add walls for the player to slide off of
+	add_wall(Vector3(100, 10, 1), Vector3(-1, 0, 0), Vector3(0, 0, -3), Vector3(0, 30, 0), "wall_1")
+	add_wall(Vector3(100, 10, 1), Vector3(-1, 0, 0), Vector3(0, 0, -3), Vector3(0, -30, 0), "wall_2")
+
+	# Assert that when the player moves forward they don't slide backwards
+	_character.move_and_slide(params.movement)
+	assert_almost_eq(_character.global_position.x, params.expected.x, 0.1)
+	assert_almost_eq(_character.global_position.y, params.expected.y, 0.1)
+	assert_almost_eq(_character.global_position.z, params.expected.z, 0.1)
