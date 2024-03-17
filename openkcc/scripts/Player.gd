@@ -89,7 +89,6 @@ func _physics_process(_delta) -> void:
 	move_and_slide(move * _delta)
 	move_and_slide(world_velocity * _delta)
 
-
 func _input(event) -> void:
 	# On web platform, mouse needs to be clicked in order to be
 	# captured properly. Or as a direct input response like pressing a key.
@@ -169,9 +168,14 @@ func move_and_slide(movement:Vector3) -> void:
 		# of the surface hit (emulate 'sliding' against the object)
 		remaining = Plane(_collision.get_normal()).project(_collision.get_remainder()).normalized() * remaining_dist
 
-		# If the player is sliding up a wall, stop it
-		# Can check if dot to up vector is almost equal to 0 (perpendicular)
-		if is_on_floor() and not moving_up() and abs(_collision.get_normal().dot(up)) <= EPSILON:
+		# Don't let player slide backwards (dot checks if facing different direction
+		# than the player's initial movement).
+		if remaining.dot(movement) < 0:
+			break
+
+		# If the player is sliding up a wall, stop the player from sliding up or down walls
+		# Can check if dot to up vector is almost equal to 0 (perpendicular) or < 0 (facing upside down)
+		if is_on_floor() and not moving_up() and _collision.get_normal().dot(up) <= EPSILON:
 			# Remove vertical component of remaining movement
 			var up_component := Vector3(up.x * remaining.x, up.y * remaining.y, up.z * remaining.z)
 			remaining -= up_component
