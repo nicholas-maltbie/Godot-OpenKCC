@@ -34,7 +34,7 @@ transform = Transform3D(-6.88895, -0.0999495, -1.52337, -4.06513, 0.040799, 2.58
 transform = Transform3D(-5.91472, -0.0892935, 2.01889, 5.38242, 0.060672, 2.219, -0.213755, 3.99854, 0.011415, -21.992, 1.61012, 5.20095)
 
 [node name="BasicBlock14" parent="." instance=ExtResource("1_3c4qc")]
-transform = Transform3D(-1.00189, -0.0934407, -2.97556, -7.93594, -0.0540675, 0.376714, -0.130721, 3.99854, -0.064441, -24.6173, 4.98555, -0.942217)
+transform = Transform3D(1.00257, 0.00699954, 2.97635, -7.93615, -0.0554084, 0.376, 0.111698, -3.99961, -1.301e-07, -24.6173, 4.98555, -0.942217)
 
 [node name="BasicBlock15" parent="." instance=ExtResource("1_3c4qc")]
 transform = Transform3D(-5.91472, -0.0892935, 2.01889, 5.38242, 0.060672, 2.219, -0.213755, 3.99854, 0.011415, -21.992, 1.61012, -0.913375)
@@ -64,7 +64,7 @@ transform = Transform3D(8, 0, 0, 0, 0.2, 0, 0, 0, 3, 8.163, 0.5, -0.098)
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.957732, 0.151114, -0.244775, 0.265484, -0.136684, 0.954377, 0.110763, -0.979021, -0.171025, 0, 0, 0)
-light_angular_distance = 30.0
+light_angular_distance = 75.0
 light_bake_mode = 1
 
 [node name="Label" type="Label" parent="."]
