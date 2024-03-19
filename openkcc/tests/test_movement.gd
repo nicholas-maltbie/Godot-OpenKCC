@@ -1,7 +1,5 @@
 extends GutTest
 
-const Player = preload("res://scripts/Player.gd")
-
 const MOVE_VECTOR_TESTS = [ \
 	[Vector3.FORWARD], \
 	[Vector3.LEFT], \
@@ -23,19 +21,6 @@ var slide_params = ParameterFactory.named_parameters(
 		[ 15, Vector3.LEFT,  [4.25, 0.1], [0.67, 0.1]],
 		[-15, Vector3.RIGHT, [4.25, 0.1], [0.67, 0.1]],
 		[  0, Vector3.RIGHT, [4.00, 0.1], [0.00, 0.1]],
-	])
-
-var move_params = ParameterFactory.named_parameters(
-	['input_array', 'movement_dir'],
-	[
-		[["Forward"], Vector3.FORWARD],
-		[["Back"], Vector3.BACK],
-		[["Left"], Vector3.LEFT],
-		[["Right"], Vector3.RIGHT],
-		[["Forward", "Left"], Vector3.FORWARD + Vector3.LEFT],
-		[["Forward", "Right"], Vector3.FORWARD + Vector3.RIGHT],
-		[["Back", "Left"], Vector3.BACK + Vector3.LEFT],
-		[["Back", "Right"], Vector3.BACK + Vector3.RIGHT],
 	])
 
 var wall_slide_params = ParameterFactory.named_parameters(
@@ -85,84 +70,28 @@ var ground_params = ParameterFactory.named_parameters(
 		[false, false, false,  true, false]
 	])
 
-var _sender = InputSender.new(Input)
-var _character:Player
+var _character:OpenKCCBodyGD
 var _ground:StaticBody3D
 
 func before_all():
 	pass
 
 func before_each():
-	_character = Player.new()
+	_character = OpenKCCBodyGD.new()
 	var collision_body:CollisionShape3D = CollisionShape3D.new()
-	var head:Node3D = Node3D.new()
-	var camera:Camera3D = Camera3D.new()
 	var capsule_shape:CapsuleShape3D = CapsuleShape3D.new()
-
-	_character.set_name("Character")
-	collision_body.set_name("CollisionBody3D")
-	head.set_name("Head")
-	camera.set_name("Camera3d")
-
 	collision_body.set_shape(capsule_shape)
 	collision_body.position = Vector3(0, 1, 0)
-
 	_character.add_child(collision_body)
-	_character.add_child(head)
-	head.add_child(camera)
-	add_child(_character)
+	add_child_autofree(_character)
 
-	_ground = StaticBody3D.new()
-	var collision_shape:CollisionShape3D = CollisionShape3D.new()
-	var box_shape:BoxShape3D = BoxShape3D.new()
-	box_shape.size = Vector3(10, 1, 10)
-	collision_shape.shape = box_shape
-	collision_shape.position = Vector3(0, -0.501, 0)
-	_ground.set_name("Ground")
-	collision_shape.set_name("CollisionShape")
-
-	add_child(_ground)
-	_ground.add_child(collision_shape)
+	_ground = TestUtils.add_wall(self, Vector3(10, 1, 10), Vector3(0, -0.501, 0), Vector3.ZERO, Vector3.ZERO, "Ground")
 
 func after_each():
-	_sender.release_all()
-	_sender.clear()
-	if is_instance_valid(_character):
-		_character.free()
-	if is_instance_valid(_ground):
-		_ground.free()
+	pass
 
 func after_all():
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-
-func add_wall(size:Vector3, offset:Vector3, position:Vector3, rotation:Vector3, name:String="Wall"):
-	var wall = StaticBody3D.new()
-	var collision_shape:CollisionShape3D = CollisionShape3D.new()
-	var box_shape:BoxShape3D = BoxShape3D.new()
-	box_shape.size = size
-	collision_shape.shape = box_shape
-	collision_shape.position = offset
-	wall.set_name(name)
-	collision_shape.set_name("CollisionShape3D")
-
-	wall.position = position
-	wall.rotation = rotation
-	wall.add_child(collision_shape)
-	add_child_autofree(wall)
-	return wall
-
-## Test player movement based on input direction key presses
-## and the resulting change in character position.
-func test_player_move(params=use_parameters(move_params)):
-	var start:Vector3 = _character.global_position
-	for dir in params.input_array:
-		Input.action_press(dir)
-	simulate(_character, 30, 1.0/30)
-	for dir in params.input_array:
-		Input.action_release(dir)
-	var current:Vector3 = _character.global_position
-	var delta:Vector3 = current - start
-	assert_almost_eq(delta.dot(params.movement_dir.normalized()), Player.SPEED, 0.1)
 
 ## Test player standing idle and that they do not move (assuming they are standing
 ## on a floor).
@@ -173,22 +102,12 @@ func test_player_idle():
 	var delta:Vector3 = current - start
 	assert_almost_eq(delta.length(), 0.0, 0.001)
 
-## Test player fall by moving them up into the air and assert that
-## they fall down at least 10 units within 2 seconds and stop when they hit the ground.
-func test_player_fall():
-	_character.global_position = Vector3.UP * 10
-	var start:Vector3 = _character.global_position
-	simulate(_character, 120, 1.0/30)
-	var current:Vector3 = _character.global_position
-	var delta:Vector3 = current - start
-	assert_almost_eq(delta.dot(Vector3.DOWN), 10.0, 0.1)
-
 ## Test player slide accross a wall when running into it.
 ## Rotate the wall to various rotatinos and have the player
 ## walk into the wall and assert how far the player will
 ## bounce based on their rotation.
 func test_player_slide(params=use_parameters(slide_params)):
-	add_wall(Vector3(10, 10, 1), Vector3(0, 0, 0), Vector3(0, 0, -5), Vector3(0, params.wall_rotation, 0))
+	TestUtils.add_wall(self, Vector3(10, 10, 1), Vector3(0, 0, 0), Vector3(0, 0, -5), Vector3(0, params.wall_rotation, 0))
 	var start:Vector3 = _character.global_position
 	_character.move_and_slide(Vector3.FORWARD * 5)
 	var current:Vector3 = _character.global_position
@@ -206,18 +125,6 @@ func test_player_move_and_slide(params=use_parameters(MOVE_VECTOR_TESTS)):
 	var current:Vector3 = _character.global_position
 	var delta:Vector3 = current - start
 	assert_almost_eq((params[0] - delta).length(), 0.0, 0.01)
-
-## Test that the player is able to jump when the "Jump" action
-## is pressed and they are standing on some solid surface.
-## Verify that when the player jumps their vertical velocity is set to
-## the jump velocity of the player.
-func test_player_jump():
-	simulate(_character, 1, 1.0/30.0)
-	assert_almost_eq(_character.world_velocity.length(), 0.0, 0.01)
-	Input.action_press("Jump")
-	simulate(_character, 1, 1.0/30.0)
-	assert_almost_eq(_character.world_velocity.dot(Vector3.UP), Player.JUMP_VELOCITY, 0.01)
-	Input.action_release("Jump")
 
 ## Test the various player grounded states based on the player height from
 ## the ground, if there is an object below them, and the angle between
@@ -241,7 +148,7 @@ func test_player_grounded(params=use_parameters(ground_params)):
 ## they will stop before sliding up the wall.
 func test_player_no_slide_up_walls(params=use_parameters(wall_slide_params)):
 	# Add a vertical wall in front of the player
-	add_wall(Vector3(10, 10, 1), Vector3(0, 0, 0), Vector3(0, 0, -5), Vector3(0, 0, 0))
+	TestUtils.add_wall(self, Vector3(10, 10, 1), Vector3(0, 0, 0), Vector3(0, 0, -5), Vector3(0, 0, 0))
 
 	# Move the player up vertically towards the wall
 	_character.check_grounded()
@@ -256,8 +163,8 @@ func test_player_no_slide_up_walls(params=use_parameters(wall_slide_params)):
 ## and could slide backwards in the original direction they were moving
 func test_player_no_jitter_backwards(params=use_parameters(jitter_parms)):
 	# Add walls for the player to slide off of
-	add_wall(Vector3(100, 10, 1), Vector3(-1, 0, 0), Vector3(0, 0, -3), Vector3(0, 30, 0), "wall_1")
-	add_wall(Vector3(100, 10, 1), Vector3(-1, 0, 0), Vector3(0, 0, -3), Vector3(0, -30, 0), "wall_2")
+	TestUtils.add_wall(self, Vector3(100, 10, 1), Vector3(-1, 0, 0), Vector3(0, 0, -3), Vector3(0, 30, 0), "wall_1")
+	TestUtils.add_wall(self, Vector3(100, 10, 1), Vector3(-1, 0, 0), Vector3(0, 0, -3), Vector3(0, -30, 0), "wall_2")
 
 	# Assert that when the player moves forward they don't slide backwards
 	_character.move_and_slide(params.movement)
