@@ -16,3 +16,12 @@ static func add_wall(gut_test:GutTest, size:Vector3, offset:Vector3, position:Ve
 	wall.add_child(collision_shape)
 	gut_test.add_child_autofree(wall)
 	return wall
+
+static func wait_until_async(gut_test:GutTest, condition:Callable, object:Object,
+		times:float=3, delta:float=1.0/30.0, max_attempts:int=100):
+	var attempt := 0
+	while attempt < max_attempts and not condition.call():
+		attempt += 1
+		await gut_test.wait_frames(1)
+		gut_test.simulate(object, times, delta)
+	gut_test.assert_true(condition.call())
