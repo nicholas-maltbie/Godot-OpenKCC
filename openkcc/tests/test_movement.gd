@@ -70,14 +70,14 @@ var ground_params = ParameterFactory.named_parameters(
 		[false, false, false,  true, false]
 	])
 
-var _character:OpenKCCBodyGD
+var _character:OpenKCCBody3DGD
 var _ground:StaticBody3D
 
 func before_all():
 	pass
 
 func before_each():
-	_character = OpenKCCBodyGD.new()
+	_character = OpenKCCBody3DGD.new()
 	var collision_body:CollisionShape3D = CollisionShape3D.new()
 	var capsule_shape:CapsuleShape3D = CapsuleShape3D.new()
 	collision_body.set_shape(capsule_shape)

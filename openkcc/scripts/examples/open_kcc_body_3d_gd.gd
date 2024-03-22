@@ -1,4 +1,4 @@
-class_name OpenKCCBodyGD
+class_name OpenKCCBody3DGD
 extends StaticBody3D
 
 const SPEED = 5.0
