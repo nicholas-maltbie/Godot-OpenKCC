@@ -1,4 +1,4 @@
-extends OpenKCCBodyGD
+extends OpenKCCBody3DGD
 
 # Get the gravity from the project settings to be synced with RigidBody nodes.
 var gravity:float = ProjectSettings.get_setting("physics/3d/default_gravity")
