@@ -1,7 +1,17 @@
-[gd_scene load_steps=3 format=3 uid="uid://ibio3sqc8sw4"]
+[gd_scene load_steps=8 format=3 uid="uid://ibio3sqc8sw4"]
 
 [ext_resource type="PackedScene" uid="uid://dj26sacnhty4r" path="res://addons/devblocks/blocks/basic_block.tscn" id="1_3c4qc"]
-[ext_resource type="PackedScene" uid="uid://dwpmuwlxa4cqr" path="res://player.tscn" id="2_28x1w"]
+[ext_resource type="Script" path="res://scripts/character.gd" id="2_5mco5"]
+[ext_resource type="Script" path="res://scripts/constant_rotation.gd" id="3_fjean"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_qge1p"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5kkw2"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_onds5"]
+size = Vector3(5, 3, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_d7eg0"]
 
 [node name="Node3D" type="Node3D"]
 
@@ -77,4 +87,26 @@ grow_horizontal = 0
 pivot_offset = Vector2(1, 0)
 text = "Press Esc or P to Toggle Input"
 
-[node name="Player" parent="." instance=ExtResource("2_28x1w")]
+[node name="Player" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+script = ExtResource("2_5mco5")
+
+[node name="CSGMesh3D" type="CSGMesh3D" parent="Player"]
+mesh = SubResource("CapsuleMesh_qge1p")
+material = SubResource("StandardMaterial3D_5kkw2")
+
+[node name="Head" type="Node3D" parent="Player"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
+
+[node name="Camera3d" type="Camera3D" parent="Player/Head"]
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0816402, 0.641941, 8.62798)
+script = ExtResource("3_fjean")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+shape = SubResource("BoxShape3D_onds5")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D"]
+transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("BoxMesh_d7eg0")

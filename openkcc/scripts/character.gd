@@ -1,4 +1,7 @@
-extends OpenKCCBody3DGD
+extends OpenKCCBody3DPQ
+
+@export var move_speed:float = 5.0
+@export var jump_velocity:float = 5.0
 
 # Get the gravity from the project settings to be synced with RigidBody nodes.
 var gravity:float = ProjectSettings.get_setting("physics/3d/default_gravity")
@@ -28,11 +31,14 @@ var _can_jump:bool = false
 @onready var cam = $Head/Camera3d as Camera3D
 
 func _ready() -> void:
+	setup_shape()
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	allow_movement = true
-	_collision = KinematicCollision3D.new();
 
 func _physics_process(_delta) -> void:
+	# Check for overlapping objects.
+	push_out_overlapping()
+
 	# Add the gravity.
 	check_grounded()
 	if not is_on_floor() or is_sliding():
@@ -56,18 +62,18 @@ func _physics_process(_delta) -> void:
 		direction = direction.normalized()
 
 	if direction:
-		move_velocity.x = direction.x * SPEED
-		move_velocity.z = direction.z * SPEED
+		move_velocity.x = direction.x * move_speed
+		move_velocity.z = direction.z * move_speed
 	else:
-		move_velocity.x = move_toward(move_velocity.x, 0, SPEED)
-		move_velocity.z = move_toward(move_velocity.z, 0, SPEED)
+		move_velocity.x = move_toward(move_velocity.x, 0, move_speed)
+		move_velocity.z = move_toward(move_velocity.z, 0, move_speed)
 
 	var move:Vector3 = move_velocity
 	if is_on_floor() and not is_sliding():
 		move *= Quaternion(_ground_normal, up)
 
+	move_and_slide(move * _delta, false)
 	move_and_slide(world_velocity * _delta, false)
-	move_and_slide(move * _delta)
 
 func _input(event:InputEvent) -> void:
 	# On web platform, mouse needs to be clicked in order to be
@@ -114,7 +120,7 @@ func _attempt_jump():
 		_apply_jump()
 
 func _apply_jump():
-	world_velocity = up * JUMP_VELOCITY
+	world_velocity = up * jump_velocity
 
 func moving_up() -> bool:
 	return world_velocity.dot(up) > 0

@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://dwpmuwlxa4cqr"]
 
-[ext_resource type="Script" path="res://scripts/player.gd" id="1_qm3hf"]
+[ext_resource type="Script" path="res://scripts/character.gd" id="1_qm3hf"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_gyyi2"]
 margin = 0.001
@@ -11,6 +11,7 @@ margin = 0.001
 
 [node name="Player" type="StaticBody3D"]
 script = ExtResource("1_qm3hf")
+move_speed = 3.0
 
 [node name="CollisionBody3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
