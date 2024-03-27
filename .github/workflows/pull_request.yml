@@ -21,14 +21,11 @@ jobs:
   test:
     uses: ./.github/workflows/gut_tests.yml
     needs: compile
-    with:
-      buildArtifact: false
 
   build:
     uses: ./.github/workflows/web_build.yml
     needs: compile
     with:
-      buildArtifact: false
       uploadArtifact: false
 
   lint:

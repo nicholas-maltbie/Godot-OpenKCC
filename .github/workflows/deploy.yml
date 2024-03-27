@@ -32,14 +32,10 @@ jobs:
   test:
     uses: ./.github/workflows/gut_tests.yml
     needs: compile
-    with:
-      buildArtifact: false
 
   deploy:
     needs: test
     uses: ./.github/workflows/github_pages_deploy.yml
-    with:
-      buildArtifact: false
 
   package:
     uses: ./.github/workflows/create_package.yml
