@@ -1,6 +1,6 @@
 extends GutTest
 
-const Player = preload("res://scripts/player.gd")
+const Player = preload("res://scripts/character.gd")
 
 var move_params = ParameterFactory.named_parameters(
 	['input_array', 'movement_dir'],
@@ -24,23 +24,17 @@ func before_all():
 
 func before_each():
 	_character = Player.new()
-	var collision_body:CollisionShape3D = CollisionShape3D.new()
 	var head:Node3D = Node3D.new()
 	var camera:Camera3D = Camera3D.new()
-	var capsule_shape:CapsuleShape3D = CapsuleShape3D.new()
 
 	_character.set_name("Character")
-	collision_body.set_name("CollisionBody3D")
 	head.set_name("Head")
 	camera.set_name("Camera3d")
 
-	collision_body.set_shape(capsule_shape)
-	collision_body.position = Vector3(0, 1, 0)
-
-	_character.add_child(collision_body)
 	_character.add_child(head)
 	head.add_child(camera)
 	add_child_autofree(_character)
+	_character.global_position = Vector3(0, 1, 0)
 
 	_ground = TestUtils.add_wall(self, Vector3(100, 1, 100), Vector3(0, -0.501, 0), Vector3.ZERO, Vector3.ZERO, "Ground")
 	_sender = InputSender.new(_character)
@@ -63,7 +57,7 @@ func test_player_move(params=use_parameters(move_params)):
 		_sender.action_up(dir)
 	var current:Vector3 = _character.global_position
 	var delta:Vector3 = current - start
-	assert_almost_eq(delta.dot(params.movement_dir.normalized()), Player.SPEED, 0.1)
+	assert_almost_eq(delta.dot(params.movement_dir.normalized()), _character.move_speed, 0.1)
 
 ## Test that the player is able to jump when the "Jump" action
 ## is pressed and they are standing on some solid surface.
@@ -73,7 +67,7 @@ func test_player_jump():
 	assert_almost_eq(_character.world_velocity.length(), 0.0, 0.01)
 	_sender.action_down("Jump")
 	simulate(_character, 1, 1)
-	assert_almost_eq(_character.world_velocity.dot(Vector3.UP), Player.JUMP_VELOCITY, 0.01)
+	assert_almost_eq(_character.world_velocity.dot(Vector3.UP), _character.jump_velocity, 0.01)
 	_sender.action_up("Jump")
 
 ## Test player fall by moving them up into the air and assert that
@@ -84,7 +78,7 @@ func test_player_fall():
 	simulate(_character, 120, 1.0/30)
 	var current:Vector3 = _character.global_position
 	var delta:Vector3 = current - start
-	assert_almost_eq(delta.dot(Vector3.DOWN), 10.0, 0.1)
+	assert_almost_eq(delta.dot(Vector3.DOWN), 9.0, 0.1)
 
 ## Put the player on a sliding surface
 ## Assert that they can only jump once even if they

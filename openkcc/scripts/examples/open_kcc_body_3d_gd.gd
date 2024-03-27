@@ -1,8 +1,6 @@
 class_name OpenKCCBody3DGD
 extends StaticBody3D
 
-const SPEED = 5.0
-const JUMP_VELOCITY = 4.5
 const DEFAULT_GROUNDED_HEIGHT = 0.01
 const DEFAULT_MAX_WALK_ANGLE = 60
 const MAX_BOUNCES:int = 5
@@ -28,22 +26,20 @@ var _ground_position:Vector3 = Vector3.ZERO
 # Internal variable for computing collisions
 var _collision:KinematicCollision3D = KinematicCollision3D.new();
 
-func check_grounded() -> bool:
-	_ground_hit = test_move(global_transform, Vector3.DOWN * grounded_dist, _collision, EPSILON)
+func check_grounded():
+	_ground_hit = test_move(global_transform, Vector3.DOWN * (grounded_dist + EPSILON), _collision, EPSILON, true)
 	if _ground_hit:
 		_ground_object = _collision.get_collider()
 		_ground_dist = _collision.get_travel().length()
 		_ground_angle = _collision.get_normal().angle_to(up)
 		_ground_normal = _collision.get_normal()
 		_ground_position = _collision.get_position()
-		return is_on_floor()
-
-	_ground_object = null
-	_ground_dist = 0
-	_ground_angle = 0
-	_ground_normal = Vector3.ZERO
-	_ground_position = Vector3.ZERO
-	return false
+	else:
+		_ground_object = null
+		_ground_dist = 0
+		_ground_angle = 0
+		_ground_normal = Vector3.ZERO
+		_ground_position = Vector3.ZERO
 
 func is_on_floor() -> bool:
 	return _ground_hit and _ground_dist <= grounded_dist
@@ -83,7 +79,7 @@ func move_and_slide(movement:Vector3, stop_slide_up_walls:bool=true) -> void:
 			break;
 
 		# If the player is sliding up a wall, stop the player from sliding up or down walls
-		if stop_slide_up_walls and normal.dot(up) >= 0:
+		if stop_slide_up_walls and normal.dot(up) <= 0:
 			# Remove vertical component of remaining movement
 			remaining = Plane(up).project(remaining)
 
