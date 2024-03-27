@@ -1,13 +1,6 @@
 name: 🚀 Deploy Github Pages Demo
 on:
   workflow_call:
-    inputs:
-      buildArtifact:
-        description: 'Should artifacts be compiled'
-        required: false
-        default: true
-        type: boolean
-  workflow_dispatch:
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:

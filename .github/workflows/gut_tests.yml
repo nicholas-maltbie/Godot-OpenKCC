@@ -1,31 +1,13 @@
 name: "🧪 GUT Tests"
 on:
   workflow_call:
-    inputs:
-      buildArtifact:
-        description: 'Should artifacts be compiled'
-        required: false
-        default: true
-        type: boolean
-  workflow_dispatch:
 
 jobs:
-  compile:
-    if: ${{ github.event_name == 'workflow_dispatch' || inputs.buildArtifact }}
-    uses: ./.github/workflows/gdextension_build.yml
-    with:
-      buildLinux: true
-      buildWeb: true
-
   test:
     name: 🧪 Run Tests
     runs-on: ubuntu-20.04
     container:
       image: barichello/godot-ci:4.2
-    if: |
-      always() &&
-      (needs.compile.result == 'success' || needs.compile.result == 'skipped')
-    needs: compile
     steps:
       - uses: actions/checkout@v3
       - run: git config --global --add safe.directory $GITHUB_WORKSPACE
