@@ -16,10 +16,10 @@ const MOVE_VECTOR_TESTS = [ \
 var slide_params = ParameterFactory.named_parameters(
 	['wall_rotation', 'expected_slide_dir', 'forward_bounds', 'slide_bounds'],
 	[
-		[ 30, Vector3.LEFT,  [4.65, 0.1], [0.95, 0.1]],
-		[-30, Vector3.RIGHT, [4.65, 0.1], [0.95, 0.1]],
-		[ 15, Vector3.LEFT,  [4.25, 0.1], [0.67, 0.1]],
-		[-15, Vector3.RIGHT, [4.25, 0.1], [0.67, 0.1]],
+		[ 30, Vector3.LEFT,  [4.05, 0.1], [0.95, 0.1]],
+		[-30, Vector3.RIGHT, [4.05, 0.1], [0.95, 0.1]],
+		[ 15, Vector3.LEFT,  [3.90, 0.1], [0.25, 0.1]],
+		[-15, Vector3.RIGHT, [3.90, 0.1], [0.25, 0.1]],
 		[  0, Vector3.RIGHT, [4.00, 0.1], [0.00, 0.1]],
 	])
 
@@ -30,14 +30,14 @@ var wall_slide_params = ParameterFactory.named_parameters(
 		[Vector3.FORWARD * 20 + Vector3.UP * 10, Vector3(0, 2, -4), Vector3(0.0, 0.1, 0.1)],
 		[Vector3.FORWARD * 30 + Vector3.UP * 15, Vector3(0, 2, -4), Vector3(0.0, 0.1, 0.1)],
 		[Vector3.FORWARD * 35 + Vector3.UP * 20, Vector3(0, 2, -4), Vector3(0.0, 0.2, 0.2)],
-		[Vector3.FORWARD * 10 + Vector3.UP *  5 + Vector3.RIGHT * 3, Vector3(3.2, 2, -4), Vector3(0.1, 0.2, 0.2)],
-		[Vector3.FORWARD * 10 + Vector3.UP *  5 + Vector3.RIGHT * 5, Vector3(5.2, 2, -4), Vector3(0.1, 0.2, 0.2)],
-		[Vector3.FORWARD * 10 + Vector3.UP *  5 + Vector3.LEFT * 3, Vector3(-3.2, 2, -4), Vector3(0.1, 0.2, 0.2)],
-		[Vector3.FORWARD * 10 + Vector3.UP *  5 + Vector3.LEFT * 5, Vector3(-5.2, 2, -4), Vector3(0.1, 0.2, 0.2)],
-		[Vector3.FORWARD * 20 + Vector3.UP * 10 + Vector3.RIGHT * 3, Vector3(3.5, 2, -4), Vector3(0.1, 0.2, 0.2)],
-		[Vector3.FORWARD * 20 + Vector3.UP * 10 + Vector3.RIGHT * 5, Vector3(5.7, 2, -4), Vector3(0.1, 0.2, 0.2)],
-		[Vector3.FORWARD * 20 + Vector3.UP * 10 + Vector3.LEFT * 3, Vector3(-3.5, 2, -4), Vector3(0.1, 0.2, 0.2)],
-		[Vector3.FORWARD * 20 + Vector3.UP * 10 + Vector3.LEFT * 5, Vector3(-5.7, 2, -4), Vector3(0.1, 0.2, 0.2)],
+		[Vector3.FORWARD * 10 + Vector3.UP *  5 + Vector3.RIGHT * 3, Vector3(1.8, 2, -4), Vector3(0.1, 0.2, 0.2)],
+		[Vector3.FORWARD * 10 + Vector3.UP *  5 + Vector3.RIGHT * 5, Vector3(3.0, 2, -4), Vector3(0.1, 0.2, 0.2)],
+		[Vector3.FORWARD * 10 + Vector3.UP *  5 + Vector3.LEFT * 3, Vector3(-1.8, 2, -4), Vector3(0.1, 0.2, 0.2)],
+		[Vector3.FORWARD * 10 + Vector3.UP *  5 + Vector3.LEFT * 5, Vector3(-3.0, 2, -4), Vector3(0.1, 0.2, 0.2)],
+		[Vector3.FORWARD * 20 + Vector3.UP * 10 + Vector3.RIGHT * 3, Vector3(1.3, 2, -4), Vector3(0.1, 0.2, 0.2)],
+		[Vector3.FORWARD * 20 + Vector3.UP * 10 + Vector3.RIGHT * 5, Vector3(2.2, 2, -4), Vector3(0.1, 0.2, 0.2)],
+		[Vector3.FORWARD * 20 + Vector3.UP * 10 + Vector3.LEFT * 3, Vector3(-1.3, 2, -4), Vector3(0.1, 0.2, 0.2)],
+		[Vector3.FORWARD * 20 + Vector3.UP * 10 + Vector3.LEFT * 5, Vector3(-2.2, 2, -4), Vector3(0.1, 0.2, 0.2)],
 	])
 
 var jitter_parms = ParameterFactory.named_parameters(

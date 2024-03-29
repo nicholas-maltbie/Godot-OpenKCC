@@ -29,10 +29,13 @@ var _ground_position:Vector3 = Vector3.ZERO
 var _collision:OpenKCCCollision = OpenKCCCollision.new()
 var _physics_query_params:PhysicsShapeQueryParameters3D = PhysicsShapeQueryParameters3D.new()
 var _capsule:Shape3D
+var _overlap_capsule:Shape3D
 
 func push_out_overlapping():
 	var space_state = get_world_3d().direct_space_state
 	_physics_query_params.transform = global_transform
+	_physics_query_params.shape = _overlap_capsule
+	_physics_query_params.margin = EPSILON
 	var result := space_state.collide_shape(_physics_query_params, 3)
 
 	# if not overlapping with anything, exist
@@ -52,6 +55,8 @@ func push_out_overlapping():
 func _get_collision(start:Transform3D, dir:Vector3, dist:float, collision:OpenKCCCollision) -> bool:
 	var space_state = get_world_3d().direct_space_state
 	_physics_query_params.transform = start
+	_physics_query_params.margin = skin_width
+	_physics_query_params.shape = _capsule
 	_physics_query_params.motion = dir * (dist + skin_width)
 
 	var result := space_state.cast_motion(_physics_query_params)
@@ -82,10 +87,11 @@ func _get_collision(start:Transform3D, dir:Vector3, dist:float, collision:OpenKC
 
 func setup_shape():
 	_capsule = CapsuleShape3D.new()
-	_capsule.height = height - skin_width
+	_overlap_capsule = CapsuleShape3D.new()
+	_capsule.height = height - skin_width * 2
 	_capsule.radius = radius - skin_width
-	_physics_query_params.shape = _capsule
-	_physics_query_params.margin = EPSILON
+	_overlap_capsule.height = height
+	_overlap_capsule.radius = radius
 
 func move_and_slide(movement:Vector3, stop_slide_up_walls:bool=true) -> void:
 	var bounce:int = 0
@@ -159,7 +165,7 @@ func get_angle_factor(angle_between:float) -> float:
 		abs(angle_between - BUFFER_SHOVE_RADIANS) / MAX_SHOVE_RADIANS, 0, 1)
 
 	# Reduce the remaining movement by the remaining movement that ocurred
-	return pow(normalized_angle, 0.5)
+	return pow(0.1 + 0.9 * normalized_angle, 2)
 
 class OpenKCCCollision:
 	var dist_traveled:float
