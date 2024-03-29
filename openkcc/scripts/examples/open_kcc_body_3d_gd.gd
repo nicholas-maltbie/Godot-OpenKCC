@@ -94,4 +94,4 @@ func get_angle_factor(angle_between:float) -> float:
 		abs(angle_between - BUFFER_SHOVE_RADIANS) / MAX_SHOVE_RADIANS, 0, 1)
 
 	# Reduce the remaining movement by the remaining movement that ocurred
-	return pow(normalized_angle, 0.5)
+	return pow(0.1 + normalized_angle * 0.9, 2)

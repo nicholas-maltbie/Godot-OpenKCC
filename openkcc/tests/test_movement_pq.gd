@@ -16,10 +16,10 @@ const MOVE_VECTOR_TESTS = [ \
 var slide_params = ParameterFactory.named_parameters(
 	['wall_rotation', 'expected_slide_dir', 'forward_bounds', 'slide_bounds'],
 	[
-		[ 30, Vector3.LEFT,  [6.65, 0.1], [2.75, 0.1]],
-		[-30, Vector3.RIGHT, [6.65, 0.1], [2.75, 0.1]],
-		[ 15, Vector3.LEFT,  [9.25, 0.1], [0.67, 0.1]],
-		[-15, Vector3.RIGHT, [9.25, 0.1], [0.67, 0.1]],
+		[ 30, Vector3.LEFT,  [5.28, 0.1], [0.95, 0.1]],
+		[-30, Vector3.RIGHT, [5.28, 0.1], [0.95, 0.1]],
+		[ 15, Vector3.LEFT,  [8.88, 0.1], [0.25, 0.1]],
+		[-15, Vector3.RIGHT, [8.88, 0.1], [0.25, 0.1]],
 		[  0, Vector3.RIGHT, [9.00, 0.1], [0.00, 0.1]],
 	])
 
@@ -30,14 +30,14 @@ var wall_slide_params = ParameterFactory.named_parameters(
 		[Vector3.FORWARD * 20 + Vector3.UP * 10, Vector3(0, 3, -4), Vector3(0.0, 0.1, 0.1)],
 		[Vector3.FORWARD * 30 + Vector3.UP * 15, Vector3(0, 3, -4), Vector3(0.0, 0.1, 0.1)],
 		[Vector3.FORWARD * 35 + Vector3.UP * 20, Vector3(0, 3, -4), Vector3(0.0, 0.2, 0.2)],
-		[Vector3.FORWARD * 10 + Vector3.UP *  5 + Vector3.RIGHT * 3, Vector3(3.2, 3, -4), Vector3(0.1, 0.2, 0.2)],
-		[Vector3.FORWARD * 10 + Vector3.UP *  5 + Vector3.RIGHT * 5, Vector3(5.2, 3, -4), Vector3(0.1, 0.2, 0.2)],
-		[Vector3.FORWARD * 10 + Vector3.UP *  5 + Vector3.LEFT * 3, Vector3(-3.2, 3, -4), Vector3(0.1, 0.2, 0.2)],
-		[Vector3.FORWARD * 10 + Vector3.UP *  5 + Vector3.LEFT * 5, Vector3(-5.2, 3, -4), Vector3(0.1, 0.2, 0.2)],
-		[Vector3.FORWARD * 20 + Vector3.UP * 10 + Vector3.RIGHT * 3, Vector3(3.5, 3, -4), Vector3(0.1, 0.2, 0.2)],
-		[Vector3.FORWARD * 20 + Vector3.UP * 10 + Vector3.RIGHT * 5, Vector3(5.7, 3, -4), Vector3(0.1, 0.2, 0.2)],
-		[Vector3.FORWARD * 20 + Vector3.UP * 10 + Vector3.LEFT * 3, Vector3(-3.5, 3, -4), Vector3(0.1, 0.2, 0.2)],
-		[Vector3.FORWARD * 20 + Vector3.UP * 10 + Vector3.LEFT * 5, Vector3(-5.7, 3, -4), Vector3(0.1, 0.2, 0.2)],
+		[Vector3.FORWARD * 10 + Vector3.UP *  5 + Vector3.RIGHT * 3, Vector3(1.7, 3, -4), Vector3(0.1, 0.2, 0.2)],
+		[Vector3.FORWARD * 10 + Vector3.UP *  5 + Vector3.RIGHT * 5, Vector3(3.0, 3, -4), Vector3(0.1, 0.2, 0.2)],
+		[Vector3.FORWARD * 10 + Vector3.UP *  5 + Vector3.LEFT * 3, Vector3(-1.7, 3, -4), Vector3(0.1, 0.2, 0.2)],
+		[Vector3.FORWARD * 10 + Vector3.UP *  5 + Vector3.LEFT * 5, Vector3(-3.0, 3, -4), Vector3(0.1, 0.2, 0.2)],
+		[Vector3.FORWARD * 20 + Vector3.UP * 10 + Vector3.RIGHT * 3, Vector3(1.3, 3, -4), Vector3(0.1, 0.2, 0.2)],
+		[Vector3.FORWARD * 20 + Vector3.UP * 10 + Vector3.RIGHT * 5, Vector3(2.2, 3, -4), Vector3(0.1, 0.2, 0.2)],
+		[Vector3.FORWARD * 20 + Vector3.UP * 10 + Vector3.LEFT * 3, Vector3(-1.3, 3, -4), Vector3(0.1, 0.2, 0.2)],
+		[Vector3.FORWARD * 20 + Vector3.UP * 10 + Vector3.LEFT * 5, Vector3(-2.2, 3, -4), Vector3(0.1, 0.2, 0.2)],
 	])
 
 var jitter_parms = ParameterFactory.named_parameters(
@@ -186,6 +186,6 @@ func test_player_handle_overlap(params=use_parameters(overlap_params)):
 	_character.push_out_overlapping()
 
 	# Specifically, the player should be pushed out according to expected offset
-	assert_almost_eq(_character.global_position.x, params.expected_position.x, 0.1)
-	assert_almost_eq(_character.global_position.y, params.expected_position.y, 0.1)
-	assert_almost_eq(_character.global_position.z, params.expected_position.z, 0.1)
+	assert_almost_eq(_character.global_position.x, params.expected_position.x, 0.01)
+	assert_almost_eq(_character.global_position.y, params.expected_position.y, 0.01)
+	assert_almost_eq(_character.global_position.z, params.expected_position.z, 0.01)
