@@ -19,6 +19,7 @@ shape = SubResource("CapsuleShape3D_gyyi2")
 
 [node name="CSGMesh3D" type="CSGMesh3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+gi_mode = 2
 mesh = SubResource("CapsuleMesh_qge1p")
 material = SubResource("StandardMaterial3D_5kkw2")
 
