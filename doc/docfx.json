@@ -1,0 +1,26 @@
+{
+    "build": {
+      "template": [
+        "default",
+        "modern",
+        "godot-template"
+      ],
+      "content": [
+        {
+          "files": ["*.yml"],
+          "src": "api",
+          "dest": "api"
+        },
+        {
+          "files": [
+            "toc.yml",
+            "index.md"
+          ]
+        }
+      ],
+      "xref": [
+        "https://gddoc2yml.nickmaltbie.com/xrefmap.yml"
+      ],
+      "dest": "_site"
+    }
+  }

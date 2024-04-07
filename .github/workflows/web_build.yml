@@ -9,8 +9,58 @@ on:
         type: boolean
 
 jobs:
-  build:
-    name: 🌐 Build Site
+  build-docs:
+    name: 🌐 Build Documentation
+    runs-on: ubuntu-latest
+    container:
+      image: barichello/godot-ci:4.2
+    steps:
+      - uses: actions/checkout@v3
+      - run: git config --global --add safe.directory $GITHUB_WORKSPACE
+      - uses: ./.github/actions/setvars
+      - uses: nschloe/action-cached-lfs-checkout@v1
+
+      - uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '7.x'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Tools
+        run: |
+          export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
+          dotnet tool restore
+          python3 -m pip install gddoc2yml
+      
+      - name: Build Documentation
+        run: |
+          godot -v -e --headless --path ${{env.PROJECT_PATH}} --quit-after 100 || true
+          mkdir -p ${{env.PROJECT_PATH}}/doc/godot
+          godot --path ${{env.PROJECT_PATH}} --doctool doc/godot
+          godot --path ${{env.PROJECT_PATH}} --doctool doc/classes --gdscript-docs res://scripts
+
+      - name: Convert Docs to YML
+        run: gdxml2yml --filter ${{env.PROJECT_PATH}}/doc/classes ${{env.PROJECT_PATH}}/doc/classes ${{env.PROJECT_PATH}}/doc/godot doc/api
+
+      - name: Build site with DocFx
+        run: |
+          export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
+          dotnet tool run docfx doc/docfx.json
+
+      - name: Add baseUrl to xrefmap
+        run: |
+          sed -i '2 i baseUrl: https://openkcc.nickmaltbie.com/docs/' doc/_site/xrefmap.yml
+
+      - name: 📦 Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: docs
+          path: doc/_site/
+          retention-days: 1
+
+  build-game:
+    name: 🌐 Build Godot Project
     runs-on: ubuntu-20.04
     container:
       image: barichello/godot-ci:4.2
@@ -38,10 +88,34 @@ jobs:
 
       - name: 🕸 Web Build
         run: |
-          run: godot -v -e --headless --path ${{env.PROJECT_PATH}} --quit || true
+          godot -v -e --headless --path ${{env.PROJECT_PATH}} --quit-after 100 || true
           mkdir ${GITHUB_WORKSPACE}/_site
           godot -v --headless --path ${{env.PROJECT_PATH}} --export-release web ${GITHUB_WORKSPACE}/_site/index.html
           cp ${{env.PROJECT_PATH}}/coi-serviceworker.min.js ${GITHUB_WORKSPACE}/_site/coi-serviceworker.min.js
+
+      - name: 📦 Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: game
+          path: _site/
+          retention-days: 1
+
+  upload-artifact:
+    name: 📦 Upload Site Artifact
+    needs: [build-docs, build-game]
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Download Game
+        uses: actions/download-artifact@v4
+        with:
+          name: game
+          path: _site/
+
+      - name: Download Docs
+        uses: actions/download-artifact@v4
+        with:
+          name: docs
+          path: _site/docs
 
       - name: Fix Permissions
         run: |
@@ -49,7 +123,7 @@ jobs:
             echo "::warning title=Invalid file permissions automatically fixed::$line"
           done
 
-      - name: 📦 Upload Site Artifact
+      - name: Upload Artifact
         if: ${{ inputs.uploadArtifact }}
         uses: actions/upload-pages-artifact@v1
         with:

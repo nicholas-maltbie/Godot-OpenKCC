@@ -116,7 +116,7 @@ $out = "external\rcedit-x64.exe"
 Invoke-WebRequest -Uri $url -OutFile $out
 
 # Export debug windows-desktop build
-godot -v -e --path openkcc --headless --quit
+godot -v -e --path openkcc --headless --quit-after 100
 mkdir -p builds/Windows
 godot --path openkcc --headless --export-release windows-desktop
 ```
@@ -141,7 +141,7 @@ scons --directory godot-cpp platform=web
 scons platform=web target=template_release
 
 # Export debug web build
-godot -v -e --path openkcc --headless --quit
+godot -v -e --path openkcc --headless --quit-after 100
 mkdir -p builds/WebGL
 godot --path openkcc --headless --export-release web
 cp openkcc/coi-serviceworker.min.js builds/WebGL/coi-serviceworker.min.js
@@ -151,4 +151,35 @@ Host website for local testing via [python -m http.server](https://docs.python.o
 
 ```PowerShell
 python -m http.server --directory builds/WebGL
+```
+
+## Documentation
+
+Documentation for the project is stored in the `doc` directory
+and built using [DocFx](https://github.com/dotnet/docfx).
+
+Generate documentation using godot cli tool `--doctool` and `--gdscript-docs`.
+Use [gddoc2yml](https://github.com/nicholas-maltbie/gddoc2yml) tool for
+generating docfx docs.
+
+```PowerShell
+# install gddoc2yml
+python3 -m pip install gddoc2yml
+
+# Install docfx if needed
+dotnet tool restore
+
+#  Load project in editor at least once
+godot -v -e --path openkcc --headless --quit-after 100
+
+# Build xml based documentation
+mkdir -p openkcc/doc/godot
+godot --path openkcc --doctool doc/godot
+godot --path openkcc --doctool doc/classes --gdscript-docs res://scripts
+
+# Convert docs to yml
+gdxml2yml --filter openkcc/doc/classes openkcc/doc/classes openkcc/doc/godot doc/api
+
+# Create site with docfx
+dotnet tool run docfx doc/docfx.json --serve
 ```

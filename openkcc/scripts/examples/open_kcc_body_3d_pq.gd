@@ -1,56 +1,88 @@
-class_name OpenKCCBody3DPQ
-extends Node3D
+class_name OpenKCCBody3DPQ extends Node3D
+## Implementation of the OpenKCC that uses the
+## the [PhysicsShapeQueryParameters3D] to directly
+## interact with the physics world.
 
+#region Constants
+
+## Default grounded height value for player.
 const DEFAULT_GROUNDED_HEIGHT:float = 0.15
+
+## Default maximum walk angle in degrees.
 const DEFAULT_MAX_WALK_ANGLE:float = 60
+
+## Max bounces when computing player movement.
 const MAX_BOUNCES:int = 5
+
+## Buffer value when computing angle falloff (90 degrees)
 const BUFFER_SHOVE_RADIANS:float = PI
+
+## Max angle taht a player can reflect off of (180 degrees)
 const MAX_SHOVE_RADIANS:float = PI/2
+
+## Small epsilon value for handling error ranges.
 const EPSILON:float = 0.001
 
+#endregion
+
+#region Export Parameters
+
+## Height of player's capsule collider.
 @export var height:float = 2
+
+## Radius of player's capsule collider.
 @export var radius:float = 0.5
+
+## Skin width of player's collision shape.
+## Player is allowed to overlap with other objects by this amount, good to
+## keep this a small, non-zero value to allow for some overlap with surronding objects.
 @export var skin_width:float = 0.01
 
-# Grounded configuration
+## Distance at which player is considered on the ground and no longer falling, defaults to
+## [constant DEFAULT_GROUNDED_HEIGHT].
 @export var grounded_dist:float = DEFAULT_GROUNDED_HEIGHT
-@export var max_walk_angle:float = DEFAULT_MAX_WALK_ANGLE
 
-# Direction of up vector
+## Maximum angle at which the player can walk up slopes in degrees, defaults to
+## [constant DEFAULT_MAX_WALK_ANGLE].
+@export var max_walk_angle:float = DEFAULT_MAX_WALK_ANGLE
+#endregion
+
+## Direction of up vector for player movement.
 var up:Vector3 = Vector3.UP
 
-# Grounded state
+#region Grounded State
+## A value indicating whether the ground hit check hit an object within the grounded dist.
 var _ground_hit:bool = false
+
+## Distance player is standing off the ground.
 var _ground_dist:float = 0
+
+## Angle between the surface normal of the player and the up vector.
 var _ground_angle:float = 0
+
+## Normal vector of the player's standing.
 var _ground_normal:Vector3 = Vector3.ZERO
+
+## Position in which player's collider is hitting the ground.
 var _ground_position:Vector3 = Vector3.ZERO
 
+#endregion
+
+#region Collision Parameters
+
+## Collision placeholder for player movement to avoid dynamic memory allocation.
 var _collision:OpenKCCCollision = OpenKCCCollision.new()
+
+## Physics query for player movement to avoid dynamic memory allocation.
 var _physics_query_params:PhysicsShapeQueryParameters3D = PhysicsShapeQueryParameters3D.new()
+
+## Capsule shape of the player with the skin width removed.
 var _capsule:Shape3D
+
+## Capsule shape of the player including the overlap.
 var _overlap_capsule:Shape3D
 
-func push_out_overlapping():
-	var space_state = get_world_3d().direct_space_state
-	_physics_query_params.transform = global_transform
-	_physics_query_params.shape = _overlap_capsule
-	_physics_query_params.margin = EPSILON
-	var result := space_state.collide_shape(_physics_query_params, 3)
-
-	# if not overlapping with anything, exist
-	if result.is_empty():
-		return
-
-	# For each pair of points, compute how far to push the player out of them
-	var delta:Vector3 = Vector3.ZERO
-	var collision:int = result.size() / 2
-	for collision_idx in range(0, collision):
-		var idx_1 = collision_idx * 2
-		var idx_2 = idx_1 + 1
-		delta += result[idx_2] - result[idx_1]
-
-	global_position += delta
+#endregion
 
 func _get_collision(start:Transform3D, dir:Vector3, dist:float, collision:OpenKCCCollision) -> bool:
 	var space_state = get_world_3d().direct_space_state
@@ -84,6 +116,28 @@ func _get_collision(start:Transform3D, dir:Vector3, dist:float, collision:OpenKC
 	collision.point = rest["point"]
 	collision.normal = rest["normal"]
 	return true
+
+## Push the character out of overlapping objects
+func push_out_overlapping():
+	var space_state = get_world_3d().direct_space_state
+	_physics_query_params.transform = global_transform
+	_physics_query_params.shape = _overlap_capsule
+	_physics_query_params.margin = EPSILON
+	var result := space_state.collide_shape(_physics_query_params, 3)
+
+	# if not overlapping with anything, exist
+	if result.is_empty():
+		return
+
+	# For each pair of points, compute how far to push the player out of them
+	var delta:Vector3 = Vector3.ZERO
+	var collision:int = result.size() / 2
+	for collision_idx in range(0, collision):
+		var idx_1 = collision_idx * 2
+		var idx_2 = idx_1 + 1
+		delta += result[idx_2] - result[idx_1]
+
+	global_position += delta
 
 func setup_shape():
 	_capsule = CapsuleShape3D.new()
