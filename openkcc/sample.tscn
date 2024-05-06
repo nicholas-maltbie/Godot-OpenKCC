@@ -33,7 +33,6 @@ block_style = 6
 transform = Transform3D(0.47938, -0.86878, -0.124161, -0.212969, -0.252408, 0.943893, -0.851375, -0.426041, -0.306022, 0, 0, 0)
 shadow_enabled = true
 directional_shadow_blend_splits = true
-directional_shadow_pancake_size = 0.0
 
 [node name="Label" type="Label" parent="."]
 anchors_preset = 1

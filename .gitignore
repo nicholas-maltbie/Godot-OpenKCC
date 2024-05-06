@@ -72,3 +72,8 @@ test_results/
 
 # Temporary files
 *.tmp
+
+# Generated documentation files
+openkcc/doc
+doc/_site
+doc/api
