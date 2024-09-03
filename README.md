@@ -1,63 +1,12 @@
 # OpenKCC Godot
 
-## Style Guide
+This project is a sample of the Open Kinematic Character Controller for the
+Godot game engine. A Kinematic Character Controller (KCC) provides a
+way to control a character avatar as a kinematic object that will
+interact with the environment.
 
-Style guides used for project by language:
-
-* GDScript : [GDScript Style Guide](https://docs.godotengine.org/en/stable/tutorials/scripting/gdscript/gdscript_styleguide.html)
-* C# : [C# Style Guide](https://docs.godotengine.org/en/stable/tutorials/scripting/c_sharp/c_sharp_style_guide.html)
-* C++ : [Code Style Guides : C++ and Objective-C](https://docs.godotengine.org/en/stable/contributing/development/code_style_guidelines.html#c-and-objective-c)
-
-### Linting
-
-C++ formatting via [clang-format](https://clang.llvm.org/docs/ClangFormat.html).
-Can be installed format via pip.
-
-```PowerShell
-# Install
-python -m pip install clang-format
-
-# Find formatting via clang-format
-clang-format src/*.cpp --dry-run
-clang-format src/*.h --dry-run
-
-# Fix formatting via clang-format
-clang-format src/*.cpp -i
-clang-format src/*.h -i
-```
-
-GDScript linting via [godot-gdscript-toolkit](https://github.com/Scony/godot-gdscript-toolkit)
-with the `gdlint` command
-
-```PowerShell
-# Install gdlint via pip
-pip3 install gdtoolkit
-
-# Run gdlint on openkcc files
-gdlint openkcc demo-project/scripts demo-project/tests
-```
-
-_Note: still in progress_ C# linting via [dotnet format](https://github.com/dotnet/format)
-can be installed via dotnet in repo.
-
-```PowerShell
-# Install via dotnet, uses .config/dotnet-tools.json
-dotnet tool restore
-
-# Run dotnet-format command via dotnet tool run
-dotnet tool run dotnet-format .\demo-project\GodotOpenKCC.sln --check
-```
-
-_Note: still in progress_ Markdown linting via [markdownlint](https://github.com/DavidAnson/markdownlint)
-can be installed via npm.
-
-```PowerShell
-# Install cli version via npm
-npm install -g markdownlint-cli
-
-# Run on local repo
-markdownlint .
-```
+OpenKCC is an open source project hosted at
+[https://github.com/nicholas-maltbie/Godot-OpenKCC](https://github.com/nicholas-maltbie/Godot-OpenKCC).
 
 ## Project Setup
 
@@ -85,14 +34,6 @@ scons target=editor
 # Note, I ran into some issues with the build and multi threading and
 #  some of the build dependencies attaching a flag such as -j1 at the end
 #  seemed to resolve those errors.
-```
-
-## Tests
-
-Run tests for project with [GUT](https://github.com/bitwes/Gut)
-
-```PowerShell
-godot -d -s --path demo-project addons/gut/gut_cmdln.gd
 ```
 
 ## Build
@@ -183,4 +124,71 @@ gdxml2yml --filter demo-project/doc/classes demo-project/doc/classes `
 
 # Create site with docfx
 dotnet tool run docfx doc/docfx.json --serve
+```
+
+## Style Guide
+
+Style guides used for project by language:
+
+* GDScript : [GDScript Style Guide](https://docs.godotengine.org/en/stable/tutorials/scripting/gdscript/gdscript_styleguide.html)
+* C# : [C# Style Guide](https://docs.godotengine.org/en/stable/tutorials/scripting/c_sharp/c_sharp_style_guide.html)
+* C++ : [Code Style Guides : C++ and Objective-C](https://docs.godotengine.org/en/stable/contributing/development/code_style_guidelines.html#c-and-objective-c)
+
+## Tests
+
+Run tests for project with [GUT](https://github.com/bitwes/Gut)
+
+```PowerShell
+godot -d -s --path demo-project addons/gut/gut_cmdln.gd
+```
+
+## Linting
+
+C++ formatting via [clang-format](https://clang.llvm.org/docs/ClangFormat.html).
+Can be installed format via pip.
+
+```PowerShell
+# Install
+python -m pip install clang-format
+
+# Find formatting via clang-format
+clang-format src/*.cpp --dry-run
+clang-format src/*.h --dry-run
+
+# Fix formatting via clang-format
+clang-format src/*.cpp -i
+clang-format src/*.h -i
+```
+
+GDScript linting via [godot-gdscript-toolkit](https://github.com/Scony/godot-gdscript-toolkit)
+with the `gdlint` command
+
+```PowerShell
+# Install gdlint via pip
+pip3 install gdtoolkit
+
+# Run gdlint on openkcc files
+gdlint openkcc demo-project/scripts demo-project/tests
+```
+
+_Note: still in progress_ C# linting via [dotnet format](https://github.com/dotnet/format)
+can be installed via dotnet in repo.
+
+```PowerShell
+# Install via dotnet, uses .config/dotnet-tools.json
+dotnet tool restore
+
+# Run dotnet-format command via dotnet tool run
+dotnet tool run dotnet-format .\demo-project\GodotOpenKCC.sln --check
+```
+
+_Note: still in progress_ Markdown linting via [markdownlint](https://github.com/DavidAnson/markdownlint)
+can be installed via npm.
+
+```PowerShell
+# Install cli version via npm
+npm install -g markdownlint-cli
+
+# Run on local repo
+markdownlint .
 ```
