@@ -7,7 +7,7 @@ jobs:
     name: 🧪 Run Tests
     runs-on: ubuntu-20.04
     container:
-      image: barichello/godot-ci:4.2
+      image: barichello/godot-ci:4.2.1
     steps:
       - uses: actions/checkout@v3
       - run: git config --global --add safe.directory $GITHUB_WORKSPACE

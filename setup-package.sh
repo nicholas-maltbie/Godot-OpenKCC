@@ -12,7 +12,7 @@
 # Arguments:
 #
 #   -p $package_path - Required, path to package folder of project,
-#       Should be something like "openkcc\addons\openkcc"
+#       Should be something like "./openkcc"
 #   [-t $tag] - Optional, tag version to checkout before building
 #       package. If provided, will create a new branch with
 #       the name pattern "release/$tag"
@@ -40,7 +40,7 @@ show_help () {
   echo "  Arguments:"
   echo ""
   echo "    -p \$package_path - Required, path to package folder of project,"
-  echo "        Should be something like \"openkcc/addons/openkcc\""
+  echo "        Should be something like \"./openkcc\""
   echo "    [-t \$tag] - Optional, tag version to checkout before building"
   echo "        package. If provided, will create a new branch with"
   echo "        the name pattern \"release/\$tag\""

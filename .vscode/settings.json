@@ -1,5 +1,5 @@
 {
-    "gut-extension.additionalOptions": "-d --path ./openkcc",
+    "gut-extension.additionalOptions": "-d --path ./demo-project",
     "files.associations": {
         "type_traits": "cpp",
         "ostream": "cpp",

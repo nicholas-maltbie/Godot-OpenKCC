@@ -21,7 +21,7 @@ jobs:
         with:
           dotnet-version: '7.x'
       - run: dotnet tool restore
-      - run: dotnet tool run dotnet-format ./openkcc/GodotOpenKCC.sln --check
+      - run: dotnet tool run dotnet-format ./demo-project/GodotOpenKCC.sln --check
 
   gd-lint:
     name: 🧹 GDScript lint
@@ -33,7 +33,7 @@ jobs:
           python-version: '3.10' 
           cache: 'pip'
       - run: pip install gdtoolkit
-      - run: gdlint openkcc/addons/openkcc openkcc/scripts openkcc/tests
+      - run: gdlint openkcc demo-project/scripts demo-project/tests
 
   markdown-lint:
     name: 🧹 Markdown lint
