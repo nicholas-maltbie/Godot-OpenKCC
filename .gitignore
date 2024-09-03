@@ -4,11 +4,11 @@ __pycache__
 *.pyc
 
 # Godot 4+ specific ignores
-web-/.godot/
+demo-project/.godot/
 
 # Binairy addons
-web-/addons/debug_draw_3d/libs/*
-web-/addons/debug_draw_3d/csharp/*
+demo-project/addons/debug_draw_3d/libs/*
+demo-project/addons/debug_draw_3d/csharp/*
 
 # Temporary asset list for building
 .lfs-assets-id
@@ -31,10 +31,10 @@ openkcc/libs/*.exp
 openkcc/libs/*.lib
 
 # Linux so failes
-web-/libs/*.so
+demo-project/libs/*.so
 
 # Mac framework files
-web-/libs/*.framework
+demo-project/libs/*.framework
 
 # Javascript wasm files
 openkcc/libs/*.wasm
@@ -74,6 +74,6 @@ test_results/
 *.tmp
 
 # Generated documentation files
-web-/doc
+demo-project/doc
 doc/_site
 doc/api
