@@ -64,6 +64,7 @@ scons platform=windows target=template_release
 # Optional: Download redit tool
 $url = "https://github.com/electron/rcedit/releases/download/v1.1.1/rcedit-x64.exe"
 $out = "external\rcedit-x64.exe"
+mkdir -p external
 Invoke-WebRequest -Uri $url -OutFile $out
 
 # Export debug windows-desktop build
