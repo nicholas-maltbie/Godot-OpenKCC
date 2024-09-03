@@ -72,9 +72,9 @@ runs:
       shell: bash
       run: |
         echo "::group::🛠️ GDExtesion Compilation 🛠️"
-        scons platform=${{inputs.platform}} arch=${{inputs.arch}} target=${{inputs.target}} ${{inputs.additional}}
+        scons platform=${{inputs.platform}} arch=${{inputs.arch}} target=${{inputs.target}} ${{inputs.additional}} -j4
         if [ "${{inputs.target}}" == "template_release" ] && [ "${{inputs.platform}}" != "android" ]; then
-          scons platform=${{inputs.platform}} arch=${{inputs.arch}} target=${{inputs.target}} ${{inputs.additional}}
+          scons platform=${{inputs.platform}} arch=${{inputs.arch}} target=${{inputs.target}} ${{inputs.additional}} -j4
         fi
         echo "::endgroup::"
 

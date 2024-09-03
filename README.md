@@ -20,7 +20,7 @@ deployed with each update to the codebase.
 
 ## Project Setup
 
-Install Godot v4.2-stable, then make sure to setup the build tools for the project.
+Install Godot v4.2.2-stable, then make sure to setup the build tools for the project.
 Setup guide for required tools by platform: [Building from Source](https://docs.godotengine.org/en/stable/contributing/development/compiling/index.html)
 
 Using the GDExtensions to develop with C++, see [GDExtension C++ example](https://docs.godotengine.org/en/stable/tutorials/scripting/gdextension/gdextension_cpp_example.html)
@@ -35,11 +35,11 @@ from Godot's docs for more details.
 git -C godot-cpp submodule update --init
 
 # Setup build platform tools for windows and web environment
-scons --directory godot-cpp
+scons --directory godot-cpp -j4
 
 # Build openkcc libraries for your development platform.
-scons
-scons target=editor
+scons -j4
+scons target=editor -j4
 
 # Note, I ran into some issues with the build and multi threading and
 #  some of the build dependencies attaching a flag such as -j1 at the end
@@ -58,8 +58,8 @@ with godot.
 
 ```PowerShell
 # Build libraries for openkcc
-scons --directory godot-cpp platform=windows
-scons platform=windows target=template_release
+scons --directory godot-cpp platform=windows -j4
+scons platform=windows target=template_release -j4
 
 # Optional: Download redit tool
 $url = "https://github.com/electron/rcedit/releases/download/v1.1.1/rcedit-x64.exe"
@@ -89,8 +89,8 @@ Requires a custom extension built [Compiling for the Web: GDExtension](https://d
 
 ```PowerShell
 # Build libraries for openkcc
-scons --directory godot-cpp platform=web
-scons platform=web target=template_release
+scons --directory godot-cpp platform=web -j4
+scons platform=web target=template_release -j4
 
 # Export debug web build
 godot -v -e --path demo-project --headless --quit-after 100
