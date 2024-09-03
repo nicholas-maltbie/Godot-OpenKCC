@@ -31,10 +31,10 @@ openkcc/libs/*.exp
 openkcc/libs/*.lib
 
 # Linux so failes
-demo-project/libs/*.so
+openkcc/libs/*.so
 
 # Mac framework files
-demo-project/libs/*.framework
+openkcc/libs/*.framework
 
 # Javascript wasm files
 openkcc/libs/*.wasm
