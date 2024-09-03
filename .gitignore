@@ -4,11 +4,11 @@ __pycache__
 *.pyc
 
 # Godot 4+ specific ignores
-openkcc/.godot/
+web-/.godot/
 
 # Binairy addons
-openkcc/addons/debug_draw_3d/libs/*
-openkcc/addons/debug_draw_3d/csharp/*
+web-/addons/debug_draw_3d/libs/*
+web-/addons/debug_draw_3d/csharp/*
 
 # Temporary asset list for building
 .lfs-assets-id
@@ -26,18 +26,18 @@ src/*.bc
 
 # Ignore generated extension files
 # Windows generated files
-openkcc/addons/openkcc/libs/*.dll
-openkcc/addons/openkcc/libs/*.exp
-openkcc/addons/openkcc/libs/*.lib
+openkcc/libs/*.dll
+openkcc/libs/*.exp
+openkcc/libs/*.lib
 
 # Linux so failes
-openkcc/addons/openkcc/libs/*.so
+web-/libs/*.so
 
 # Mac framework files
-openkcc/addons/openkcc/libs/*.framework
+web-/libs/*.framework
 
 # Javascript wasm files
-openkcc/addons/openkcc/libs/*.wasm
+openkcc/libs/*.wasm
 
 # Binaries
 .DS_Store
@@ -74,6 +74,6 @@ test_results/
 *.tmp
 
 # Generated documentation files
-openkcc/doc
+web-/doc
 doc/_site
 doc/api

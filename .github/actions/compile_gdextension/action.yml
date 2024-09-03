@@ -18,7 +18,7 @@ inputs:
     default: "bin"
   output_libs_path:
     description: Path to compiled libraries
-    default: "openkcc/addons/openkcc/libs"
+    default: "openkcc/libs"
 runs:
   using: "composite"
   steps:
