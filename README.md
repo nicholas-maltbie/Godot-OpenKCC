@@ -34,7 +34,7 @@ with the `gdlint` command
 pip3 install gdtoolkit
 
 # Run gdlint on openkcc files
-gdlint web-/addons/openkcc demo-project/scripts demo-project/tests
+gdlint openkcc demo-project/scripts demo-project/tests
 ```
 
 _Note: still in progress_ C# linting via [dotnet format](https://github.com/dotnet/format)
@@ -45,7 +45,7 @@ can be installed via dotnet in repo.
 dotnet tool restore
 
 # Run dotnet-format command via dotnet tool run
-dotnet tool run dotnet-format .\web-\GodotOpenKCC.sln --check
+dotnet tool run dotnet-format .\demo-project\GodotOpenKCC.sln --check
 ```
 
 _Note: still in progress_ Markdown linting via [markdownlint](https://github.com/DavidAnson/markdownlint)
@@ -92,7 +92,7 @@ scons target=editor
 Run tests for project with [GUT](https://github.com/bitwes/Gut)
 
 ```PowerShell
-godot -d -s --path web- addons/gut/gut_cmdln.gd
+godot -d -s --path demo-project addons/gut/gut_cmdln.gd
 ```
 
 ## Build
@@ -116,9 +116,9 @@ $out = "external\rcedit-x64.exe"
 Invoke-WebRequest -Uri $url -OutFile $out
 
 # Export debug windows-desktop build
-godot -v -e --path web- --headless --quit-after 100
+godot -v -e --path demo-project --headless --quit-after 100
 mkdir -p builds/Windows
-godot --path web- --headless --export-release windows-desktop
+godot --path demo-project --headless --export-release windows-desktop
 ```
 
 ### Build Web Platform
@@ -141,10 +141,10 @@ scons --directory godot-cpp platform=web
 scons platform=web target=template_release
 
 # Export debug web build
-godot -v -e --path web- --headless --quit-after 100
+godot -v -e --path demo-project --headless --quit-after 100
 mkdir -p builds/WebGL
 godot --path demo-project --headless --export-release web
-cp web-/coi-serviceworker.min.js builds/WebGL/coi-serviceworker.min.js
+cp demo-project/coi-serviceworker.min.js builds/WebGL/coi-serviceworker.min.js
 ```
 
 Host website for local testing via [python -m http.server](https://docs.python.org/3/library/http.server.html)
@@ -178,7 +178,8 @@ godot --path demo-project --doctool doc/godot
 godot --path demo-project --doctool doc/classes --gdscript-docs res://scripts
 
 # Convert docs to yml
-gdxml2yml --filter demo-project/doc/classes demo-project/doc/classes demo-project/doc/godot doc/api
+gdxml2yml --filter demo-project/doc/classes demo-project/doc/classes `
+    demo-project/doc/godot doc/api
 
 # Create site with docfx
 dotnet tool run docfx doc/docfx.json --serve

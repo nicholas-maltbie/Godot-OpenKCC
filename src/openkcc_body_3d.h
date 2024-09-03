@@ -21,6 +21,6 @@ public:
 	~OpenKCCBody3D();
 };
 
-} //namespace godot
+} //namespace openkcc
 
 #endif // OPENKCCBODY3D_H
