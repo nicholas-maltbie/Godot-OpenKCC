@@ -8,6 +8,16 @@ interact with the environment.
 OpenKCC is an open source project hosted at
 [https://github.com/nicholas-maltbie/Godot-OpenKCC](https://github.com/nicholas-maltbie/Godot-OpenKCC).
 
+This is an open source project licensed under a [MIT License](./License.txt).
+Feel free to use a build of the project for your own work. If you see an
+error in the project or have any suggestions, write an issue or make a pull
+request, I'll happily include any suggestions or ideas into the project.
+
+You can see a demo of the project running here: [https://openkcc.nickmaltbie.com/](https://openkcc.nickmaltbie.com/).
+The project hosted on the website is up to date with the most recent version on
+the `main` branch of this github repo and is automatically
+deployed with each update to the codebase.
+
 ## Project Setup
 
 Install Godot v4.2-stable, then make sure to setup the build tools for the project.
