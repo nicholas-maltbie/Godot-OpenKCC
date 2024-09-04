@@ -1,7 +1,7 @@
 extends GutTest
 
 const MenuManager = preload("res://scripts/menu_manager.gd")
-const menu_scene = preload("res://scenes/menu.tscn")
+const MenuScene = preload("res://scenes/menu.tscn")
 
 var _menu:MenuManager
 var _sender
@@ -10,7 +10,7 @@ func before_all():
 	pass
 
 func before_each():
-	_menu = menu_scene.instantiate()
+	_menu = MenuScene.instantiate()
 	_sender = InputSender.new(_menu)
 	add_child_autofree(_menu)
 
