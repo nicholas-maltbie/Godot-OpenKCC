@@ -1,8 +1,9 @@
-[gd_scene load_steps=9 format=3 uid="uid://ibio3sqc8sw4"]
+[gd_scene load_steps=10 format=3 uid="uid://ibio3sqc8sw4"]
 
-[ext_resource type="PackedScene" uid="uid://dj26sacnhty4r" path="res://addons/devblocks/blocks/basic_block.tscn" id="1_3c4qc"]
-[ext_resource type="PackedScene" uid="uid://brsdadxyheo2k" path="res://character.tscn" id="2_tova5"]
-[ext_resource type="Script" path="res://scripts/constant_rotation.gd" id="3_fjean"]
+[ext_resource type="PackedScene" uid="uid://dj26sacnhty4r" path="res://addons/devblocks/blocks/basic_block.tscn" id="1_qt6ee"]
+[ext_resource type="PackedScene" uid="uid://brsdadxyheo2k" path="res://example/character.tscn" id="2_dr2yj"]
+[ext_resource type="Script" path="res://scripts/constant_rotation.gd" id="3_h22et"]
+[ext_resource type="PackedScene" uid="uid://b3yfb8efh4kwb" path="res://scenes/menu.tscn" id="4_rnmvr"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_j3jj1"]
 
@@ -25,7 +26,7 @@ size = Vector3(5, 3, 1)
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_3gy7d")
 
-[node name="Floor" parent="." instance=ExtResource("1_3c4qc")]
+[node name="Floor" parent="." instance=ExtResource("1_qt6ee")]
 transform = Transform3D(100, 0, 0, 0, 1, 0, 0, 0, 100, 0, -0.5, 0)
 block_style = 6
 
@@ -34,21 +35,11 @@ transform = Transform3D(0.47938, -0.86878, -0.124161, -0.212969, -0.252408, 0.94
 shadow_enabled = true
 directional_shadow_blend_splits = true
 
-[node name="Label" type="Label" parent="."]
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -191.0
-offset_bottom = 23.0
-grow_horizontal = 0
-pivot_offset = Vector2(1, 0)
-text = "Press Esc or P to Toggle Input"
-
-[node name="Player" parent="." instance=ExtResource("2_tova5")]
+[node name="Player" parent="." instance=ExtResource("2_dr2yj")]
 
 [node name="Spinning Block" type="StaticBody3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0816402, 0.641941, 8.62798)
-script = ExtResource("3_fjean")
+script = ExtResource("3_h22et")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Spinning Block"]
 shape = SubResource("BoxShape3D_onds5")
@@ -61,67 +52,69 @@ mesh = SubResource("BoxMesh_d7eg0")
 [node name="Basic Ramp" type="Node3D" parent="."]
 transform = Transform3D(0.840349, 0, -0.542046, 0, 1, 0, 0.542046, 0, 0.840349, 0.0934992, 0, -8.70205)
 
-[node name="BasicBlock2" parent="Basic Ramp" instance=ExtResource("1_3c4qc")]
+[node name="BasicBlock2" parent="Basic Ramp" instance=ExtResource("1_qt6ee")]
 transform = Transform3D(-7.99997, 6.03982e-07, 0.00722754, -1.20797e-06, -4, -1.84605e-14, 0.0192668, -1.45445e-09, 2.99999, 0.164282, 2, -3.93431)
 
-[node name="BasicBlock3" parent="Basic Ramp" instance=ExtResource("1_3c4qc")]
+[node name="BasicBlock3" parent="Basic Ramp" instance=ExtResource("1_qt6ee")]
 transform = Transform3D(-0.0166883, 0.00481671, 2.99999, 4, 3.4641, 0, -6.92818, 1.99999, -0.00722754, -2.29082, 0, -0.196331)
 
 [node name="Stairs" type="Node3D" parent="."]
 
-[node name="BasicBlock4" parent="Stairs" instance=ExtResource("1_3c4qc")]
+[node name="BasicBlock4" parent="Stairs" instance=ExtResource("1_qt6ee")]
 transform = Transform3D(8, 0, 0, 0, 0.2, 0, 0, 0, 3, 6.563, 0.1, -0.098)
 
-[node name="BasicBlock5" parent="Stairs" instance=ExtResource("1_3c4qc")]
+[node name="BasicBlock5" parent="Stairs" instance=ExtResource("1_qt6ee")]
 transform = Transform3D(8, 0, 0, 0, 0.2, 0, 0, 0, 3, 7.363, 0.3, -0.098)
 
-[node name="BasicBlock6" parent="Stairs" instance=ExtResource("1_3c4qc")]
+[node name="BasicBlock6" parent="Stairs" instance=ExtResource("1_qt6ee")]
 transform = Transform3D(8, 0, 0, 0, 0.2, 0, 0, 0, 3, 8.163, 0.5, -0.098)
 
 [node name="Curve" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18.5247, -1.90735e-06, -12.1676)
 
-[node name="BasicBlock4" parent="Curve" instance=ExtResource("1_3c4qc")]
+[node name="BasicBlock4" parent="Curve" instance=ExtResource("1_qt6ee")]
 transform = Transform3D(4.82143, -3.64008e-07, -2.39395, -1.20797e-06, -4, -1.84605e-14, -6.38387, 4.81969e-07, -1.80804, -2.29303, 2, -1.19378)
 
-[node name="BasicBlock5" parent="Curve" instance=ExtResource("1_3c4qc")]
+[node name="BasicBlock5" parent="Curve" instance=ExtResource("1_qt6ee")]
 transform = Transform3D(-3.22606, 2.43561e-07, -2.74526, -1.20797e-06, -4, 2.2793e-14, -7.32069, 5.52697e-07, 1.20978, 1.22597, 2, -1.07148)
 
 [node name="Angled Blocks" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20.6837, 0, -3.51823)
 
-[node name="BasicBlock6" parent="Angled Blocks" instance=ExtResource("1_3c4qc")]
+[node name="BasicBlock6" parent="Angled Blocks" instance=ExtResource("1_qt6ee")]
 transform = Transform3D(5.51788, 0.655134, -2.11589, 5.72396, -1.21431, 1.88764, -0.888453, -3.7545, -0.979722, -0.945593, -1.5927, 2.42133)
 
-[node name="BasicBlock7" parent="Angled Blocks" instance=ExtResource("1_3c4qc")]
+[node name="BasicBlock7" parent="Angled Blocks" instance=ExtResource("1_qt6ee")]
 transform = Transform3D(-7.7452, 0.57151, 0.616796, -1.69443, -0.118042, -2.9306, -1.06804, -3.9572, 0.176498, 3.37431, -0.574744, 2.28812)
 
-[node name="BasicBlock14" parent="Angled Blocks" instance=ExtResource("1_3c4qc")]
+[node name="BasicBlock14" parent="Angled Blocks" instance=ExtResource("1_qt6ee")]
 transform = Transform3D(1.00257, 0.00699954, 2.97635, -7.93615, -0.0554084, 0.376, 0.111698, -3.99961, -1.301e-07, -7.31509, 4.98555, 2.11408)
 
-[node name="BasicBlock15" parent="Angled Blocks" instance=ExtResource("1_3c4qc")]
+[node name="BasicBlock15" parent="Angled Blocks" instance=ExtResource("1_qt6ee")]
 transform = Transform3D(-5.91472, -0.0892935, 2.01889, 5.38242, 0.060672, 2.219, -0.213755, 3.99854, 0.011415, -4.68979, 1.61012, 2.14292)
 
 [node name="Angled Sope" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20.3307, 0, 3.28631)
 
-[node name="BasicBlock8" parent="Angled Sope" instance=ExtResource("1_3c4qc")]
+[node name="BasicBlock8" parent="Angled Sope" instance=ExtResource("1_qt6ee")]
 transform = Transform3D(-6.88895, -0.0999495, -1.52337, -4.06513, 0.040799, 2.58364, -0.130721, 3.99854, -0.064441, -2.1348, 4.98555, 2.8273)
 
-[node name="BasicBlock9" parent="Angled Sope" instance=ExtResource("1_3c4qc")]
+[node name="BasicBlock9" parent="Angled Sope" instance=ExtResource("1_qt6ee")]
 transform = Transform3D(-5.90748, -0.10664, 2.02139, 5.38951, 0.0569739, 2.21663, -0.234366, 3.99817, 0.0223281, -3.1368, 1.61012, 2.85615)
 
 [node name="Angled Box" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -21.0489, 0, 16.7464)
 
-[node name="BasicBlock10" parent="Angled Box" instance=ExtResource("1_3c4qc")]
+[node name="BasicBlock10" parent="Angled Box" instance=ExtResource("1_qt6ee")]
 transform = Transform3D(-6.88895, -0.0999495, -1.52337, -4.06513, 0.040799, 2.58364, -0.130721, 3.99854, -0.064441, -1.63539, 5.08399, 0.285488)
 
-[node name="BasicBlock11" parent="Angled Box" instance=ExtResource("1_3c4qc")]
+[node name="BasicBlock11" parent="Angled Box" instance=ExtResource("1_qt6ee")]
 transform = Transform3D(-5.91472, -0.0892935, 2.01889, 5.38242, 0.060672, 2.219, -0.213755, 3.99854, 0.011415, -2.58509, 1.61012, 0.441088)
 
-[node name="BasicBlock12" parent="Angled Box" instance=ExtResource("1_3c4qc")]
+[node name="BasicBlock12" parent="Angled Box" instance=ExtResource("1_qt6ee")]
 transform = Transform3D(-6.88895, -0.0999495, -1.52337, -0.447571, 3.98953, 0.137386, 4.04253, 0.271378, -2.58079, -1.58309, 3.41517, -1.25701)
 
-[node name="BasicBlock13" parent="Angled Box" instance=ExtResource("1_3c4qc")]
+[node name="BasicBlock13" parent="Angled Box" instance=ExtResource("1_qt6ee")]
 transform = Transform3D(-5.91472, -0.0892935, 2.01889, 0.206949, 3.99108, 0.184554, -5.38268, 0.251565, -2.21134, -2.58509, 3.1805, 2.11039)
+
+[node name="Menu" parent="." instance=ExtResource("4_rnmvr")]

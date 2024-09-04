@@ -33,7 +33,13 @@ var _can_jump:bool = false
 func _ready() -> void:
 	setup_shape()
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	MenuBus.menu_opened.connect(_on_menu_opened)
+	MenuBus.menu_closed.connect(_on_menu_closed)
 	allow_movement = true
+
+func _exit_tree():
+	MenuBus.menu_opened.disconnect(_on_menu_opened)
+	MenuBus.menu_closed.disconnect(_on_menu_closed)
 
 func _physics_process(_delta) -> void:
 	# Check for overlapping objects.
@@ -75,6 +81,12 @@ func _physics_process(_delta) -> void:
 	move_and_slide(move * _delta, true)
 	move_and_slide(world_velocity * _delta, false)
 
+func _on_menu_opened() -> void:
+	allow_movement = false
+
+func _on_menu_closed() -> void:
+	allow_movement = true
+
 func _input(event:InputEvent) -> void:
 	# On web platform, mouse needs to be clicked in order to be
 	# captured properly. Or as a direct input response like pressing a key.
@@ -82,12 +94,6 @@ func _input(event:InputEvent) -> void:
 		if event is InputEventMouseButton:
 			allow_movement = true
 			Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-
-	if event.is_action_pressed("Exit"):
-		# Set mouse to captured mode on input form player
-		# This needs to be done in _input for web support
-		allow_movement = !allow_movement
-		capture_mouse()
 
 	if event.is_action("Jump"):
 		_input_jump = event.is_pressed()
@@ -124,9 +130,3 @@ func _apply_jump():
 
 func moving_up() -> bool:
 	return world_velocity.dot(up) > 0
-
-func capture_mouse() -> void:
-	if allow_movement:
-		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-	else:
-		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
