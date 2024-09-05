@@ -1,5 +1,6 @@
 class_name OpenKCCBody3DGD
 extends StaticBody3D
+## Implementation of basic bounce and grounded movement
 
 const DEFAULT_GROUNDED_HEIGHT = 0.01
 const DEFAULT_MAX_WALK_ANGLE = 60

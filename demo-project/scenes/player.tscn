@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://dwpmuwlxa4cqr"]
 
-[ext_resource type="Script" path="res://scripts/character.gd" id="1_qm3hf"]
+[ext_resource type="Script" path="res://scripts/character.gd" id="1_fxq6d"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_gyyi2"]
 margin = 0.001
@@ -10,7 +10,7 @@ margin = 0.001
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5kkw2"]
 
 [node name="Player" type="StaticBody3D"]
-script = ExtResource("1_qm3hf")
+script = ExtResource("1_fxq6d")
 move_speed = 3.0
 
 [node name="CollisionBody3D" type="CollisionShape3D" parent="."]
