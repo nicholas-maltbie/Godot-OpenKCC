@@ -78,8 +78,8 @@ func _physics_process(_delta) -> void:
 	if is_on_floor() and not is_sliding():
 		move *= Quaternion(_ground_normal, up)
 
-	move_and_slide(move * _delta, true)
-	move_and_slide(world_velocity * _delta, false)
+	move_and_slide(move * _delta, true, is_on_floor())
+	move_and_slide(world_velocity * _delta, false, false)
 
 func _on_menu_opened() -> void:
 	allow_movement = false

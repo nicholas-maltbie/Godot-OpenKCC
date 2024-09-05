@@ -175,7 +175,7 @@ func setup_shape():
 	_overlap_capsule.height = height
 	_overlap_capsule.radius = radius
 
-func move_and_slide(movement:Vector3, stop_slide_up_walls:bool=true) -> void:
+func move_and_slide(movement:Vector3, stop_slide_up_walls:bool=true, can_snap_up:bool=true) -> void:
 	var bounce:int = 0
 	var remaining:Vector3 = movement
 	var start := global_transform
@@ -209,7 +209,8 @@ func move_and_slide(movement:Vector3, stop_slide_up_walls:bool=true) -> void:
 
 		# Check if the player is running into a perpendicular surface
 		var perpendicular_bounce:bool = _check_perpendicular_bounce(_collision, remaining)
-		if perpendicular_bounce and vertical_snap_up > 0 and _can_snap_up(vertical_snap_up, remaining, start.origin):
+		var valid_snap = perpendicular_bounce and can_snap_up and vertical_snap_up > 0
+		if valid_snap and _can_snap_up(vertical_snap_up, remaining, start.origin):
 			# Decrease remaining momentum slightly
 			dist_remaining /= sqrt(2)
 			
