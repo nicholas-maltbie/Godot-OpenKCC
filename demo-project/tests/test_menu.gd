@@ -25,16 +25,17 @@ func test_menu_toggle():
 	# Assert that menu starts off closed
 	assert_false(_menu.actions.visible)
 	assert_false(_menu.menu_open)
+	assert_eq(_menu.mouse_mode, Input.MOUSE_MODE_CAPTURED)
 
 	# Toggle manually via input bus
 	MenuBus.toggle_menu.emit()
 	assert_true(_menu.actions.visible)
 	assert_true(_menu.menu_open)
-	assert_eq(Input.get_mouse_mode(), Input.MOUSE_MODE_VISIBLE)
+	assert_eq(_menu.mouse_mode, Input.MOUSE_MODE_VISIBLE)
 	MenuBus.toggle_menu.emit()
 	assert_false(_menu.actions.visible)
 	assert_false(_menu.menu_open)
-	assert_eq(Input.get_mouse_mode(), Input.MOUSE_MODE_CAPTURED)
+	assert_eq(_menu.mouse_mode, Input.MOUSE_MODE_CAPTURED)
 
 func test_menu_on_input():
 	# Assert that menu starts off closed

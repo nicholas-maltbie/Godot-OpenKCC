@@ -6,9 +6,11 @@ extends Node
 
 # Is the menu open
 var menu_open:bool = false
+var mouse_mode
 
 func _ready() -> void:
 	actions.set_visible(false)
+	mouse_mode = Input.MOUSE_MODE_CAPTURED
 	MenuBus.toggle_menu.connect(_toggle_menu)
 	resume_button.pressed.connect(_toggle_menu)
 	quit_button.pressed.connect(_quit_game)
@@ -32,8 +34,9 @@ func _quit_game() -> void:
 
 func _capture_mouse() -> void:
 	if menu_open:
-		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+		mouse_mode = Input.MOUSE_MODE_VISIBLE
 		MenuBus.menu_opened.emit()
 	else:
-		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+		mouse_mode = Input.MOUSE_MODE_CAPTURED
 		MenuBus.menu_closed.emit()
+	Input.set_mouse_mode(mouse_mode)
