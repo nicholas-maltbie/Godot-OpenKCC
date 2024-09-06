@@ -38,11 +38,20 @@ extends Node3D
 			step_width = value
 			_build_mesh()
 
+## Texture for stairs
+@export var texture:Texture2D:
+	get:
+		return texture
+	set(value):
+		if value != texture:
+			texture = value
+			_build_mesh()
+
 ## Object for the stairs as a child to this
 @export var _stairs_obj:Node3D
 
 func _enter_tree() -> void:
-	if _stairs_obj.get_parent() != self:
+	if _stairs_obj != null and _stairs_obj.get_parent() != self:
 		_stairs_obj = find_child("StairsBody")
 	_build_mesh_if_none_exists()
 
@@ -54,6 +63,15 @@ func _add_square(vertices:PackedVector3Array, v1:Vector3, v2:Vector3, v3:Vector3
 	vertices.push_back(v3)
 	vertices.push_back(v4)
 	vertices.push_back(v1)
+
+func _add_square_uv(uvs:PackedVector2Array, v1:Vector2, v2:Vector2, v3:Vector2, v4:Vector2) -> void:
+	uvs.push_back(v1)
+	uvs.push_back(v2)
+	uvs.push_back(v3)
+
+	uvs.push_back(v3)
+	uvs.push_back(v4)
+	uvs.push_back(v1)
 
 func _build_mesh_if_none_exists() -> void:
 	if _stairs_obj == null:
@@ -67,9 +85,11 @@ func _build_mesh() -> void:
 		_stairs_obj.free()
 	
 	var vertices = PackedVector3Array()
+	var uvs = PackedVector2Array()
 	var mat = StandardMaterial3D.new()
-	var color = Color(0.6, 0.6, 0.6)
+	var color = Color(1, 1, 1)
 	mat.albedo_color = color
+	mat.albedo_texture = texture
 	
 	for step in num_step:
 		# Build each step as two sets of squares
@@ -89,28 +109,57 @@ func _build_mesh() -> void:
 		
 		# Add front face
 		_add_square(vertices, front_bottom_line.v2, front_top_line.v2, front_top_line.v1, front_bottom_line.v1)
+		_add_square_uv(uvs, \
+			Vector2(front_bottom_line.v2.x, front_bottom_line.v2.y), \
+			Vector2(front_top_line.v2.x, front_top_line.v2.y), \
+			Vector2(front_top_line.v1.x, front_top_line.v1.y), \
+			Vector2(front_bottom_line.v1.x, front_bottom_line.v1.y))
 		
 		# Add top face
 		_add_square(vertices, front_top_line.v2, back_top_line.v2, back_top_line.v1, front_top_line.v1)
+		_add_square_uv(uvs, \
+			Vector2(front_top_line.v2.x, front_top_line.v2.z), \
+			Vector2(back_top_line.v2.x, back_top_line.v2.z), \
+			Vector2(back_top_line.v1.x, back_top_line.v1.z), \
+			Vector2(front_top_line.v1.x, front_top_line.v1.z))
 
 		# Add side faces
 		_add_square(vertices, front_top_line.v1, back_top_line.v1, base_back_line.v1, base_front_line.v1)
 		_add_square(vertices, base_front_line.v2, base_back_line.v2, back_top_line.v2, front_top_line.v2)
+		_add_square_uv(uvs, \
+			Vector2(front_top_line.v2.z, front_top_line.v2.y), \
+			Vector2(back_top_line.v2.z, back_top_line.v2.y), \
+			Vector2(base_back_line.v1.z, base_back_line.v1.y), \
+			Vector2(base_front_line.v1.z, base_front_line.v1.y))
+		_add_square_uv(uvs, \
+			Vector2(base_front_line.v2.z, base_front_line.v2.y), \
+			Vector2(base_back_line.v2.z, base_back_line.v2.y), \
+			Vector2(back_top_line.v1.z, back_top_line.v1.y), \
+			Vector2(front_top_line.v1.z, front_top_line.v1.y))
 		
 		# Add back face if last step
 		if step == num_step - 1:
 			_add_square(vertices, base_back_line.v1, back_top_line.v1, back_top_line.v2, base_back_line.v2)
+			_add_square_uv(uvs, \
+				Vector2(base_back_line.v2.x, base_back_line.v2.y), \
+				Vector2(back_top_line.v2.x, back_top_line.v2.y), \
+				Vector2(back_top_line.v1.x, back_top_line.v1.y), \
+				Vector2(base_back_line.v1.x, base_back_line.v1.y))
 	
 	var st = SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
 	st.set_material(mat)
+	mat.vertex_color_use_as_albedo = true
 	
-	for v in vertices.size(): 
-		st.add_vertex(vertices[v])
+	for idx in vertices.size():
+		st.set_color(color)
+		st.set_uv(uvs[idx])
+		st.add_vertex(vertices[idx])
 
 	# Add generated mesh to this object
 	var mesh_instance = MeshInstance3D.new()
 	st.generate_normals()
+	st.generate_tangents()
 	mesh_instance.mesh = st.commit()
 
 	var static_body = StaticBody3D.new()

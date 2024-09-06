@@ -209,8 +209,11 @@ func move_and_slide(movement:Vector3, stop_slide_up_walls:bool=true, can_snap_up
 
 		# Check if the player is running into a perpendicular surface
 		var perpendicular_bounce:bool = _check_perpendicular_bounce(_collision, remaining)
-		var valid_snap = perpendicular_bounce and can_snap_up and vertical_snap_up > 0
-		if valid_snap and _can_snap_up(vertical_snap_up, remaining, start.origin):
+		var allow_snap:bool = can_snap_up and vertical_snap_up > 0
+		var bottom:Vector3 = start.origin - height /  2 * up
+		var within_snap_height:bool = (_collision.point - bottom).dot(up) <= vertical_snap_up
+		if perpendicular_bounce and allow_snap and within_snap_height and \
+			_can_snap_up(vertical_snap_up, remaining, start.origin):
 			# Decrease remaining momentum slightly
 			dist_remaining /= sqrt(2)
 			
