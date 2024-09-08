@@ -51,6 +51,9 @@ const EPSILON:float = 0.001
 
 ## Minimum depth required for a stair when moving onto a step.
 @export var step_up_depth:float = 0.3
+
+## Vertical snap down distance the player snap down while walking.
+@export var vertical_snap_down:float = 0.35
 #endregion
 
 ## Direction of up vector for player movement.
@@ -145,8 +148,16 @@ func _get_collision(start:Transform3D, dir:Vector3, dist:float, collision:OpenKC
 	collision.normal = rest["normal"]
 	return true
 
+func _get_snap_down(position:Vector3, dir:Vector3, dist:float) -> Vector3:
+	var snap_transform:Transform3D = Transform3D(global_transform.basis, position)
+	var hit := _get_collision(snap_transform, dir, dist, _collision)
+	if hit and _collision.dist_traveled > skin_width:
+		return dir * _collision.dist_traveled
+
+	return Vector3.ZERO
+
 ## Push the character out of overlapping objects
-func push_out_overlapping():
+func push_out_overlapping() -> void: 
 	var space_state = get_world_3d().direct_space_state
 	_physics_query_params.transform = global_transform
 	_physics_query_params.shape = _overlap_capsule
@@ -167,6 +178,17 @@ func push_out_overlapping():
 
 	global_position += delta
 
+func snap_down(dir:Vector3, max_move:float) -> bool:
+	var snap_down:Vector3 = _get_snap_down(global_position, dir, vertical_snap_down)
+	if snap_down.length() > max_move:
+		snap_down = snap_down.normalized() * max_move
+	
+	if snap_down.length() > EPSILON:
+		global_position += snap_down
+		return true
+	else:
+		return false
+
 func setup_shape():
 	_capsule = CapsuleShape3D.new()
 	_overlap_capsule = CapsuleShape3D.new()
@@ -179,6 +201,7 @@ func move_and_slide(movement:Vector3, stop_slide_up_walls:bool=true, can_snap_up
 	var bounce:int = 0
 	var remaining:Vector3 = movement
 	var start := global_transform
+	var snapped_up:bool = false
 
 	# Compute movement due to each bounce
 	while remaining.length() > EPSILON and bounce < MAX_BOUNCES:
@@ -199,6 +222,7 @@ func move_and_slide(movement:Vector3, stop_slide_up_walls:bool=true, can_snap_up
 
 		var normal:Vector3 = _collision.normal
 		var dist_remaining:float = _collision.dist_remaining
+		remaining = remaining.normalized() * dist_remaining
 
 		# Otherwise this collided with something
 		# Move the object to the collision position
@@ -214,8 +238,7 @@ func move_and_slide(movement:Vector3, stop_slide_up_walls:bool=true, can_snap_up
 		var within_snap_height:bool = (_collision.point - bottom).dot(up) <= vertical_snap_up
 		if perpendicular_bounce and allow_snap and within_snap_height and \
 			_can_snap_up(vertical_snap_up, remaining, start.origin):
-			# Decrease remaining momentum slightly
-			dist_remaining /= sqrt(2)
+			snapped_up = true
 			
 			# move player up if they can snap up a step
 			var distance_move:float = min(dist_remaining, vertical_snap_up)
@@ -239,6 +262,9 @@ func move_and_slide(movement:Vector3, stop_slide_up_walls:bool=true, can_snap_up
 		if stop_slide_up_walls and normal.dot(up) <= EPSILON:
 			# Remove vertical component of remaining movement
 			remaining = Plane(up).project(remaining)
+
+	if snapped_up:
+		start.origin += _get_snap_down(start.origin, -up, vertical_snap_up)
 
 	global_position = start.origin
 

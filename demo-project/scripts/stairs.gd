@@ -64,14 +64,14 @@ func _add_square(vertices:PackedVector3Array, v1:Vector3, v2:Vector3, v3:Vector3
 	vertices.push_back(v4)
 	vertices.push_back(v1)
 
-func _add_square_uv(uvs:PackedVector2Array, v1:Vector2, v2:Vector2, v3:Vector2, v4:Vector2) -> void:
-	uvs.push_back(v1)
-	uvs.push_back(v2)
-	uvs.push_back(v3)
+func _add_square_uv(uvs:PackedVector2Array, v1:Vector2, v2:Vector2, v3:Vector2, v4:Vector2, offset:Vector2) -> void:
+	uvs.push_back(offset - v1)
+	uvs.push_back(offset - v2)
+	uvs.push_back(offset - v3)
 
-	uvs.push_back(v3)
-	uvs.push_back(v4)
-	uvs.push_back(v1)
+	uvs.push_back(offset - v3)
+	uvs.push_back(offset - v4)
+	uvs.push_back(offset - v1)
 
 func _build_mesh_if_none_exists() -> void:
 	if _stairs_obj == null:
@@ -90,6 +90,8 @@ func _build_mesh() -> void:
 	var color = Color(1, 1, 1)
 	mat.albedo_color = color
 	mat.albedo_texture = texture
+
+	var offset = Vector2(step_width, 1)
 	
 	for step in num_step:
 		# Build each step as two sets of squares
@@ -113,7 +115,8 @@ func _build_mesh() -> void:
 			Vector2(front_bottom_line.v2.x, front_bottom_line.v2.y), \
 			Vector2(front_top_line.v2.x, front_top_line.v2.y), \
 			Vector2(front_top_line.v1.x, front_top_line.v1.y), \
-			Vector2(front_bottom_line.v1.x, front_bottom_line.v1.y))
+			Vector2(front_bottom_line.v1.x, front_bottom_line.v1.y), \
+			offset)
 		
 		# Add top face
 		_add_square(vertices, front_top_line.v2, back_top_line.v2, back_top_line.v1, front_top_line.v1)
@@ -121,7 +124,8 @@ func _build_mesh() -> void:
 			Vector2(front_top_line.v2.x, front_top_line.v2.z), \
 			Vector2(back_top_line.v2.x, back_top_line.v2.z), \
 			Vector2(back_top_line.v1.x, back_top_line.v1.z), \
-			Vector2(front_top_line.v1.x, front_top_line.v1.z))
+			Vector2(front_top_line.v1.x, front_top_line.v1.z), \
+			offset)
 
 		# Add side faces
 		_add_square(vertices, front_top_line.v1, back_top_line.v1, base_back_line.v1, base_front_line.v1)
@@ -130,12 +134,14 @@ func _build_mesh() -> void:
 			Vector2(front_top_line.v2.z, front_top_line.v2.y), \
 			Vector2(back_top_line.v2.z, back_top_line.v2.y), \
 			Vector2(base_back_line.v1.z, base_back_line.v1.y), \
-			Vector2(base_front_line.v1.z, base_front_line.v1.y))
+			Vector2(base_front_line.v1.z, base_front_line.v1.y), \
+			offset)
 		_add_square_uv(uvs, \
 			Vector2(base_front_line.v2.z, base_front_line.v2.y), \
 			Vector2(base_back_line.v2.z, base_back_line.v2.y), \
 			Vector2(back_top_line.v1.z, back_top_line.v1.y), \
-			Vector2(front_top_line.v1.z, front_top_line.v1.y))
+			Vector2(front_top_line.v1.z, front_top_line.v1.y), \
+			offset)
 		
 		# Add back face if last step
 		if step == num_step - 1:
@@ -144,7 +150,8 @@ func _build_mesh() -> void:
 				Vector2(base_back_line.v2.x, base_back_line.v2.y), \
 				Vector2(back_top_line.v2.x, back_top_line.v2.y), \
 				Vector2(back_top_line.v1.x, back_top_line.v1.y), \
-				Vector2(base_back_line.v1.x, base_back_line.v1.y))
+				Vector2(base_back_line.v1.x, base_back_line.v1.y), \
+				offset)
 	
 	var st = SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
