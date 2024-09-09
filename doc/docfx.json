@@ -12,9 +12,19 @@
           "dest": "api"
         },
         {
+          "files": ["*.yml", "*.md"],
+          "src": "design",
+          "dest": "design"
+        },
+        {
+          "files": ["*.png"],
+          "src": "design/imgs",
+          "dest": "design/imgs"
+        },
+        {
           "files": [
             "toc.yml",
-            "index.md"
+            "*.md"
           ]
         }
       ],

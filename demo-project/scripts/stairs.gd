@@ -11,7 +11,7 @@ extends Node3D
 			num_step = value
 			_build_mesh()
 
-## height of each step
+## Height of each step
 @export var step_height:float = 0.2:
 	get:
 		return step_height
@@ -20,7 +20,7 @@ extends Node3D
 			step_height = value
 			_build_mesh()
 
-## depth of each step
+## Depth of each step
 @export var step_depth:float = 0.35:
 	get:
 		return step_depth
@@ -29,7 +29,7 @@ extends Node3D
 			step_depth = value
 			_build_mesh()
 
-## depth of each step
+## Width of each step
 @export var step_width:float = 1:
 	get:
 		return step_width
