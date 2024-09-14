@@ -59,3 +59,18 @@ between steps.
 * All the faces on the top are mapped using the coordinates in the XZ plane.
 * All the faces on the sides are mapped using the coordinates in the ZY plane.
 * All the faces on the front are mapped using the coordinates in the XY plane.
+
+## Node Setup
+
+The node setup for the stairs object is configured as a MeshInstance as the
+root node with the [stairs.gd](xref:stairs) script attached. The stairs script
+will generate two children nodes with types [StaticBody3D](xref:StaticBody3D)
+and [CollisionBody3D](xref:CollisionBody3D) to define the shape of the stairs
+in the physics world. Whenever a parameter is updated, the mesh for the
+mesh instance and collision body will both be updated.
+
+```txt
++Stairs (MeshInstance + Stairs.gd)
+|--+ StaticBody (StaticBody3D)
+   |-- CollisionBody3D
+```

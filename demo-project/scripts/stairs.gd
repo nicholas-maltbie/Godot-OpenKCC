@@ -1,6 +1,6 @@
 @tool
 class_name Stairs
-extends Node3D
+extends MeshInstance3D
 
 ## Number of steps to include
 @export_range(0, 20, 1, "or_greater") var num_step:int = 10:
@@ -164,10 +164,9 @@ func _build_mesh() -> void:
 		st.add_vertex(vertices[idx])
 
 	# Add generated mesh to this object
-	var mesh_instance = MeshInstance3D.new()
 	st.generate_normals()
 	st.generate_tangents()
-	mesh_instance.mesh = st.commit()
+	self.mesh = st.commit()
 
 	var static_body = StaticBody3D.new()
 	var collision_body = CollisionShape3D.new()
@@ -177,12 +176,10 @@ func _build_mesh() -> void:
 
 	add_child(static_body)
 	static_body.add_child(collision_body)
-	static_body.add_child(mesh_instance)
 
 	if Engine.is_editor_hint():
 		static_body.owner = get_tree().edited_scene_root
 		collision_body.owner = get_tree().edited_scene_root
-		mesh_instance.owner = get_tree().edited_scene_root
 
 	var existing = find_child("StairsBody")
 	if existing != null:
@@ -195,6 +192,6 @@ class Line3D:
 	var v1:Vector3
 	var v2:Vector3
 
-	func _init(v1:Vector3, v2:Vector3):
-		self.v1 = v1
-		self.v2 = v2
+	func _init(start:Vector3, end:Vector3):
+		self.v1 = start
+		self.v2 = end

@@ -174,7 +174,9 @@ func push_out_overlapping() -> void:
 	for collision_idx in range(0, collision):
 		var idx_1 = collision_idx * 2
 		var idx_2 = idx_1 + 1
-		delta += result[idx_2] - result[idx_1]
+		var push = result[idx_2] - result[idx_1]
+		if push.length() > EPSILON:
+			delta += push.normalized() * (push.length() - EPSILON)
 
 	global_position += delta
 
