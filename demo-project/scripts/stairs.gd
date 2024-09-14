@@ -9,7 +9,8 @@ extends MeshInstance3D
 	set(value):
 		if value > 0 and value != num_step:
 			num_step = value
-			_build_mesh()
+			if update_on_set:
+				_build_mesh()
 
 ## Height of each step
 @export var step_height:float = 0.2:
@@ -18,7 +19,8 @@ extends MeshInstance3D
 	set(value):
 		if value != step_height:
 			step_height = value
-			_build_mesh()
+			if update_on_set:
+				_build_mesh()
 
 ## Depth of each step
 @export var step_depth:float = 0.35:
@@ -27,7 +29,8 @@ extends MeshInstance3D
 	set(value):
 		if value != step_depth:
 			step_depth = value
-			_build_mesh()
+			if update_on_set:
+				_build_mesh()
 
 ## Width of each step
 @export var step_width:float = 1:
@@ -36,7 +39,8 @@ extends MeshInstance3D
 	set(value):
 		if value != step_width:
 			step_width = value
-			_build_mesh()
+			if update_on_set:
+				_build_mesh()
 
 ## Texture for stairs
 @export var texture:Texture2D:
@@ -45,42 +49,15 @@ extends MeshInstance3D
 	set(value):
 		if value != texture:
 			texture = value
-			_build_mesh()
+			if update_on_set:
+				_build_mesh()
 
 ## Object for the stairs as a child to this
 @export var _stairs_obj:Node3D
 
-func _enter_tree() -> void:
-	if _stairs_obj != null and _stairs_obj.get_parent() != self:
-		_stairs_obj = find_child("StairsBody")
-	_build_mesh_if_none_exists()
+var update_on_set=true
 
-func _add_square(vertices:PackedVector3Array, v1:Vector3, v2:Vector3, v3:Vector3, v4:Vector3) -> void:
-	vertices.push_back(v1)
-	vertices.push_back(v2)
-	vertices.push_back(v3)
-
-	vertices.push_back(v3)
-	vertices.push_back(v4)
-	vertices.push_back(v1)
-
-func _add_square_uv(uvs:PackedVector2Array, v1:Vector2, v2:Vector2, v3:Vector2, v4:Vector2, offset:Vector2) -> void:
-	uvs.push_back(offset - v1)
-	uvs.push_back(offset - v2)
-	uvs.push_back(offset - v3)
-
-	uvs.push_back(offset - v3)
-	uvs.push_back(offset - v4)
-	uvs.push_back(offset - v1)
-
-func _build_mesh_if_none_exists() -> void:
-	if _stairs_obj == null:
-		_build_mesh()
-
-func _build_mesh() -> void:
-	if !is_node_ready():
-		return
-
+func force_update_mesh() -> void:
 	if _stairs_obj != null:
 		_stairs_obj.free()
 
@@ -186,6 +163,39 @@ func _build_mesh() -> void:
 
 	static_body.name = "StairsBody"
 	_stairs_obj = static_body
+
+func _enter_tree() -> void:
+	if _stairs_obj != null and _stairs_obj.get_parent() != self:
+		_stairs_obj = find_child("StairsBody")
+	_build_mesh_if_none_exists()
+
+func _add_square(vertices:PackedVector3Array, v1:Vector3, v2:Vector3, v3:Vector3, v4:Vector3) -> void:
+	vertices.push_back(v1)
+	vertices.push_back(v2)
+	vertices.push_back(v3)
+
+	vertices.push_back(v3)
+	vertices.push_back(v4)
+	vertices.push_back(v1)
+
+func _add_square_uv(uvs:PackedVector2Array, v1:Vector2, v2:Vector2, v3:Vector2, v4:Vector2, offset:Vector2) -> void:
+	uvs.push_back(offset - v1)
+	uvs.push_back(offset - v2)
+	uvs.push_back(offset - v3)
+
+	uvs.push_back(offset - v3)
+	uvs.push_back(offset - v4)
+	uvs.push_back(offset - v1)
+
+func _build_mesh_if_none_exists() -> void:
+	if _stairs_obj == null:
+		_build_mesh()
+
+func _build_mesh() -> void:
+	if !is_node_ready():
+		return
+
+	force_update_mesh()
 
 class Line3D:
 	var v1:Vector3

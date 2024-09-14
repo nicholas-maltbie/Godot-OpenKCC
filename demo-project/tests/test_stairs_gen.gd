@@ -3,7 +3,7 @@ extends GutTest
 var step_height_values = [0.1, 0.2, 0.3]
 var step_depth_values = [0.25, 0.35, 0.45]
 var step_width_values = [1, 1.5, 2.0]
-var num_step_values = [10]
+var num_step_values = [2, 5, 10]
 
 var stairs_param = ParameterFactory.named_parameters(
 	['step_height', 'step_depth', 'step_width'],
@@ -11,7 +11,7 @@ var stairs_param = ParameterFactory.named_parameters(
 
 var staircase_param = ParameterFactory.named_parameters(
 	['num_step', 'step_height', 'step_depth', 'step_width'],
-	[[10, 0.1, 0.25, 1]])
+	get_staircase_params())
 
 var _stairs:Stairs
 
@@ -25,7 +25,7 @@ func get_step_params():
 
 func get_staircase_params():
 	var staircase_params_values = []
-	for step_param in get_step_params():
+	for step_param in get_step_params().slice(0, 5):
 		for num_step_val in num_step_values:
 			staircase_params_values.append([num_step_val] + step_param)
 	return staircase_params_values
@@ -46,10 +46,12 @@ func after_all():
 ## Test generating a single step will result in the expected shape
 ## A box with a front, sides, and top of the expected size.
 func test_stairs_one_step(params=use_parameters(stairs_param)):
+	_stairs.update_on_set = false
 	_stairs.num_step = 1
 	_stairs.step_height = params.step_height
 	_stairs.step_depth = params.step_depth
 	_stairs.step_width = params.step_width
+	_stairs.force_update_mesh()
 
 	# one square for front (2 tri), top (2 tri), two for sides (4 tri), one
 	# for back (2 tri) should have a total of 10 triangles. 10 tri = 30 vertices
@@ -61,10 +63,12 @@ func test_stairs_one_step(params=use_parameters(stairs_param)):
 
 ## Test generating a staircase of size n works as expected
 func test_staircase_gen(params=use_parameters(staircase_param)):
+	_stairs.update_on_set = false
+	_stairs.num_step = params.num_step
 	_stairs.step_height = params.step_height
 	_stairs.step_depth = params.step_depth
 	_stairs.step_width = params.step_width
-	_stairs.num_step = params.num_step
+	_stairs.force_update_mesh()
 
 	# each step has one square for front (2 tri), top (2 tri), and two for sides (4 tri)
 	# Plus one for back (2 tri)
