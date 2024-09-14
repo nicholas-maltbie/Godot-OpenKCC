@@ -80,10 +80,10 @@ func _build_mesh_if_none_exists() -> void:
 func _build_mesh() -> void:
 	if !is_node_ready():
 		return
-	
+
 	if _stairs_obj != null:
 		_stairs_obj.free()
-	
+
 	var vertices = PackedVector3Array()
 	var uvs = PackedVector2Array()
 	var mat = StandardMaterial3D.new()
@@ -92,7 +92,6 @@ func _build_mesh() -> void:
 	mat.albedo_texture = texture
 
 	var offset = Vector2(step_width, 1)
-	
 	for step in num_step:
 		# Build each step as two sets of squares
 		# one on the front, one on the back
@@ -108,7 +107,7 @@ func _build_mesh() -> void:
 		var back_top_line := Line3D.new(Vector3(left, top, back), Vector3(right, top, back))
 		var base_back_line := Line3D.new(Vector3(left, 0, back), Vector3(right, 0, back))
 		var base_front_line := Line3D.new(Vector3(left, 0, front), Vector3(right, 0, front))
-		
+
 		# Add front face
 		_add_square(vertices, front_bottom_line.v2, front_top_line.v2, front_top_line.v1, front_bottom_line.v1)
 		_add_square_uv(uvs, \
@@ -117,7 +116,7 @@ func _build_mesh() -> void:
 			Vector2(front_top_line.v1.x, front_top_line.v1.y), \
 			Vector2(front_bottom_line.v1.x, front_bottom_line.v1.y), \
 			offset)
-		
+
 		# Add top face
 		_add_square(vertices, front_top_line.v2, back_top_line.v2, back_top_line.v1, front_top_line.v1)
 		_add_square_uv(uvs, \
@@ -142,7 +141,7 @@ func _build_mesh() -> void:
 			Vector2(back_top_line.v1.z, back_top_line.v1.y), \
 			Vector2(front_top_line.v1.z, front_top_line.v1.y), \
 			offset)
-		
+
 		# Add back face if last step
 		if step == num_step - 1:
 			_add_square(vertices, base_back_line.v1, back_top_line.v1, back_top_line.v2, base_back_line.v2)
@@ -152,12 +151,12 @@ func _build_mesh() -> void:
 				Vector2(back_top_line.v1.x, back_top_line.v1.y), \
 				Vector2(base_back_line.v1.x, base_back_line.v1.y), \
 				offset)
-	
+
 	var st = SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
 	st.set_material(mat)
 	mat.vertex_color_use_as_albedo = true
-	
+
 	for idx in vertices.size():
 		st.set_color(color)
 		st.set_uv(uvs[idx])

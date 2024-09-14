@@ -1,13 +1,19 @@
 extends GutTest
 
-const Stairs = preload("res://scripts/stairs.gd")
-
-var _stairs:Stairs
-
 var step_height_values = [0.1, 0.2, 0.3]
 var step_depth_values = [0.25, 0.35, 0.45]
 var step_width_values = [1, 1.5, 2.0]
 var num_step_values = [10]
+
+var stairs_param = ParameterFactory.named_parameters(
+	['step_height', 'step_depth', 'step_width'],
+	get_step_params())
+
+var staircase_param = ParameterFactory.named_parameters(
+	['num_step', 'step_height', 'step_depth', 'step_width'],
+	[[10, 0.1, 0.25, 1]])
+
+var _stairs:Stairs
 
 func get_step_params():
 	var step_param_values = []
@@ -23,14 +29,6 @@ func get_staircase_params():
 		for num_step_val in num_step_values:
 			staircase_params_values.append([num_step_val] + step_param)
 	return staircase_params_values
-
-var stairs_param = ParameterFactory.named_parameters(
-	['step_height', 'step_depth', 'step_width'],
-	get_step_params())
-
-var staircase_param = ParameterFactory.named_parameters(
-	['num_step', 'step_height', 'step_depth', 'step_width'],
-	[[10, 0.1, 0.25, 1]])
 
 func before_all():
 	pass
@@ -86,16 +84,16 @@ func _verify_single_step(stairs:Stairs, step_idx:int):
 	var right_plane = 0
 	var top_plane = (step_idx + 1) * stairs.step_height
 	var top_next_step = (step_idx + 2) * stairs.step_height
-	
+
 	var face_count := {"front": 0, "back":0, "left": 0, "right":0, "top": 0}
 	var faces = _stairs.mesh.get_faces()
-	
+
 	# find the triangles for each face
 	for face_idx in faces.size() / 3:
 		var v1 = faces[face_idx * 3]
 		var v2 = faces[face_idx * 3 + 1]
 		var v3 = faces[face_idx * 3 + 2]
-		
+
 		# vertices should either be along front plane, side plane, or back plane
 		# Front/back plane, at same depth along z axis
 		# Side plane, at same depth along x axis
@@ -103,24 +101,32 @@ func _verify_single_step(stairs:Stairs, step_idx:int):
 		var front = _is_almost_eq(v1.z, v2.z, 0.001) and _is_almost_eq(v2.z, v3.z, 0.001)
 		var side = _is_almost_eq(v1.x, v2.x, 0.001) and _is_almost_eq(v2.x, v3.x, 0.001)
 		var top = _is_almost_eq(v1.y, v2.y, 0.001) and _is_almost_eq(v2.y, v3.y, 0.001)
-		
+
 		if front:
 			assert_false(side or top)
 			if _is_almost_eq(v1.z, front_plane, 0.001):
 				face_count["front"] += 1
 			elif _is_almost_eq(v1.z, back_plane, 0.001):
 				# Ignore back face of subsequent steps
-				if _is_almost_eq(v1.y, top_next_step, 0.001) or _is_almost_eq(v2.y, top_next_step, 0.001) or _is_almost_eq(v3.y, top_next_step, 0.001):
+				if _is_almost_eq(v1.y, top_next_step, 0.001) or \
+					_is_almost_eq(v2.y, top_next_step, 0.001) or \
+					_is_almost_eq(v3.y, top_next_step, 0.001):
 					continue
 				face_count["back"] += 1
 		elif side:
 			assert_false(front or top)
 			# only include sides that share an edge with this step.
-			if not (_is_almost_eq(v1.z, front_plane, 0.001) or _is_almost_eq(v2.z, front_plane, 0.001) or _is_almost_eq(v3.z, front_plane, 0.001)):
+			if not (_is_almost_eq(v1.z, front_plane, 0.001) or \
+				_is_almost_eq(v2.z, front_plane, 0.001) or \
+				_is_almost_eq(v3.z, front_plane, 0.001)):
 				continue
 			# Ignore side faces of subsequent or previous steps
-			if _is_almost_eq(v1.z, front_plane_previous, 0.001) or _is_almost_eq(v2.z, front_plane_previous, 0.001) or _is_almost_eq(v3.z, front_plane_previous, 0.001) or \
-				_is_almost_eq(v1.z, back_plane_next, 0.001) or _is_almost_eq(v2.z, back_plane_next, 0.001) or _is_almost_eq(v3.z, back_plane_next, 0.001):
+			if _is_almost_eq(v1.z, front_plane_previous, 0.001) or \
+				_is_almost_eq(v2.z, front_plane_previous, 0.001) or \
+				_is_almost_eq(v3.z, front_plane_previous, 0.001) or \
+				_is_almost_eq(v1.z, back_plane_next, 0.001) or \
+				_is_almost_eq(v2.z, back_plane_next, 0.001) or \
+				_is_almost_eq(v3.z, back_plane_next, 0.001):
 				continue
 			if _is_almost_eq(v1.x, left_plane, 0.001):
 				face_count["left"] += 1
@@ -136,7 +142,7 @@ func _verify_single_step(stairs:Stairs, step_idx:int):
 	assert_eq(face_count["left"], 2)
 	assert_eq(face_count["right"], 2)
 	assert_eq(face_count["top"], 2)
-	
+
 	if step_idx == stairs.num_step - 1:
 		assert_eq(face_count["back"], 2)
 	else:

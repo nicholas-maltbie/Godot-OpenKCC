@@ -101,7 +101,7 @@ func _can_snap_up(distance_to_snap:float, momentum:Vector3, position:Vector3) ->
 	var snap_pos:Vector3 = position + distance_to_snap * up;
 	var snap_transform:Transform3D = Transform3D(global_transform.basis, snap_pos)
 	var hit := _get_collision(snap_transform, momentum.normalized(), step_up_depth, _collision)
-	
+
 	# If they can move without instantly hitting something, then snap them up
 	return !hit or _collision.dist_traveled > step_up_depth
 
@@ -157,7 +157,7 @@ func _get_snap_down(position:Vector3, dir:Vector3, dist:float) -> Vector3:
 	return Vector3.ZERO
 
 ## Push the character out of overlapping objects
-func push_out_overlapping() -> void: 
+func push_out_overlapping() -> void:
 	var space_state = get_world_3d().direct_space_state
 	_physics_query_params.transform = global_transform
 	_physics_query_params.shape = _overlap_capsule
@@ -184,12 +184,11 @@ func snap_down(dir:Vector3, max_move:float) -> bool:
 	var snap_down:Vector3 = _get_snap_down(global_position, dir, vertical_snap_down)
 	if snap_down.length() > max_move:
 		snap_down = snap_down.normalized() * max_move
-	
+
 	if snap_down.length() > EPSILON:
 		global_position += snap_down
 		return true
-	else:
-		return false
+	return false
 
 func setup_shape():
 	_capsule = CapsuleShape3D.new()
@@ -241,7 +240,7 @@ func move_and_slide(movement:Vector3, stop_slide_up_walls:bool=true, can_snap_up
 		if perpendicular_bounce and allow_snap and within_snap_height and \
 			_can_snap_up(vertical_snap_up, remaining, start.origin):
 			snapped_up = true
-			
+
 			# move player up if they can snap up a step
 			var distance_move:float = min(dist_remaining, vertical_snap_up)
 			start.origin += distance_move * up
