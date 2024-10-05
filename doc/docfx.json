@@ -17,17 +17,13 @@
           "dest": "design"
         },
         {
-          "files": ["*.png"],
-          "src": "design/imgs",
-          "dest": "design/imgs"
-        },
-        {
           "files": [
             "toc.yml",
             "*.md"
           ]
         }
       ],
+      "resource": ["**/*.png"],
       "xref": [
         "https://gddoc2yml.nickmaltbie.com/xrefmap.yml"
       ],

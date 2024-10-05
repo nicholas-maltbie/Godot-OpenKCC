@@ -47,6 +47,8 @@ The mis-aligned vertices on the sides between steps does cause some UV and
 shading artifacts which can be seen more clearly when the face is
 un-textured. However, if a texture is applied, the effect is less noticeable.
 
+![Example of image lighting artifacting on stairs due to low polygon count](imgs/stair-artifacting.png)
+
 This mesh also needs normals for each vertex which can be generated
 using the [SurfaceTool.generate_normals](xref:SurfaceTool.generate_normals(bool))
 to ensure proper lighting interactions.
@@ -63,9 +65,9 @@ between steps.
 ## Node Setup
 
 The node setup for the stairs object is configured as a MeshInstance as the
-root node with the [stairs.gd](xref:stairs) script attached. The stairs script
+root node with the [stairs.gd](xref:Stairs) script attached. The stairs script
 will generate two children nodes with types [StaticBody3D](xref:StaticBody3D)
-and [CollisionBody3D](xref:CollisionBody3D) to define the shape of the stairs
+and [CollisionObject3D](xref:CollisionObject3D) to define the shape of the stairs
 in the physics world. Whenever a parameter is updated, the mesh for the
 mesh instance and collision body will both be updated.
 
