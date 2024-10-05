@@ -45,6 +45,15 @@ const EPSILON:float = 0.001
 ## Maximum angle at which the player can walk up slopes in degrees, defaults to
 ## [constant DEFAULT_MAX_WALK_ANGLE].
 @export var max_walk_angle:float = DEFAULT_MAX_WALK_ANGLE
+
+## Vertical snap up distance the player can snap up.
+@export var vertical_snap_up:float = 0.3
+
+## Minimum depth required for a stair when moving onto a step.
+@export var step_up_depth:float = 0.3
+
+## Vertical snap down distance the player snap down while walking.
+@export var vertical_snap_down:float = 0.35
 #endregion
 
 ## Direction of up vector for player movement.
@@ -76,6 +85,9 @@ var _collision:OpenKCCCollision = OpenKCCCollision.new()
 ## Physics query for player movement to avoid dynamic memory allocation.
 var _physics_query_params:PhysicsShapeQueryParameters3D = PhysicsShapeQueryParameters3D.new()
 
+## Physics query for raycast to avoid dynamic memory allocation.
+var _phsyics_raycast_query_params:PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.new()
+
 ## Capsule shape of the player with the skin width removed.
 var _capsule:Shape3D
 
@@ -83,6 +95,25 @@ var _capsule:Shape3D
 var _overlap_capsule:Shape3D
 
 #endregion
+
+func _can_snap_up(distance_to_snap:float, momentum:Vector3, position:Vector3) -> bool:
+	# If the character were to snap up and move forward, would they hit something?
+	var snap_pos:Vector3 = position + distance_to_snap * up;
+	var snap_transform:Transform3D = Transform3D(global_transform.basis, snap_pos)
+	var hit := _get_collision(snap_transform, momentum.normalized(), step_up_depth, _collision)
+
+	# If they can move without instantly hitting something, then snap them up
+	return !hit or _collision.dist_traveled > step_up_depth
+
+func _check_perpendicular_bounce(hit:OpenKCCCollision, momentum:Vector3) -> bool:
+	var space_state = get_world_3d().direct_space_state
+	_phsyics_raycast_query_params.from = hit.point - up.normalized() * EPSILON + hit.normal * EPSILON
+	_phsyics_raycast_query_params.to = _phsyics_raycast_query_params.from + momentum.normalized() * hit.dist_remaining
+	var result:Dictionary = space_state.intersect_ray(_phsyics_raycast_query_params)
+	if result.is_empty():
+		return false
+	var hit_normal:Vector3 = result["normal"]
+	return hit_normal.dot(up) <= EPSILON
 
 func _get_collision(start:Transform3D, dir:Vector3, dist:float, collision:OpenKCCCollision) -> bool:
 	var space_state = get_world_3d().direct_space_state
@@ -117,8 +148,16 @@ func _get_collision(start:Transform3D, dir:Vector3, dist:float, collision:OpenKC
 	collision.normal = rest["normal"]
 	return true
 
+func _get_snap_down(position:Vector3, dir:Vector3, dist:float) -> Vector3:
+	var snap_transform:Transform3D = Transform3D(global_transform.basis, position)
+	var hit := _get_collision(snap_transform, dir, dist, _collision)
+	if hit and _collision.dist_traveled > skin_width:
+		return dir * _collision.dist_traveled
+
+	return Vector3.ZERO
+
 ## Push the character out of overlapping objects
-func push_out_overlapping():
+func push_out_overlapping() -> void:
 	var space_state = get_world_3d().direct_space_state
 	_physics_query_params.transform = global_transform
 	_physics_query_params.shape = _overlap_capsule
@@ -135,9 +174,21 @@ func push_out_overlapping():
 	for collision_idx in range(0, collision):
 		var idx_1 = collision_idx * 2
 		var idx_2 = idx_1 + 1
-		delta += result[idx_2] - result[idx_1]
+		var push = result[idx_2] - result[idx_1]
+		if push.length() > EPSILON:
+			delta += push.normalized() * (push.length() - EPSILON)
 
 	global_position += delta
+
+func snap_down(dir:Vector3, max_move:float) -> bool:
+	var snap_down:Vector3 = _get_snap_down(global_position, dir, vertical_snap_down)
+	if snap_down.length() > max_move:
+		snap_down = snap_down.normalized() * max_move
+
+	if snap_down.length() > EPSILON:
+		global_position += snap_down
+		return true
+	return false
 
 func setup_shape():
 	_capsule = CapsuleShape3D.new()
@@ -147,13 +198,17 @@ func setup_shape():
 	_overlap_capsule.height = height
 	_overlap_capsule.radius = radius
 
-func move_and_slide(movement:Vector3, stop_slide_up_walls:bool=true) -> void:
+func move_and_slide(movement:Vector3, stop_slide_up_walls:bool=true, can_snap_up:bool=true) -> void:
 	var bounce:int = 0
 	var remaining:Vector3 = movement
 	var start := global_transform
+	var snapped_up:bool = false
 
 	# Compute movement due to each bounce
 	while remaining.length() > EPSILON and bounce < MAX_BOUNCES:
+		# Increment bounce count
+		bounce += 1
+
 		# Helper value
 		var move_dir:Vector3 = remaining.normalized()
 		var move_dist:float = remaining.length()
@@ -166,17 +221,37 @@ func move_and_slide(movement:Vector3, stop_slide_up_walls:bool=true) -> void:
 			start.origin += remaining
 			break
 
+		var normal:Vector3 = _collision.normal
+		var dist_remaining:float = _collision.dist_remaining
+		remaining = remaining.normalized() * dist_remaining
+
 		# Otherwise this collided with something
 		# Move the object to the collision position
 		start.origin += move_dir * _collision.dist_traveled
 
 		# Get angle between surface normal and remaining movement
-		var angle_between:float = _collision.normal.angle_to(move_dir)
+		var angle_between:float = normal.angle_to(move_dir)
+
+		# Check if the player is running into a perpendicular surface
+		var perpendicular_bounce:bool = _check_perpendicular_bounce(_collision, remaining)
+		var allow_snap:bool = can_snap_up and vertical_snap_up > 0
+		var bottom:Vector3 = start.origin - height /  2 * up
+		var within_snap_height:bool = (_collision.point - bottom).dot(up) <= vertical_snap_up
+		if perpendicular_bounce and allow_snap and within_snap_height and \
+			_can_snap_up(vertical_snap_up, remaining, start.origin):
+			snapped_up = true
+
+			# move player up if they can snap up a step
+			var distance_move:float = min(dist_remaining, vertical_snap_up)
+			start.origin += distance_move * up
+
+			# Skip rest of boucne operation
+			continue
 
 		# Rotate the remaining movement to be projected along the plane
 		# of the surface hit (emulate 'sliding' against the object)
-		remaining = Plane(_collision.normal).project(remaining).normalized() * \
-			_collision.dist_remaining * get_angle_factor(angle_between)
+		remaining = Plane(normal).project(remaining).normalized() * \
+			dist_remaining * get_angle_factor(angle_between)
 
 		# Don't let player slide backwards (dot checks if facing same direction
 		# than the player's initial movement).
@@ -185,12 +260,12 @@ func move_and_slide(movement:Vector3, stop_slide_up_walls:bool=true) -> void:
 			break
 
 		# If the player is sliding up a wall, stop the player from sliding up or down walls
-		if stop_slide_up_walls and _collision.normal.dot(up) <= EPSILON:
+		if stop_slide_up_walls and normal.dot(up) <= EPSILON:
 			# Remove vertical component of remaining movement
 			remaining = Plane(up).project(remaining)
 
-		# Increment bounce count
-		bounce += 1
+	if snapped_up:
+		start.origin += _get_snap_down(start.origin, -up, vertical_snap_up)
 
 	global_position = start.origin
 

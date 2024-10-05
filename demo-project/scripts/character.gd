@@ -2,6 +2,10 @@ extends OpenKCCBody3DPQ
 
 @export var move_speed:float = 5.0
 @export var jump_velocity:float = 5.0
+@export var snap_down_speed:float = 2.5
+
+# Has the player snapped down as of the previous frame
+var snapped_down = false
 
 # Get the gravity from the project settings to be synced with RigidBody nodes.
 var gravity:float = ProjectSettings.get_setting("physics/3d/default_gravity")
@@ -47,9 +51,9 @@ func _physics_process(_delta) -> void:
 
 	# Add the gravity.
 	check_grounded()
-	if not is_on_floor() or is_sliding():
+	if not grounded() or is_sliding():
 		world_velocity -= up * gravity * _delta
-	elif is_on_floor() and !moving_up():
+	elif grounded() and !moving_up():
 		# If player is not moving up and hit the ground, stop world velocity
 		world_velocity = Vector3.ZERO
 
@@ -75,11 +79,19 @@ func _physics_process(_delta) -> void:
 		move_velocity.z = move_toward(move_velocity.z, 0, move_speed)
 
 	var move:Vector3 = move_velocity
-	if is_on_floor() and not is_sliding():
+	if grounded() and not is_sliding():
 		move *= Quaternion(_ground_normal, up)
 
-	move_and_slide(move * _delta, true)
-	move_and_slide(world_velocity * _delta, false)
+	move_and_slide(move * _delta, true, grounded() and not moving_up())
+	move_and_slide(world_velocity * _delta, false, false)
+
+	if grounded() and not moving_vertically():
+		snapped_down = snap_down(-up, snap_down_speed * _delta)
+	else:
+		snapped_down = false
+
+func grounded() -> bool:
+	return is_on_floor() or snapped_down
 
 func _on_menu_opened() -> void:
 	allow_movement = false
@@ -117,10 +129,10 @@ func _input(event:InputEvent) -> void:
 
 func _attempt_jump():
 	# If the player is on ground and not sliding, allow to jump again
-	if is_on_floor() and not is_sliding():
+	if grounded() and not is_sliding():
 		_can_jump = true
 
-	if _input_jump and is_on_floor() and _can_jump:
+	if _input_jump and grounded() and _can_jump:
 		# Toggle jumped flag to prevent jump again until they are back on the ground
 		_can_jump = false
 		_apply_jump()
@@ -129,4 +141,7 @@ func _apply_jump():
 	world_velocity = up * jump_velocity
 
 func moving_up() -> bool:
-	return world_velocity.dot(up) > 0
+	return world_velocity.dot(up) > EPSILON
+
+func moving_vertically() -> bool:
+	return world_velocity.project(up).length() > EPSILON
