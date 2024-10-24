@@ -6,7 +6,7 @@ var step_width_values = [1, 1.5, 2.0]
 var num_step_values = [2, 5, 10]
 
 var stairs_param = ParameterFactory.named_parameters(
-	['step_height', 'step_depth', 'step_width'],
+	['step_height', 'step_depth', 'step_width', 'include_back', 'include_sides', 'include_bottom'],
 	get_step_params())
 
 var staircase_param = ParameterFactory.named_parameters(
@@ -20,7 +20,11 @@ func get_step_params():
 	for step_height_val in step_height_values:
 		for step_depth_val in step_depth_values:
 			for step_width_val in step_width_values:
-				step_param_values.append([step_height_val, step_depth_val, step_width_val])
+				for include_back in [true, false]:
+					for include_side in [true, false]:
+						for include_bottom in [true, false]:
+							step_param_values.append(\
+		[step_height_val, step_depth_val, step_width_val, include_back, include_side, include_bottom])
 	return step_param_values
 
 func get_staircase_params():
@@ -46,28 +50,39 @@ func after_all():
 ## Test generating a single step will result in the expected shape
 ## A box with a front, sides, and top of the expected size.
 func test_stairs_one_step(params=use_parameters(stairs_param)):
-	_stairs.update_on_set = false
+	_stairs._update_on_set = false
 	_stairs.num_step = 1
 	_stairs.step_height = params.step_height
 	_stairs.step_depth = params.step_depth
 	_stairs.step_width = params.step_width
+	_stairs.include_back_face = params.include_back
+	_stairs.include_side_faces = params.include_sides
+	_stairs.include_bottom_face = params.include_bottom
 	_stairs.force_update_mesh()
 
-	# one square for front (2 tri), top (2 tri), two for sides (4 tri), one
-	# for back (2 tri) should have a total of 10 triangles. 10 tri = 30 vertices
 	var mesh = _stairs.mesh
 	var faces = mesh.get_faces()
-	assert_eq(faces.size(), 30)
+
+	var top_faces = 2
+	var front_faces = 2
+	var back_faces = 2 if params.include_back else 0
+	var bottom_faces = 2 if params.include_bottom else 0
+	var side_faces = 4 if params.include_sides else 0
+	var total_faces = top_faces + front_faces + back_faces + bottom_faces + side_faces
+	assert_eq(faces.size(), total_faces * 3)
 
 	_verify_single_step(_stairs, 0)
 
 ## Test generating a staircase of size n works as expected
 func test_staircase_gen(params=use_parameters(staircase_param)):
-	_stairs.update_on_set = false
+	_stairs._update_on_set = false
 	_stairs.num_step = params.num_step
 	_stairs.step_height = params.step_height
 	_stairs.step_depth = params.step_depth
 	_stairs.step_width = params.step_width
+	_stairs.include_back_face = true
+	_stairs.include_side_faces = true
+	_stairs.include_bottom_face = false
 	_stairs.force_update_mesh()
 
 	# each step has one square for front (2 tri), top (2 tri), and two for sides (4 tri)
@@ -89,7 +104,7 @@ func _verify_single_step(stairs:Stairs, step_idx:int):
 	var top_plane = (step_idx + 1) * stairs.step_height
 	var top_next_step = (step_idx + 2) * stairs.step_height
 
-	var face_count := {"front": 0, "back":0, "left": 0, "right":0, "top": 0}
+	var face_count := {"front": 0, "back":0, "left": 0, "right":0, "top": 0, "bottom": 0}
 	var faces = _stairs.mesh.get_faces()
 
 	# find the triangles for each face
@@ -117,7 +132,8 @@ func _verify_single_step(stairs:Stairs, step_idx:int):
 					_is_almost_eq(v3.y, top_next_step, 0.001):
 					continue
 				face_count["back"] += 1
-		elif side:
+
+		if side:
 			assert_false(front or top)
 			# only include sides that share an edge with this step.
 			if not (_is_almost_eq(v1.z, front_plane, 0.001) or \
@@ -136,18 +152,29 @@ func _verify_single_step(stairs:Stairs, step_idx:int):
 				face_count["left"] += 1
 			elif _is_almost_eq(v1.x, right_plane, 0.001):
 				face_count["right"] += 1
-		elif top:
+
+		if top:
 			assert_false(front or side)
+			# Top face
 			if _is_almost_eq(v1.y, top_plane, 0.001):
 				face_count["top"] += 1
+			# Bottom face
+			if _is_almost_eq(v1.y, 0, 0.001):
+				face_count["bottom"] += 1
 
 	# Assert face counts
 	assert_eq(face_count["front"], 2)
-	assert_eq(face_count["left"], 2)
-	assert_eq(face_count["right"], 2)
 	assert_eq(face_count["top"], 2)
 
+	var expected_sides:int = 2 if stairs.include_side_faces else 0;
+	assert_eq(face_count["left"], expected_sides)
+	assert_eq(face_count["right"], expected_sides)
+
 	if step_idx == stairs.num_step - 1:
-		assert_eq(face_count["back"], 2)
+		var expected_bottom:int = 2 if stairs.include_bottom_face else 0;
+		var expected_back:int = 2 if stairs.include_back_face else 0;
+		assert_eq(face_count["back"], expected_back)
+		assert_eq(face_count["bottom"], expected_bottom)
 	else:
 		assert_eq(face_count["back"], 0)
+		assert_eq(face_count["bottom"], 0)

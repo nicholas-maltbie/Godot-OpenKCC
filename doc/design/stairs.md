@@ -13,6 +13,11 @@ Configurable properties:
 * [step_depth](xref:Stairs.step_depth) - Depth of each step.
 * [step_height](xref:Stairs.step_height) - Height of each step.
 * [step_width](xref:Stairs.step_width) - Width of each step.
+* [include_side_faces](xref:Stairs.include_side_faces) - Include side faces for stairs.
+* [include_back_face](xref:Stairs.include_back_face) - Include square for back
+  of staircase.
+* [include_bottom_face](xref:Stairs.include_bottom_face) - Include bottom face
+  of staircase.
 * [texture](xref:Stairs.texture) - Texture to apply to staircase material.
 
 Whenever a property is updated, a new stair mesh and material will be generated
