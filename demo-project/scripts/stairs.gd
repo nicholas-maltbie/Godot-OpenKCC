@@ -67,7 +67,13 @@ extends Node3D
 		include_bottom_face = value
 		_build_on_set(previous, include_bottom_face)
 
-## should the mesh be saved to the scene.
+## Should the mesh be saved to the scene. Enabling this option saves the mesh
+## data to the .tscn file. This will speed up loading times and allow for
+## the mesh to be loaded instantly with the scene and not need to be
+## re-generated every time this object is created. However, this mesh data
+## can be qutie large and make the scene file much larger than expected.
+##
+## Enabled by default to allow for fast loading
 @export var save_mesh:bool = true:
 	get:
 		return save_mesh
@@ -168,28 +174,28 @@ func force_update_mesh() -> void:
 	st.generate_tangents()
 	var static_body:StaticBody3D = null
 	var collision_body:CollisionShape3D = null
-	var base:MeshInstance3D = null
+	var mesh_instance:MeshInstance3D = null
 
 	for child in get_children():
 		if child is MeshInstance3D:
-			base = child
+			mesh_instance = child
 			break
 
 	# Setup mesh instance 3d child
-	if base == null:
-		base = MeshInstance3D.new()
-		add_child(base)
+	if mesh_instance == null:
+		mesh_instance = MeshInstance3D.new()
+		add_child(mesh_instance)
 
-	base.mesh = st.commit()
+	mesh_instance.mesh = st.commit()
 
-	for child in base.get_children():
+	for child in get_children():
 		if child is StaticBody3D:
 			static_body = child
 			break
 
 	if static_body == null:
 		static_body = StaticBody3D.new()
-		base.add_child(static_body)
+		add_child(static_body)
 
 	for child in static_body.get_children():
 		if child is CollisionShape3D:
@@ -209,7 +215,7 @@ func force_update_mesh() -> void:
 		if not save_mesh:
 			root = null
 
-		base.owner = root
+		mesh_instance.owner = root
 		static_body.owner = root
 		collision_body.owner = root
 

@@ -69,15 +69,17 @@ between steps.
 
 ## Node Setup
 
-The node setup for the stairs object is configured as a MeshInstance as the
+The node setup for the stairs object is configured as a Node3D as the
 root node with the [stairs.gd](xref:Stairs) script attached. The stairs script
-will generate two children nodes with types [StaticBody3D](xref:StaticBody3D)
-and [CollisionObject3D](xref:CollisionObject3D) to define the shape of the stairs
+will generate three children nodes with types [MeshInstance3D](xref:MeshInstance3D),
+[StaticBody3D](xref:StaticBody3D), and [CollisionObject3D](xref:CollisionObject3D)
+to define the visual component of the stairs, and the shape of the stairs
 in the physics world. Whenever a parameter is updated, the mesh for the
 mesh instance and collision body will both be updated.
 
 ```txt
 +Stairs (MeshInstance + Stairs.gd)
+|--+ MeshInstance3D
 |--+ StaticBody (StaticBody3D)
    |-- CollisionBody3D
 ```
