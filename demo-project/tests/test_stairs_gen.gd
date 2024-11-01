@@ -60,7 +60,7 @@ func test_stairs_one_step(params=use_parameters(stairs_param)):
 	_stairs.include_bottom_face = params.include_bottom
 	_stairs.force_update_mesh()
 
-	var mesh = _stairs.mesh
+	var mesh = _stairs.get_child(0).mesh
 	var faces = mesh.get_faces()
 
 	var top_faces = 2
@@ -88,7 +88,7 @@ func test_staircase_gen(params=use_parameters(staircase_param)):
 	# each step has one square for front (2 tri), top (2 tri), and two for sides (4 tri)
 	# Plus one for back (2 tri)
 	var expected_face_count = (2 + 2 + 4) * params.num_step + 2
-	var faces = _stairs.mesh.get_faces()
+	var faces = _stairs.get_child(0).mesh.get_faces()
 	assert_eq(faces.size() / 3, expected_face_count)
 
 	for step_idx in params.num_step:
@@ -105,7 +105,7 @@ func _verify_single_step(stairs:Stairs, step_idx:int):
 	var top_next_step = (step_idx + 2) * stairs.step_height
 
 	var face_count := {"front": 0, "back":0, "left": 0, "right":0, "top": 0, "bottom": 0}
-	var faces = _stairs.mesh.get_faces()
+	var faces = _stairs.get_child(0).mesh.get_faces()
 
 	# find the triangles for each face
 	for face_idx in faces.size() / 3:
