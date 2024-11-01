@@ -211,16 +211,18 @@ func force_update_mesh() -> void:
 	collision_body.shape = shape_3d
 
 	if Engine.is_editor_hint():
-		var root = get_tree().edited_scene_root
-		if not save_mesh:
-			root = null
-
-		mesh_instance.owner = root
-		static_body.owner = root
-		collision_body.owner = root
+		if save_mesh and is_inside_tree():
+			var root = get_tree().edited_scene_root
+			mesh_instance.owner = root
+			static_body.owner = root
+			collision_body.owner = root
+		elif not save_mesh:
+			mesh_instance.owner = null
+			static_body.owner = null
+			collision_body.owner = null
 
 ## Upon object entering the scene, build the mesh.
-func _enter_tree() -> void:
+func _ready() -> void:
 	var stairs:MeshInstance3D = null
 	for child in get_children():
 		if child is MeshInstance3D:
@@ -232,7 +234,7 @@ func _enter_tree() -> void:
 
 ## Check if property has changed and update if configured.
 func _build_on_set(previous, new) -> void:
-	if previous != new and _update_on_set:
+	if is_node_ready() and previous != new and _update_on_set:
 		_build_mesh()
 
 ## Helper method to add a square to a set of PackedVector3Array as two triangles.
