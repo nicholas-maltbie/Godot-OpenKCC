@@ -1,6 +1,6 @@
 @tool
 class_name Stairs
-extends MeshInstance3D
+extends Node3D
 
 ## Number of steps to include
 @export_range(0, 20, 1, "or_greater") var num_step:int = 10:
@@ -66,6 +66,21 @@ extends MeshInstance3D
 		var previous = include_bottom_face
 		include_bottom_face = value
 		_build_on_set(previous, include_bottom_face)
+
+## Should the mesh be saved to the scene. Enabling this option saves the mesh
+## data to the .tscn file. This will speed up loading times and allow for
+## the mesh to be loaded instantly with the scene and not need to be
+## re-generated every time this object is created. However, this mesh data
+## can be qutie large and make the scene file much larger than expected.
+##
+## Enabled by default to allow for fast loading
+@export var save_mesh:bool = true:
+	get:
+		return save_mesh
+	set(value):
+		var previous = save_mesh
+		save_mesh = value
+		_build_on_set(previous, value)
 
 ## Texture for stairs
 @export var texture:Texture2D:
@@ -157,10 +172,21 @@ func force_update_mesh() -> void:
 	# Add generated mesh to this object
 	st.generate_normals()
 	st.generate_tangents()
-	self.mesh = st.commit()
-
 	var static_body:StaticBody3D = null
 	var collision_body:CollisionShape3D = null
+	var mesh_instance:MeshInstance3D = null
+
+	for child in get_children():
+		if child is MeshInstance3D:
+			mesh_instance = child
+			break
+
+	# Setup mesh instance 3d child
+	if mesh_instance == null:
+		mesh_instance = MeshInstance3D.new()
+		add_child(mesh_instance)
+
+	mesh_instance.mesh = st.commit()
 
 	for child in get_children():
 		if child is StaticBody3D:
@@ -185,16 +211,30 @@ func force_update_mesh() -> void:
 	collision_body.shape = shape_3d
 
 	if Engine.is_editor_hint():
-		static_body.owner = get_tree().edited_scene_root
-		collision_body.owner = get_tree().edited_scene_root
+		if save_mesh and is_inside_tree():
+			var root = get_tree().edited_scene_root
+			mesh_instance.owner = root
+			static_body.owner = root
+			collision_body.owner = root
+		elif not save_mesh:
+			mesh_instance.owner = null
+			static_body.owner = null
+			collision_body.owner = null
 
 ## Upon object entering the scene, build the mesh.
-func _enter_tree() -> void:
-	_build_mesh()
+func _ready() -> void:
+	var stairs:MeshInstance3D = null
+	for child in get_children():
+		if child is MeshInstance3D:
+			stairs = child
+			break
+
+	if stairs == null:
+		_build_mesh()
 
 ## Check if property has changed and update if configured.
 func _build_on_set(previous, new) -> void:
-	if previous != new and _update_on_set:
+	if is_node_ready() and previous != new and _update_on_set:
 		_build_mesh()
 
 ## Helper method to add a square to a set of PackedVector3Array as two triangles.
@@ -219,9 +259,6 @@ func _add_square_uv(uvs:PackedVector2Array, v1:Vector2, v2:Vector2, v3:Vector2, 
 
 ## Create mesh if node is ready, cancel otherwise.
 func _build_mesh() -> void:
-	if !is_node_ready():
-		return
-
 	force_update_mesh()
 
 ## Helper class for managing a line in 3D space.
