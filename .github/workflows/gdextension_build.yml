@@ -51,7 +51,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           submodules: recursive
       - uses: ./.github/actions/setvars
@@ -63,13 +63,13 @@ jobs:
           platform: windows
           target: ${{matrix.target}}
           arch: ${{matrix.arch}}
-          artifact: windows
+          artifact: windows_${{matrix.target}}_${{matrix.arch}}
 
   # ============================================
 
   linux-gdextension:
     name: 🐧 Linux
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-latest"
     if: ${{ inputs.buildLinux || github.event_name == 'workflow_dispatch' }}
 
     strategy:
@@ -80,7 +80,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           submodules: recursive
       - uses: ./.github/actions/setvars
@@ -92,7 +92,7 @@ jobs:
           platform: linux
           target: ${{matrix.target}}
           arch: ${{matrix.arch}}
-          artifact: linux
+          artifact: linux_${{matrix.target}}_${{matrix.arch}}
 
   # ============================================
 
@@ -109,7 +109,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           submodules: recursive
       - uses: ./.github/actions/setvars
@@ -121,7 +121,7 @@ jobs:
           platform: macos
           target: ${{matrix.target}}
           arch: ${{matrix.arch}}
-          artifact: macos
+          artifact: macos_${{matrix.target}}_${{matrix.arch}}
           additional: macos_deployment_target=10.14
 
   # ============================================
@@ -139,7 +139,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           submodules: recursive
       - uses: ./.github/actions/setvars
@@ -171,7 +171,7 @@ jobs:
           platform: android
           target: ${{matrix.target}}
           arch: ${{matrix.arch}}
-          artifact: android
+          artifact: android_${{matrix.target}}_${{matrix.arch}}
 
   web-gdextension:
     name: 🕸 Web
@@ -186,7 +186,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           submodules: recursive
       - uses: ./.github/actions/setvars
@@ -202,7 +202,7 @@ jobs:
           platform: web
           target: ${{matrix.target}}
           arch: ${{matrix.arch}}
-          artifact: web
+          artifact: web_${{matrix.target}}_${{matrix.arch}}
 
   # ============================================
 
@@ -215,45 +215,19 @@ jobs:
         android-gdextension,
         web-gdextension,
       ]
-    if: |
-      always() &&
-      (needs.windows-gdextension.result == 'success' || needs.windows-gdextension.result == 'skipped') &&
-      (needs.linux-gdextension.result == 'success' || needs.linux-gdextension.result == 'skipped') &&
-      (needs.macos-gdextension.result == 'success' || needs.macos-gdextension.result == 'skipped') &&
-      (needs.android-gdextension.result == 'success' || needs.android-gdextension.result == 'skipped') &&
-      (needs.web-gdextension.result == 'success' || needs.web-gdextension.result == 'skipped') &&
-      !(needs.windows-gdextension.result == 'skipped' &&
-        needs.linux-gdextension.result == 'skipped' &&
-        needs.macos-gdextension.result == 'skipped' &&
-        needs.android-gdextension.result == 'skipped' &&
-        needs.web-gdextension.result == 'skipped')
+    if: success() || failure()
     name: 📦 Collect GDExtension binaries
     runs-on: ubuntu-latest
 
     steps:
       - name: Download Binaries
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
+          merge-multiple: true
           path: extracted_files
 
-      - name: Store all libraries in one directory
-        run: |
-          ls -R extracted_files/
-          declare -a platforms=("windows" "linux" "macos" "android" "web")
-          for platform in "${platforms[@]}"
-          do
-            if [ -n "$(ls -A extracted_files/$platform 2>/dev/null)" ]; then
-              echo "Extract files for $platform"
-              mv -f extracted_files/$platform/* extracted_files
-              rm -r extracted_files/$platform
-            else
-              echo "No files found for $platform"
-            fi
-          done
-          touch extracted_files/.gdignore
-
       - name: Upload GDExtension
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: gdextension_libs
           retention-days: 7

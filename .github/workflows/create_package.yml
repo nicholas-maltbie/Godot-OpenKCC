@@ -21,7 +21,7 @@ on:
 
 jobs:
   create_package:
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-latest"
     name: 📦 Build Package
     env:
       BRANCH_PREFIX: release
@@ -57,7 +57,7 @@ jobs:
 
       # Upload package as zip
       - name: Upload Package
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: godot-openkcc
           retention-days: 7
@@ -66,5 +66,5 @@ jobs:
             !.git
       
       # Restore back to original branch
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         if: always()
