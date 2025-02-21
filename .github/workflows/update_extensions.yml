@@ -20,12 +20,12 @@ jobs:
       contents: write
     needs: compile
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: ./.github/actions/setvars
       - uses: nschloe/action-cached-lfs-checkout@v1
 
       - name: Download Binaries
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: extracted_files
           name: gdextension_libs

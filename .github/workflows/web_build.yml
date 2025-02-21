@@ -10,35 +10,59 @@ on:
 
 jobs:
   build-docs:
-    name: 🌐 Build Documentation
+    name: 🌐 Build GDScript Documentation
     runs-on: ubuntu-latest
     container:
-      image: barichello/godot-ci:4.2.2
+      image: barichello/godot-ci:4.3
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+      - run: git config --global --add safe.directory $GITHUB_WORKSPACE
+      - uses: ./.github/actions/setvars
+      - uses: nschloe/action-cached-lfs-checkout@v1
+      
+      - name: Load Project Once
+        run: godot -v -e --headless --path ${{env.PROJECT_PATH}} --quit-after 100 || true
+
+      - run: mkdir -p ${{env.PROJECT_PATH}}/doc/godot
+      - run: godot --path ${{env.PROJECT_PATH}} --doctool doc/godot --quit
+      - run: godot --path ${{env.PROJECT_PATH}} --doctool doc/classes --gdscript-docs res://scripts --quit
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: gdscript_data
+          path: ${{env.PROJECT_PATH}}/doc
+          retention-days: 1
+
+  build-doc-website:
+    name: 🌐 Build Doc Website
+    runs-on: ubuntu-latest
+    needs: build-docs
+    steps:
+      - uses: actions/checkout@v4
       - run: git config --global --add safe.directory $GITHUB_WORKSPACE
       - uses: ./.github/actions/setvars
       - uses: nschloe/action-cached-lfs-checkout@v1
 
+      - name: Download GDScript Documentation
+        uses: actions/download-artifact@v4
+        with:
+          name: gdscript_data
+          path: ${{env.PROJECT_PATH}}/doc
+
       - uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '7.x'
+
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
-
+          python-version: '3.13'
+  
       - name: Install Tools
         run: |
           export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
           dotnet tool restore
           python3 -m pip install gddoc2yml
-      
-      - name: Build Documentation
-        run: |
-          godot -v -e --headless --path ${{env.PROJECT_PATH}} --quit-after 100 || true
-          mkdir -p ${{env.PROJECT_PATH}}/doc/godot
-          godot --path ${{env.PROJECT_PATH}} --doctool doc/godot
-          godot --path ${{env.PROJECT_PATH}} --doctool doc/classes --gdscript-docs res://scripts
 
       - name: Convert Docs to YML
         run: gdxml2yml --filter ${{env.PROJECT_PATH}}/doc/classes ${{env.PROJECT_PATH}}/doc/classes ${{env.PROJECT_PATH}}/doc/godot doc/api
@@ -63,15 +87,15 @@ jobs:
     name: 🌐 Build Godot Project
     runs-on: ubuntu-20.04
     container:
-      image: barichello/godot-ci:4.2.2
+      image: barichello/godot-ci:4.3
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: git config --global --add safe.directory $GITHUB_WORKSPACE
       - uses: ./.github/actions/setvars
       - uses: nschloe/action-cached-lfs-checkout@v1
 
       - name: Download Binaries
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: extracted_files
           name: gdextension_libs
@@ -102,7 +126,7 @@ jobs:
 
   upload-artifact:
     name: 📦 Upload Site Artifact
-    needs: [build-docs, build-game]
+    needs: [build-doc-website, build-game]
     runs-on: ubuntu-20.04
     steps:
       - name: Download Game
@@ -125,6 +149,6 @@ jobs:
 
       - name: Upload Artifact
         if: ${{ inputs.uploadArtifact }}
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v3
         with:
           name: github-pages

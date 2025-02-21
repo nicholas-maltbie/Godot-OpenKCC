@@ -5,18 +5,18 @@ on:
 jobs:
   cpp-lint:
     name: 🧹 C++ lint
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-latest"
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: RafikFarhad/clang-format-github-action@v3
         with:
           sources: "src/**/*.h,src/**/*.c,test/**/*.cpp"
 
   cs-lint:
     name: 🧹 C# lint
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-latest"
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '7.x'
@@ -25,9 +25,9 @@ jobs:
 
   gd-lint:
     name: 🧹 GDScript lint
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-latest"
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/setup-python@v4
         with:
           python-version: '3.10' 
@@ -37,7 +37,7 @@ jobs:
 
   markdown-lint:
     name: 🧹 Markdown lint
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-latest"
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actionshub/markdownlint@main

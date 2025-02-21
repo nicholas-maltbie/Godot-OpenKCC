@@ -18,7 +18,7 @@ jobs:
     steps:
     - uses: dorny/test-reporter@v1
       with:
-        artifact: test-results 
+        artifact: test-results
         name: GUT Tests
         path: '*.xml'
         reporter: jest-junit

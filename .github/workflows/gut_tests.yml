@@ -4,18 +4,26 @@ on:
 
 jobs:
   test:
-    name: 🧪 Run Tests
+    name: 🧪 Run Tests ${{ matrix.version }}
     runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        include:
+          - version: "4.3"
+            container: "barichello/godot-ci:4.3"
+          - version: "4.2.2"
+            container: "barichello/godot-ci:4.2.2"
     container:
-      image: barichello/godot-ci:4.2.2
+      image: ${{ matrix.container }}
+
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: git config --global --add safe.directory $GITHUB_WORKSPACE
       - uses: ./.github/actions/setvars
       - uses: nschloe/action-cached-lfs-checkout@v1
 
       - name: Download Binaries
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: extracted_files
           name: gdextension_libs
@@ -35,11 +43,32 @@ jobs:
 
       - name: Run Tests
         run: |
-          godot --headless --path ${{env.PROJECT_PATH}} -s res://addons/gut/gut_cmdln.gd -gjunit_xml_file=res://../test_results/results.xml -gexit
+          godot --headless --path ${{env.PROJECT_PATH}} -s res://addons/gut/gut_cmdln.gd -gjunit_xml_file=res://../test_results/results_${{ matrix.version }}.xml -gexit
 
       - name: Upload Results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: success() || failure()
         with:
+          name: test_results_${{ matrix.version}}
+          path: test_results
+
+  collect-results:
+    needs: test
+    if: success() || failure()
+    name: 📦 Collect Test Results
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download Results
+        uses: actions/download-artifact@v4
+        with:
+          pattern: test_results_*
+          path: test_results
+          merge-multiple: true
+
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v4
+        with:
           name: test-results
-          path: test_results/results.xml
+          retention-days: 7
+          path: test_results/*

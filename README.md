@@ -20,7 +20,7 @@ deployed with each update to the codebase.
 
 ## Project Setup
 
-Install Godot v4.2.2-stable, then make sure to setup the build tools for the project.
+Install Godot v4.3.stable, then make sure to setup the build tools for the project.
 Setup guide for required tools by platform: [Building from Source](https://docs.godotengine.org/en/stable/contributing/development/compiling/index.html)
 
 Using the GDExtensions to develop with C++, see [GDExtension C++ example](https://docs.godotengine.org/en/stable/tutorials/scripting/gdextension/gdextension_cpp_example.html)
