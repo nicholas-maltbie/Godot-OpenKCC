@@ -1,0 +1,25 @@
+[gd_scene load_steps=5 format=3 uid="uid://3o31vox8w7ag"]
+
+[ext_resource type="Script" path="res://scripts/character_builtin.gd" id="1_ge4xx"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_qge1p"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5kkw2"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_p2ho7"]
+
+[node name="Player" type="CharacterBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+script = ExtResource("1_ge4xx")
+
+[node name="CSGMesh3D" type="CSGMesh3D" parent="."]
+mesh = SubResource("CapsuleMesh_qge1p")
+material = SubResource("StandardMaterial3D_5kkw2")
+
+[node name="Head" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
+
+[node name="Camera3d" type="Camera3D" parent="Head"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("CapsuleShape3D_p2ho7")
