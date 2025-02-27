@@ -21,11 +21,12 @@ jobs:
       - uses: nschloe/action-cached-lfs-checkout@v1
       
       - name: Load Project Once
-        run: godot -v -e --headless --path ${{env.PROJECT_PATH}} --quit-after 100 || true
+        run: godot -v --headless --path ${{env.PROJECT_PATH}} --import || true
 
       - run: mkdir -p ${{env.PROJECT_PATH}}/doc/godot
       - run: godot --path ${{env.PROJECT_PATH}} --doctool doc/godot --quit
       - run: godot --path ${{env.PROJECT_PATH}} --doctool doc/classes --gdscript-docs res://scripts --quit
+      - run: godot --path demo-project --doctool doc/classes --gdscript-docs res://addons/openkcc/examples --quit
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -112,7 +113,7 @@ jobs:
 
       - name: 🕸 Web Build
         run: |
-          godot -v -e --headless --path ${{env.PROJECT_PATH}} --quit-after 100 || true
+          godot -v --headless --path ${{env.PROJECT_PATH}} --import || true
           mkdir ${GITHUB_WORKSPACE}/_site
           godot -v --headless --path ${{env.PROJECT_PATH}} --export-release web ${GITHUB_WORKSPACE}/_site/index.html
           cp ${{env.PROJECT_PATH}}/coi-serviceworker.min.js ${GITHUB_WORKSPACE}/_site/coi-serviceworker.min.js

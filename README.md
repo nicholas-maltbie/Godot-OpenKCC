@@ -68,7 +68,7 @@ mkdir -p external
 Invoke-WebRequest -Uri $url -OutFile $out
 
 # Export debug windows-desktop build
-godot -v -e --path demo-project --headless --quit-after 100
+godot -v --import --path demo-project --headless
 mkdir -p builds/Windows
 godot --path demo-project --headless --export-release windows-desktop
 ```
@@ -93,7 +93,7 @@ scons --directory godot-cpp platform=web -j4
 scons platform=web target=template_release -j4
 
 # Export debug web build
-godot -v -e --path demo-project --headless --quit-after 100
+godot -v --import --path demo-project --headless
 mkdir -p builds/WebGL
 godot --path demo-project --headless --export-release web
 cp demo-project/coi-serviceworker.min.js builds/WebGL/coi-serviceworker.min.js
@@ -122,16 +122,21 @@ python3 -m pip install gddoc2yml
 dotnet tool restore
 
 #  Load project in editor at least once
-godot -v -e --path demo-project --headless --quit-after 100
+godot -v --import --path demo-project --headless
 
 # Build xml based documentation
 mkdir -p demo-project/doc/godot
 godot --path demo-project --doctool doc/godot
-godot --path demo-project --doctool doc/classes --gdscript-docs res://scripts
+
+# Build documentation for my scripts
+godot --path demo-project --doctool doc/classes --gdscript-docs res://scripts --quit
+godot --path demo-project --doctool doc/classes `
+    --gdscript-docs res://addons/openkcc/examples --quit
 
 # Convert docs to yml
-gdxml2yml --filter demo-project/doc/classes demo-project/doc/classes `
-    demo-project/doc/godot doc/api
+gdxml2yml --filter demo-project/doc/classes `
+    demo-project/doc/classes demo-project/doc/godot `
+    doc/api
 
 # Create site with docfx
 dotnet tool run docfx doc/docfx.json --serve
