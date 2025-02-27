@@ -38,7 +38,7 @@ jobs:
 
       - name: Prepare Tests
         run: |
-          godot -e --headless --path ${{env.PROJECT_PATH}} --quit-after 100 || true
+          godot --import --headless --path ${{env.PROJECT_PATH}} || true
           mkdir -p test_results
 
       - name: Run Tests
