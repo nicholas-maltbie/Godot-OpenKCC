@@ -1,12 +1,6 @@
 name: 🌐 Web Build
 on:
   workflow_call:
-    inputs:
-      uploadArtifact:
-        description: 'Should site artifact be uploaded'
-        required: false
-        default: false
-        type: boolean
 
 jobs:
   build-docs:
@@ -124,32 +118,3 @@ jobs:
           name: game
           path: _site/
           retention-days: 1
-
-  upload-artifact:
-    name: 📦 Upload Site Artifact
-    needs: [build-doc-website, build-game]
-    runs-on: ubuntu-20.04
-    steps:
-      - name: Download Game
-        uses: actions/download-artifact@v4
-        with:
-          name: game
-          path: _site/
-
-      - name: Download Docs
-        uses: actions/download-artifact@v4
-        with:
-          name: docs
-          path: _site/docs
-
-      - name: Fix Permissions
-        run: |
-          chmod -c -R +rX "_site/" | while read line; do
-            echo "::warning title=Invalid file permissions automatically fixed::$line"
-          done
-
-      - name: Upload Artifact
-        if: ${{ inputs.uploadArtifact }}
-        uses: actions/upload-pages-artifact@v3
-        with:
-          name: github-pages

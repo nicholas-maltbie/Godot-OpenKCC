@@ -16,8 +16,35 @@ concurrency:
 jobs:
   build:
     uses: ./.github/workflows/web_build.yml
-    with:
-      uploadArtifact: true
+
+  upload-artifact:
+    name: 📦 Upload Site Artifact
+    needs: build
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Download Game
+        uses: actions/download-artifact@v4
+        with:
+          name: game
+          path: _site/
+
+      - name: Download Docs
+        uses: actions/download-artifact@v4
+        with:
+          name: docs
+          path: _site/docs
+
+      - name: Fix Permissions
+        run: |
+          chmod -c -R +rX "_site/" | while read line; do
+            echo "::warning title=Invalid file permissions automatically fixed::$line"
+          done
+
+      - name: Upload Artifact
+        id: deployment
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site/
 
   deploy:
     name: 🚀 Deploy Site
@@ -25,8 +52,8 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    needs: build
+    needs: upload-artifact
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v2
+        uses: actions/deploy-pages@v4
