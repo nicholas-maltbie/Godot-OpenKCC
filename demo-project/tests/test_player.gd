@@ -24,15 +24,14 @@ func before_all():
 
 func before_each():
 	_character = Player.new()
-	var head:Node3D = Node3D.new()
-	var camera:Camera3D = Camera3D.new()
+	var head:CameraController = CameraController.new()
+	var main_camera:Camera3D = Camera3D.new()
 
 	_character.set_name("Character")
 	head.set_name("Head")
-	camera.set_name("Camera3d")
 
 	_character.add_child(head)
-	head.add_child(camera)
+	add_child_autofree(main_camera)
 	add_child_autofree(_character)
 	_character.global_position = Vector3(0, 1, 0)
 
