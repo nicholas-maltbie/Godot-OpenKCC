@@ -142,6 +142,8 @@ data = PackedVector3Array(1.5, 0, 0, 1.5, 0.2, 0, 0, 0.2, 0, 0, 0.2, 0, 0, 0, 0,
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_3gy7d")
 
+[node name="Camera3D" type="Camera3D" parent="."]
+
 [node name="Floor" parent="." instance=ExtResource("1_qt6ee")]
 transform = Transform3D(100, 0, 0, 0, 1, 0, 0, 0, 100, 0, -0.5, 0)
 block_style = 6

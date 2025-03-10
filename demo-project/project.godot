@@ -27,7 +27,7 @@ project/assembly_name="GodotOpenKCC"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/gut/plugin.cfg")
+enabled=PackedStringArray("res://addons/gut/plugin.cfg", "res://addons/openkcc/plugin.cfg")
 
 [input]
 

@@ -19,6 +19,9 @@ var move_velocity:Vector3 = Vector3.ZERO
 # Mouse sensitivity
 var mouse_sensibility = 1200
 
+# Mouse zoom speed
+var mouse_zoom_speed = 0.25
+
 # Allow player movement
 var allow_movement:bool = true
 
@@ -32,7 +35,7 @@ var _input_component_right:float
 var _input_jump:bool = false
 var _can_jump:bool = false
 
-@onready var cam = $Head/Camera3d as Camera3D
+@onready var camera_controller = $Head as CameraController
 
 func _ready() -> void:
 	setup_shape()
@@ -44,6 +47,12 @@ func _ready() -> void:
 func _exit_tree():
 	MenuBus.menu_opened.disconnect(_on_menu_opened)
 	MenuBus.menu_closed.disconnect(_on_menu_closed)
+
+func _process(_delta) -> void:
+	# Have camera follow camera controller
+	var cam = get_viewport().get_camera_3d()
+	cam.position = camera_controller.get_target_position()
+	cam.rotation = camera_controller.get_target_rotation()
 
 func _physics_process(_delta) -> void:
 	# Check for overlapping objects.
@@ -68,7 +77,7 @@ func _physics_process(_delta) -> void:
 		# gameplay actions.
 		var input_x := _input_component_right - _input_component_left
 		var input_y := _input_component_back - _input_component_forward
-		direction = transform.basis * Vector3(input_x, 0, input_y)
+		direction = Quaternion.from_euler(Vector3(0, camera_controller.yaw, 0)) * Vector3(input_x, 0, input_y)
 		direction = direction.normalized()
 
 	if direction:
@@ -123,9 +132,16 @@ func _input(event:InputEvent) -> void:
 		# Only rotate player if input is allowed
 		# Adjust rotation based on player input
 		if allow_movement:
-			rotation.y -= event.relative.x / mouse_sensibility
-			$Head/Camera3d.rotation.x -= event.relative.y / mouse_sensibility
-			$Head/Camera3d.rotation.x = clamp($Head/Camera3d.rotation.x, deg_to_rad(-90), deg_to_rad(90))
+			camera_controller.yaw -= event.relative.x / mouse_sensibility
+			camera_controller.pitch -= event.relative.y / mouse_sensibility
+	elif event is InputEventMouseButton:
+		if event.is_pressed():
+			# zoom in
+			if event.button_index == MOUSE_BUTTON_WHEEL_UP:
+				camera_controller.zoom -= mouse_zoom_speed
+			# zoom out
+			if event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+				camera_controller.zoom += mouse_zoom_speed
 
 func _attempt_jump():
 	# If the player is on ground and not sliding, allow to jump again

@@ -6,6 +6,7 @@
         "xlocale": "cpp",
         "xstring": "cpp",
         "cmath": "cpp",
-        "algorithm": "cpp"
+        "algorithm": "cpp",
+        "list": "cpp"
     }
 }

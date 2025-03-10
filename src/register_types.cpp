@@ -1,5 +1,6 @@
 #include "register_types.h"
 
+#include "camera_controller.h"
 #include "openkcc_body_3d.h"
 
 #include <gdextension_interface.h>
@@ -15,6 +16,7 @@ void initialize_openkcc_module(ModuleInitializationLevel p_level) {
 		return;
 	}
 
+	ClassDB::register_class<CameraController>();
 	ClassDB::register_class<OpenKCCBody3D>();
 }
 

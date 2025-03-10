@@ -36,6 +36,7 @@ git -C godot-cpp submodule update --init
 
 # Setup build platform tools for windows and web environment
 scons --directory godot-cpp -j4
+scons --directory godot-cpp -j4 target=editor
 
 # Build openkcc libraries for your development platform.
 scons -j4
@@ -44,6 +45,26 @@ scons target=editor -j4
 # Note, I ran into some issues with the build and multi threading and
 #  some of the build dependencies attaching a flag such as -j1 at the end
 #  seemed to resolve those errors.
+```
+
+### Symlink Issue
+
+If you run into an issue with `demo-project\addons\openkcc` not being created as
+a symlink, make sure symlinks is enabled. Once setting has been enabled, you
+can restore the path by doing a git checkout of the path
+`demo-project\addons\openkcc` or a `git reset --hard`,
+but this may need to be run as an admin to correctly create the symlinks on windows.
+
+Check via command.
+
+```PowerShell
+git config core.symlinks
+```
+
+Update via command.
+
+```PowerShell
+git config core.symlinks true
 ```
 
 ## Build

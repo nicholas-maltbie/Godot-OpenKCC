@@ -30,3 +30,7 @@ android.template_release.arm32 = "libs/libopenkcc.android.template_release.arm32
 android.template_release.arm64 = "libs/libopenkcc.android.template_release.arm64.so"
 android.template_release.x86_32 = "libs/libopenkcc.android.template_release.x86_32.so"
 android.template_release.x86_64 = "libs/libopenkcc.android.template_release.x86_64.so"
+
+[icons]
+
+CameraController = "icons/camera_controller.svg"

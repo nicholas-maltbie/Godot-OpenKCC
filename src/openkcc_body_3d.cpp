@@ -19,7 +19,7 @@ void OpenKCCBody3D::_bind_methods() {
 }
 
 OpenKCCBody3D::OpenKCCBody3D() :
-		StaticBody3D() {
+	StaticBody3D() {
 }
 
 OpenKCCBody3D::~OpenKCCBody3D() {

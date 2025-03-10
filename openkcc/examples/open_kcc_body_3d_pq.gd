@@ -17,7 +17,7 @@ const MAX_BOUNCES:int = 5
 ## Buffer value when computing angle falloff (90 degrees)
 const BUFFER_SHOVE_RADIANS:float = PI
 
-## Max angle taht a player can reflect off of (180 degrees)
+## Max angle that a player can reflect off of (180 degrees)
 const MAX_SHOVE_RADIANS:float = PI/2
 
 ## Small epsilon value for handling error ranges.
@@ -86,7 +86,7 @@ var _collision:OpenKCCCollision = OpenKCCCollision.new()
 var _physics_query_params:PhysicsShapeQueryParameters3D = PhysicsShapeQueryParameters3D.new()
 
 ## Physics query for raycast to avoid dynamic memory allocation.
-var _phsyics_raycast_query_params:PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.new()
+var _physics_raycast_query_params:PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.new()
 
 ## Capsule shape of the player with the skin width removed.
 var _capsule:Shape3D
@@ -107,9 +107,9 @@ func _can_snap_up(distance_to_snap:float, momentum:Vector3, position:Vector3) ->
 
 func _check_perpendicular_bounce(hit:OpenKCCCollision, momentum:Vector3) -> bool:
 	var space_state = get_world_3d().direct_space_state
-	_phsyics_raycast_query_params.from = hit.point - up.normalized() * EPSILON + hit.normal * EPSILON
-	_phsyics_raycast_query_params.to = _phsyics_raycast_query_params.from + momentum.normalized() * hit.dist_remaining
-	var result:Dictionary = space_state.intersect_ray(_phsyics_raycast_query_params)
+	_physics_raycast_query_params.from = hit.point - up.normalized() * EPSILON + hit.normal * EPSILON
+	_physics_raycast_query_params.to = _physics_raycast_query_params.from + momentum.normalized() * hit.dist_remaining
+	var result:Dictionary = space_state.intersect_ray(_physics_raycast_query_params)
 	if result.is_empty():
 		return false
 	var hit_normal:Vector3 = result["normal"]
