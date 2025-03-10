@@ -79,7 +79,7 @@ void CameraController::_process(double delta) {
 		camera_pos_y = camera_source.y;
 	}
 
-	Quaternion dir = Quaternion::from_euler(get_target_rotation());
+	Quaternion dir = Quaternion(get_target_rotation());
 	target_position = Vector3(camera_source.x, camera_pos_y, camera_source.z) + dir.xform(Vector3(0, 0, zoom));
 
 	// Bound target position using raycast from camera source

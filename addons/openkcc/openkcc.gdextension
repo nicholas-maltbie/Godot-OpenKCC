@@ -1,0 +1,37 @@
+[configuration]
+
+entry_symbol = "openkcc_library_init"
+compatibility_minimum = "4.1"
+reloadable = false
+
+[libraries]
+
+linux.x86_64 = "libs/libopenkcc.linux.editor.x86_64.so"
+macos = "libs/libopenkcc.macos.editor.framework"
+windows.x86_64 = "libs/libopenkcc.windows.editor.x86_64.dll"
+
+macos.debug = "libs/libopenkcc.macos.template_debug.framework"
+macos.release = "libs/libopenkcc.macos.template_release.framework"
+
+linux.debug.x86_64 = "libs/libopenkcc.linux.template_debug.x86_64.so"
+linux.release.x86_64 = "libs/libopenkcc.linux.template_release.x86_64.so"
+
+windows.debug.x86_64 = "libs/libopenkcc.windows.template_debug.x86_64.dll"
+windows.release.x86_64 = "libs/libopenkcc.windows.template_release.x86_64.dll"
+
+web.wasm32 = "libs/libopenkcc.web.editor.wasm32.wasm"
+web.debug.wasm32 = "libs/libopenkcc.web.template_debug.wasm32.wasm"
+web.release.wasm32 = "libs/libopenkcc.web.template_release.wasm32.wasm"
+
+android.debug.arm32 = "libs/libopenkcc.android.template_debug.arm32.so"
+android.debug.arm64 = "libs/libopenkcc.android.template_debug.arm64.so"
+android.debug.x86_32 = "libs/libopenkcc.android.template_debug.x86_32.so"
+android.debug.x86_64 = "libs/libopenkcc.android.template_debug.x86_64.so"
+android.release.arm32 = "libs/libopenkcc.android.template_release.arm32.so"
+android.release.arm64 = "libs/libopenkcc.android.template_release.arm64.so"
+android.release.x86_32 = "libs/libopenkcc.android.template_release.x86_32.so"
+android.release.x86_64 = "libs/libopenkcc.android.template_release.x86_64.so"
+
+[icons]
+
+CameraController = "icons/camera_controller.svg"

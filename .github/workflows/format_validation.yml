@@ -5,7 +5,7 @@ on:
 jobs:
   cpp-lint:
     name: 🧹 C++ lint
-    runs-on: "ubuntu-latest"
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: RafikFarhad/clang-format-github-action@v3
@@ -14,7 +14,7 @@ jobs:
 
   cs-lint:
     name: 🧹 C# lint
-    runs-on: "ubuntu-latest"
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v3
@@ -25,7 +25,7 @@ jobs:
 
   gd-lint:
     name: 🧹 GDScript lint
-    runs-on: "ubuntu-latest"
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v4
@@ -33,11 +33,11 @@ jobs:
           python-version: '3.10' 
           cache: 'pip'
       - run: pip install gdtoolkit
-      - run: gdlint openkcc demo-project/scripts demo-project/tests
+      - run: gdlint addons/openkcc demo-project/scripts demo-project/tests
 
   markdown-lint:
     name: 🧹 Markdown lint
-    runs-on: "ubuntu-latest"
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actionshub/markdownlint@main

@@ -21,7 +21,7 @@ on:
 
 jobs:
   create_package:
-    runs-on: "ubuntu-latest"
+    runs-on: ubuntu-latest
     name: 📦 Build Package
     env:
       BRANCH_PREFIX: release

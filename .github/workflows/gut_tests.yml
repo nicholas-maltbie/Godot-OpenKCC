@@ -5,16 +5,15 @@ on:
 jobs:
   test:
     name: 🧪 Run Tests ${{ matrix.version }}
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         include:
-          - version: "4.3"
-            container: "barichello/godot-ci:4.3"
-          - version: "4.2.2"
-            container: "barichello/godot-ci:4.2.2"
-    container:
-      image: ${{ matrix.container }}
+          - version: 4.4.0
+          - version: 4.3.0
+          - version: 4.2.2
+          # - version: 4.1.4
 
     steps:
       - uses: actions/checkout@v4
@@ -22,27 +21,30 @@ jobs:
       - uses: ./.github/actions/setvars
       - uses: nschloe/action-cached-lfs-checkout@v1
 
+      
+      - name: Setup Godot ${{ matrix.version }}
+        uses: chickensoft-games/setup-godot@v2.1.1
+        with:
+          version: ${{ matrix.version }}
+          use-dotnet: false
+          include-templates: false
+
       - name: Download Binaries
         uses: actions/download-artifact@v4
         with:
-          path: extracted_files
+          path: ${{env.ADDON_LIBS_PATH}}
           name: gdextension_libs
+      
+      - run: ls -R ${{env.ADDON_PATH}}
+      - run: ls -R demo-project/${{env.ADDON_PATH}}
 
-      - name: Replace with new files
-        run: |
-          ls -R extracted_files
-          find extracted_files/ -mindepth 2 -type f -exec mv -i '{}' extracted_files/ ';'
-          rm -rf ${{env.ADDON_LIBS_PATH}}/
-          mv -f extracted_files ${{env.ADDON_LIBS_PATH}}
-          ls -R ${{env.ADDON_LIBS_PATH}}
-
-      - name: Prepare Tests
-        run: |
-          godot --import --headless --path ${{env.PROJECT_PATH}} || true
-          mkdir -p test_results
+      - name: import assets
+        run: godot --editor --headless --path ${{env.PROJECT_PATH}} --quit-after 100 || true
+        continue-on-error: true
 
       - name: Run Tests
         run: |
+          mkdir -p test_results
           godot --headless --path ${{env.PROJECT_PATH}} -s res://addons/gut/gut_cmdln.gd -gjunit_xml_file=res://../test_results/results_${{ matrix.version }}.xml -gexit
 
       - name: Upload Results

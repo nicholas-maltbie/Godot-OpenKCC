@@ -18,14 +18,14 @@ sources = Glob("src/*.cpp")
 
 if env["platform"] == "macos":
     library = env.SharedLibrary(
-        "openkcc/libs/libopenkcc.{}.{}.framework/libopenkcc.{}.{}".format(
+        "addons/openkcc/libs/libopenkcc.{}.{}.framework/libopenkcc.{}.{}".format(
             env["platform"], env["target"], env["platform"], env["target"]
         ),
         source=sources,
     )
 else:
     library = env.SharedLibrary(
-        "openkcc/libs/libopenkcc{}{}".format(env["suffix"], env["SHLIBSUFFIX"]),
+        "addons/openkcc/libs/libopenkcc{}{}".format(env["suffix"], env["SHLIBSUFFIX"]),
         source=sources,
     )
 

@@ -63,13 +63,13 @@ jobs:
           platform: windows
           target: ${{matrix.target}}
           arch: ${{matrix.arch}}
-          artifact: windows_${{matrix.target}}_${{matrix.arch}}
+          artifact: openkcc-windows_${{matrix.target}}_${{matrix.arch}}
 
   # ============================================
 
   linux-gdextension:
     name: 🐧 Linux
-    runs-on: "ubuntu-latest"
+    runs-on: ubuntu-latest
     if: ${{ inputs.buildLinux || github.event_name == 'workflow_dispatch' }}
 
     strategy:
@@ -92,7 +92,7 @@ jobs:
           platform: linux
           target: ${{matrix.target}}
           arch: ${{matrix.arch}}
-          artifact: linux_${{matrix.target}}_${{matrix.arch}}
+          artifact: openkcc-linux_${{matrix.target}}_${{matrix.arch}}
 
   # ============================================
 
@@ -121,14 +121,14 @@ jobs:
           platform: macos
           target: ${{matrix.target}}
           arch: ${{matrix.arch}}
-          artifact: macos_${{matrix.target}}_${{matrix.arch}}
+          artifact: openkcc-macos_${{matrix.target}}_${{matrix.arch}}
           additional: macos_deployment_target=10.14
 
   # ============================================
 
   android-gdextension:
     name: 🤖 Android
-    runs-on: "ubuntu-latest"
+    runs-on: ubuntu-latest
     if: ${{ inputs.buildAndroid || github.event_name == 'workflow_dispatch' }}
 
     strategy:
@@ -171,11 +171,11 @@ jobs:
           platform: android
           target: ${{matrix.target}}
           arch: ${{matrix.arch}}
-          artifact: android_${{matrix.target}}_${{matrix.arch}}
+          artifact: openkcc-android_${{matrix.target}}_${{matrix.arch}}
 
   web-gdextension:
     name: 🕸 Web
-    runs-on: "ubuntu-latest"
+    runs-on: ubuntu-latest
     if: ${{ inputs.buildWeb || github.event_name == 'workflow_dispatch' }}
 
     strategy:
@@ -202,7 +202,7 @@ jobs:
           platform: web
           target: ${{matrix.target}}
           arch: ${{matrix.arch}}
-          artifact: web_${{matrix.target}}_${{matrix.arch}}
+          artifact: openkcc-web_${{matrix.target}}_${{matrix.arch}}
 
   # ============================================
 
@@ -215,7 +215,10 @@ jobs:
         android-gdextension,
         web-gdextension,
       ]
-    if: success() || failure()
+    if: |
+      always() &&
+      !contains(needs.*.result, 'failure') &&
+      !contains(needs.*.result, 'cancelled')
     name: 📦 Collect GDExtension binaries
     runs-on: ubuntu-latest
 
@@ -223,8 +226,19 @@ jobs:
       - name: Download Binaries
         uses: actions/download-artifact@v4
         with:
-          merge-multiple: true
+          pattern: openkcc-*
           path: extracted_files
+
+      - name: Store all libraries in one directory
+        run: |
+          arch_dirs=$(find extracted_files/ -mindepth 1 -maxdepth 1 -type d)
+          echo "Original structure:"
+          find extracted_files -mindepth 1
+          mv -f extracted_files/**/* extracted_files
+          rm -rf $arch_dirs
+          echo "Final structure:"
+          find extracted_files -mindepth 1
+          touch extracted_files/.gdignore
 
       - name: Upload GDExtension
         uses: actions/upload-artifact@v4

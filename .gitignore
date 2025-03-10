@@ -26,18 +26,18 @@ src/*.bc
 
 # Ignore generated extension files
 # Windows generated files
-openkcc/libs/*.dll
-openkcc/libs/*.exp
-openkcc/libs/*.lib
+addons/openkcc/libs/*.dll
+addons/openkcc/libs/*.exp
+addons/openkcc/libs/*.lib
 
 # Linux so failes
-openkcc/libs/*.so
+addons/openkcc/libs/*.so
 
 # Mac framework files
-openkcc/libs/*.framework
+addons/openkcc/libs/*.framework
 
 # Javascript wasm files
-openkcc/libs/*.wasm
+addons/openkcc/libs/*.wasm
 
 # Binaries
 .DS_Store

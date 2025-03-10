@@ -2,9 +2,9 @@
 
 [ext_resource type="PackedScene" uid="uid://dj26sacnhty4r" path="res://addons/devblocks/blocks/basic_block.tscn" id="1_qt6ee"]
 [ext_resource type="PackedScene" uid="uid://brsdadxyheo2k" path="res://example/character.tscn" id="2_dr2yj"]
-[ext_resource type="Script" path="res://scripts/constant_rotation.gd" id="3_h22et"]
+[ext_resource type="Script" uid="uid://cu0ktkvi47206" path="res://scripts/constant_rotation.gd" id="3_h22et"]
 [ext_resource type="PackedScene" uid="uid://b3yfb8efh4kwb" path="res://scenes/menu.tscn" id="4_rnmvr"]
-[ext_resource type="Script" path="res://scripts/stairs.gd" id="4_tb0lp"]
+[ext_resource type="Script" uid="uid://l0phew8kq61x" path="res://scripts/stairs.gd" id="4_tb0lp"]
 [ext_resource type="Texture2D" uid="uid://bwm3chclmoo0x" path="res://addons/devblocks/textures/dark/texture_01.png" id="6_5jq8x"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_j3jj1"]
@@ -154,8 +154,6 @@ shadow_enabled = true
 directional_shadow_blend_splits = true
 
 [node name="Player" parent="." instance=ExtResource("2_dr2yj")]
-vertical_snap_up = 0.35
-step_up_depth = 0.2
 
 [node name="Spinning Block" type="StaticBody3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0816402, 0.641941, 8.62798)
