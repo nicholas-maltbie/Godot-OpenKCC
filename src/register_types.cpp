@@ -16,8 +16,8 @@ void initialize_openkcc_module(ModuleInitializationLevel p_level) {
 		return;
 	}
 
-	ClassDB::register_class<CameraController>();
-	ClassDB::register_class<OpenKCCBody3D>();
+	GDREGISTER_RUNTIME_CLASS(CameraController);
+	GDREGISTER_RUNTIME_CLASS(OpenKCCBody3D);
 }
 
 void uninitialize_openkcc_module(ModuleInitializationLevel p_level) {
