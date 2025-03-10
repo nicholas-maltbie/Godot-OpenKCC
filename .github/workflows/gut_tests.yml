@@ -15,10 +15,6 @@ jobs:
             container: "barichello/godot-ci:4.2.2"
           - version: "4.2"
             container: "barichello/godot-ci:4.2"
-          - version: "4.1"
-            container: "barichello/godot-ci:4.1"
-          - version: "4.0.3"
-            container: "barichello/godot-ci:4.0.3"
     container:
       image: ${{ matrix.container }}
 
