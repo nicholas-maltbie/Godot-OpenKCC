@@ -3,47 +3,13 @@ on:
   workflow_call:
 
 jobs:
-  build-docs:
-    name: 🌐 Build GDScript Documentation
+  build-game:
+    name: 🌐 Build Godot Project
     runs-on: ubuntu-latest
-    container:
-      image: barichello/godot-ci:4.3
     steps:
       - uses: actions/checkout@v4
-      - run: git config --global --add safe.directory $GITHUB_WORKSPACE
       - uses: ./.github/actions/setvars
       - uses: nschloe/action-cached-lfs-checkout@v1
-      
-      - name: Load Project Once
-        run: godot -v --headless --path ${{env.PROJECT_PATH}} --import || true
-
-      - run: mkdir -p ${{env.PROJECT_PATH}}/doc/godot
-      - run: godot --path ${{env.PROJECT_PATH}} --doctool doc/godot --quit
-      - run: godot --path ${{env.PROJECT_PATH}} --doctool doc/classes --gdscript-docs res://scripts --quit
-      - run: godot --path demo-project --doctool doc/classes --gdscript-docs res://addons/openkcc/examples --quit
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: gdscript_data
-          path: ${{env.PROJECT_PATH}}/doc
-          retention-days: 1
-
-  build-doc-website:
-    name: 🌐 Build Doc Website
-    runs-on: ubuntu-latest
-    needs: build-docs
-    steps:
-      - uses: actions/checkout@v4
-      - run: git config --global --add safe.directory $GITHUB_WORKSPACE
-      - uses: ./.github/actions/setvars
-      - uses: nschloe/action-cached-lfs-checkout@v1
-
-      - name: Download GDScript Documentation
-        uses: actions/download-artifact@v4
-        with:
-          name: gdscript_data
-          path: ${{env.PROJECT_PATH}}/doc
 
       - uses: actions/setup-dotnet@v3
         with:
@@ -55,66 +21,55 @@ jobs:
   
       - name: Install Tools
         run: |
-          export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
           dotnet tool restore
           python3 -m pip install gddoc2yml
+
+      - name: Setup Godot 4.4.0
+        uses: chickensoft-games/setup-godot@v2.1.1
+        with:
+          version: 4.4.0
+          use-dotnet: false
+          include-templates: true
+
+      - name: Download Binaries
+        uses: actions/download-artifact@v4
+        with:
+          path: ${{env.ADDON_LIBS_PATH}}
+          name: gdextension_libs
+
+      - name: import assets
+        run: godot --editor --headless --path ${{env.PROJECT_PATH}} --quit-after 100 || true
+        continue-on-error: true
+
+      - name: 🕸 Web Build
+        run: |
+          mkdir -p ${GITHUB_WORKSPACE}/_site
+          godot -v --headless --path ${{env.PROJECT_PATH}} --export-release web ${GITHUB_WORKSPACE}/_site/index.html
+          cp ${{env.PROJECT_PATH}}/coi-serviceworker.min.js ${GITHUB_WORKSPACE}/_site/coi-serviceworker.min.js
+
+      - name: Build Docs with doctool
+        run: |
+          mkdir -p ${{env.PROJECT_PATH}}/doc/godot
+          godot --path ${{env.PROJECT_PATH}} --doctool doc/godot --quit
+          godot --path ${{env.PROJECT_PATH}} --doctool doc/classes --gdscript-docs res://scripts --quit
+          godot --path demo-project --doctool doc/classes --gdscript-docs res://addons/openkcc/examples --quit
 
       - name: Convert Docs to YML
         run: gdxml2yml --filter ${{env.PROJECT_PATH}}/doc/classes ${{env.PROJECT_PATH}}/doc/classes ${{env.PROJECT_PATH}}/doc/godot doc/api
 
       - name: Build site with DocFx
         run: |
-          export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
           dotnet tool run docfx doc/docfx.json
 
       - name: Add baseUrl to xrefmap
         run: |
           sed -i '2 i baseUrl: https://openkcc.nickmaltbie.com/docs/' doc/_site/xrefmap.yml
 
-      - name: 📦 Upload Artifact
-        uses: actions/upload-artifact@v4
+      - name: Move docs site
+        run: mv doc/_site _site/docs
+
+      - name: Upload Artifact
+        id: deployment
+        uses: actions/upload-pages-artifact@v3
         with:
-          name: docs
-          path: doc/_site/
-          retention-days: 1
-
-  build-game:
-    name: 🌐 Build Godot Project
-    runs-on: ubuntu-20.04
-    container:
-      image: barichello/godot-ci:4.3
-    steps:
-      - uses: actions/checkout@v4
-      - run: git config --global --add safe.directory $GITHUB_WORKSPACE
-      - uses: ./.github/actions/setvars
-      - uses: nschloe/action-cached-lfs-checkout@v1
-
-      - name: Download Binaries
-        uses: actions/download-artifact@v4
-        with:
-          path: extracted_files
-          name: gdextension_libs
-
-      - name: Replace with new files
-        run: |
-          ls -R extracted_files
-          mv -f extracted_files ${{env.ADDON_LIBS_PATH}}
-
-      - name: Setup
-        run: |
-          mkdir -v -p ~/.local/share/godot/export_templates
-          mv /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable
-
-      - name: 🕸 Web Build
-        run: |
-          godot -v --headless --path ${{env.PROJECT_PATH}} --import || true
-          mkdir ${GITHUB_WORKSPACE}/_site
-          godot -v --headless --path ${{env.PROJECT_PATH}} --export-release web ${GITHUB_WORKSPACE}/_site/index.html
-          cp ${{env.PROJECT_PATH}}/coi-serviceworker.min.js ${GITHUB_WORKSPACE}/_site/coi-serviceworker.min.js
-
-      - name: 📦 Upload Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: game
           path: _site/
-          retention-days: 1

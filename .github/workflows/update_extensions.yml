@@ -15,7 +15,7 @@ jobs:
 
   update:
     name: Update Extensions
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     permissions:
       contents: write
     needs: compile

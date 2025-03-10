@@ -3,7 +3,6 @@
 #include "camera_controller.h"
 #include "openkcc_body_3d.h"
 
-#include <gdextension_interface.h>
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/core/defs.hpp>
 #include <godot_cpp/godot.hpp>
@@ -16,8 +15,8 @@ void initialize_openkcc_module(ModuleInitializationLevel p_level) {
 		return;
 	}
 
-	GDREGISTER_RUNTIME_CLASS(CameraController);
-	GDREGISTER_RUNTIME_CLASS(OpenKCCBody3D);
+	ClassDB::register_class<CameraController>();
+	ClassDB::register_class<OpenKCCBody3D>();
 }
 
 void uninitialize_openkcc_module(ModuleInitializationLevel p_level) {
@@ -26,12 +25,9 @@ void uninitialize_openkcc_module(ModuleInitializationLevel p_level) {
 	}
 }
 
-/** GDExtension Initialize **/
 extern "C" {
-GDExtensionBool GDE_EXPORT openkcc_library_init(
-		GDExtensionInterfaceGetProcAddress p_get_proc_address,
-		GDExtensionClassLibraryPtr p_library,
-		GDExtensionInitialization *r_initialization) {
+// Initialization.
+GDExtensionBool GDE_EXPORT openkcc_library_init(GDExtensionInterfaceGetProcAddress p_get_proc_address, const GDExtensionClassLibraryPtr p_library, GDExtensionInitialization *r_initialization) {
 	godot::GDExtensionBinding::InitObject init_obj(p_get_proc_address, p_library, r_initialization);
 
 	init_obj.register_initializer(initialize_openkcc_module);

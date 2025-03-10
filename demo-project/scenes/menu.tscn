@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://b3yfb8efh4kwb"]
 
 [ext_resource type="Theme" uid="uid://bpb5ykpok5j24" path="res://themes/menu_theme.tres" id="1_jevpf"]
-[ext_resource type="Script" path="res://scripts/menu_manager.gd" id="1_kcjal"]
+[ext_resource type="Script" uid="uid://tltsxk7stm3n" path="res://scripts/menu_manager.gd" id="1_kcjal"]
 
 [node name="Menu" type="MarginContainer" node_paths=PackedStringArray("actions", "quit_button", "resume_button")]
 anchors_preset = 15

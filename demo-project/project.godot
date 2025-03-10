@@ -12,7 +12,7 @@ config_version=5
 
 config/name="godot-openkcc"
 run/main_scene="res://scenes/sample.tscn"
-config/features=PackedStringArray("4.3", "GL Compatibility")
+config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="res://logo/bunny logo.svg"
 config/windows_native_icon="res://logo/icon.ico"
 run/size/mode=1
@@ -27,7 +27,7 @@ project/assembly_name="GodotOpenKCC"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/gut/plugin.cfg", "res://addons/openkcc/plugin.cfg")
+enabled=PackedStringArray("res://addons/gut/plugin.cfg")
 
 [input]
 

@@ -1,8 +1,8 @@
 [gd_scene load_steps=5 format=3 uid="uid://camvcri7e11vi"]
 
 [ext_resource type="PackedScene" uid="uid://dj26sacnhty4r" path="res://addons/devblocks/blocks/basic_block.tscn" id="1_nhrmc"]
-[ext_resource type="Script" path="res://addons/devblocks/blocks/colored_block.gd" id="2_in130"]
-[ext_resource type="Texture2D" uid="uid://8c5mlhxud2py" path="res://addons/devblocks/textures/dark/texture_01.png" id="3_whpuj"]
+[ext_resource type="Script" uid="uid://bjdhso7s4a016" path="res://addons/devblocks/blocks/colored_block.gd" id="2_in130"]
+[ext_resource type="Texture2D" uid="uid://bwm3chclmoo0x" path="res://addons/devblocks/textures/dark/texture_01.png" id="3_whpuj"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_r4r1q"]
 albedo_texture = ExtResource("3_whpuj")

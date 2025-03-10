@@ -20,7 +20,7 @@ deployed with each update to the codebase.
 
 ## Project Setup
 
-Install Godot v4.3.stable, then make sure to setup the build tools for the project.
+Install Godot v4.4.stable, then make sure to setup the build tools for the project.
 Setup guide for required tools by platform: [Building from Source](https://docs.godotengine.org/en/stable/contributing/development/compiling/index.html)
 
 Using the GDExtensions to develop with C++, see [GDExtension C++ example](https://docs.godotengine.org/en/stable/tutorials/scripting/gdextension/gdextension_cpp_example.html)
@@ -89,7 +89,7 @@ mkdir -p external
 Invoke-WebRequest -Uri $url -OutFile $out
 
 # Export debug windows-desktop build
-godot -v --import --path demo-project --headless
+godot -v --editor --path demo-project --headless --quit-after 100
 mkdir -p builds/Windows
 godot --path demo-project --headless --export-release windows-desktop
 ```
@@ -114,7 +114,7 @@ scons --directory godot-cpp platform=web -j4
 scons platform=web target=template_release -j4
 
 # Export debug web build
-godot -v --import --path demo-project --headless
+godot -v --editor --path demo-project --headless --quit-after 100
 mkdir -p builds/WebGL
 godot --path demo-project --headless --export-release web
 cp demo-project/coi-serviceworker.min.js builds/WebGL/coi-serviceworker.min.js
@@ -143,7 +143,7 @@ python3 -m pip install gddoc2yml
 dotnet tool restore
 
 #  Load project in editor at least once
-godot -v --import --path demo-project --headless
+godot -v --editor --path demo-project --headless --quit-after 100
 
 # Build xml based documentation
 mkdir -p demo-project/doc/godot
@@ -176,6 +176,7 @@ Style guides used for project by language:
 Run tests for project with [GUT](https://github.com/bitwes/Gut)
 
 ```PowerShell
+# Run tests with Gut
 godot -d -s --path demo-project addons/gut/gut_cmdln.gd
 ```
 
@@ -205,7 +206,7 @@ with the `gdlint` command
 pip3 install gdtoolkit
 
 # Run gdlint on openkcc files
-gdlint openkcc demo-project/scripts demo-project/tests
+gdlint addons/openkcc demo-project/scripts demo-project/tests
 ```
 
 _Note: still in progress_ C# linting via [dotnet format](https://github.com/dotnet/format)

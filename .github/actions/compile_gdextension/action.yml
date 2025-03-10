@@ -18,9 +18,9 @@ inputs:
     default: "bin"
   output_libs_path:
     description: Path to compiled libraries
-    default: "openkcc/libs"
+    default: "addons/openkcc/libs"
 runs:
-  using: "composite"
+  using: composite
   steps:
     - name: Get godot-cpp SHA
       shell: bash
@@ -29,17 +29,18 @@ runs:
         echo "sha=$(git rev-parse @:./godot-cpp)" >> $GITHUB_OUTPUT
 
     - name: Restore .scons_cache directory
-      uses: actions/cache/restore@v3
+      if: inputs.use_cache != 'false'
+      id: restore_scons_cache
+      uses: actions/cache/restore@v4
       with:
         path: ${{env.SCONS_CACHE}}
-        key: ${{github.job}}-${{inputs.arch}}_${{inputs.target}}-${{steps.get_godot_cpp_sha.outputs.sha}}-${{github.ref}}-${{github.sha}}
+        key: ${{github.job}}-${{inputs.artifact}}-${{steps.get_godot_cpp_sha.outputs.sha}}-${{github.ref}}-${{github.sha}}
         restore-keys: |
           ${{github.job}}-${{inputs.arch}}_${{inputs.target}}-${{steps.get_godot_cpp_sha.outputs.sha}}-${{github.ref}}
           ${{github.job}}-${{inputs.arch}}_${{inputs.target}}-${{steps.get_godot_cpp_sha.outputs.sha}}
-      continue-on-error: true
 
     - name: Set up Python 3.x
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: "3.x"
         architecture: "x64"
@@ -56,7 +57,7 @@ runs:
 
     - name: Linux dependencies
       shell: bash
-      if: runner.os == 'Linux'
+      if: (runner.os == 'Linux') && (inputs.platform == 'linux')
       run: |
         sudo apt-get update
         if [[ "${{inputs.arch}}" == *"32" ]];then
