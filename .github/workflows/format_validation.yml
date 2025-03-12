@@ -14,6 +14,8 @@ jobs:
           python-version: "3.x"
           cache: 'pip'
       - run: pip install clang-format
+      - run: |
+          clang-format src/*.cpp src/*.h --dry-run -Werror
 
   cs-lint:
     name: 🧹 C# lint

@@ -13,10 +13,10 @@ using namespace openkcc;
 const float CameraController::MAX_ROTATION_EULER = 360.0f;
 
 const float CameraController::DEFAULT_MIN_PITCH = -90.0f;
-const float CameraController::DEFAULT_MAX_PITCH = 90.0f;
+const float CameraController::DEFAULT_MAX_PITCH= 90.0f;
 
 const float CameraController::DEFAULT_MIN_ZOOM = 0.0f;
-const float CameraController::DEFAULT_MAX_ZOOM = 5.0f;
+const float CameraController::DEFAULT_MAX_ZOOM= 5.0f;
 
 void CameraController::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_target_position"), &CameraController::get_target_position);
@@ -53,8 +53,7 @@ void CameraController::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "damping_factor"), "set_damping_factor", "get_damping_factor");
 }
 
-CameraController::CameraController() :
-		Node3D() {
+CameraController::CameraController() : Node3D() {
 }
 
 CameraController::~CameraController() {
@@ -66,14 +65,17 @@ void CameraController::_ready() {
 
 void CameraController::_process(double delta) {
 	Vector3 camera_source = get_global_position();
-	if (damping_factor > 0) {
+	if (damping_factor > 0)
+	{
 		// Use damping factor if configured.
 		float current_value = camera_pos_y;
 		float target_value = camera_source.y;
 		float difference = target_value - current_value;
 		current_value += difference * damping_factor * delta;
 		camera_pos_y = CLAMP(current_value, MIN(camera_pos_y, target_value), MAX(camera_pos_y, target_value));
-	} else {
+	}
+	else
+	{
 		camera_pos_y = camera_source.y;
 	}
 
@@ -83,7 +85,8 @@ void CameraController::_process(double delta) {
 	// Bound target position using raycast from camera source
 	Ref<PhysicsRayQueryParameters3D> query = PhysicsRayQueryParameters3D::create(camera_source, target_position);
 	Dictionary result = get_world_3d()->get_direct_space_state()->intersect_ray(query);
-	if (!result.is_empty()) {
+	if (!result.is_empty())
+	{
 		target_position = result["position"];
 	}
 }

@@ -190,12 +190,10 @@ Can be installed format via pip.
 python -m pip install clang-format
 
 # Find formatting via clang-format
-clang-format src/*.cpp --dry-run
-clang-format src/*.h --dry-run
+clang-format src/*.cpp src/*.h --dry-run
 
 # Fix formatting via clang-format
-clang-format src/*.cpp -i
-clang-format src/*.h -i
+clang-format src/*.cpp src/*.h  -i
 ```
 
 GDScript linting via [godot-gdscript-toolkit](https://github.com/Scony/godot-gdscript-toolkit)
