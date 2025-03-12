@@ -123,9 +123,7 @@ func move_and_slide(movement:Vector3, stop_slide_up_walls:bool=true, can_snap_up
 		var bottom:Vector3 = start.origin
 		var within_snap_height:bool = (_collision.get_position() - bottom).dot(up) <= vertical_snap_up
 		var within_snap_bounds:bool = perpendicular_bounce and allow_snap and within_snap_height
-		print("snapping_up:", within_snap_bounds, " -- ", "perpendicular_bounce:", perpendicular_bounce, ", allow_snap:", allow_snap, ", within_snap_height:", within_snap_height)
 		if within_snap_bounds and _can_snap_up(vertical_snap_up, remaining, start.origin):
-			print("snapping_up:", vertical_snap_up)
 			# move player up if they can snap up a step
 			snapped_up = true
 			var distance_move:float = min(remaining_dist, vertical_snap_up)
