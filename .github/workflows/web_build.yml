@@ -17,17 +17,17 @@ jobs:
 
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.13'
+          python-version: "3.x"
   
       - name: Install Tools
         run: |
           dotnet tool restore
           python3 -m pip install gddoc2yml
 
-      - name: Setup Godot 4.4.0
+      - name: Setup Godot ${{env.GODOT_VERSION}}
         uses: chickensoft-games/setup-godot@v2.1.1
         with:
-          version: 4.4.0
+          version: ${{env.GODOT_VERSION}}
           use-dotnet: false
           include-templates: true
 
@@ -52,7 +52,7 @@ jobs:
           mkdir -p ${{env.PROJECT_PATH}}/doc/godot
           godot --path ${{env.PROJECT_PATH}} --doctool doc/godot --quit
           godot --path ${{env.PROJECT_PATH}} --doctool doc/classes --gdscript-docs res://scripts --quit
-          godot --path demo-project --doctool doc/classes --gdscript-docs res://addons/openkcc/examples --quit
+          godot --path ${{env.PROJECT_PATH}} --doctool doc/classes --gdscript-docs res://${{env.ADDON_PATH}}/examples --quit
 
       - name: Convert Docs to YML
         run: gdxml2yml --filter ${{env.PROJECT_PATH}}/doc/classes ${{env.PROJECT_PATH}}/doc/classes ${{env.PROJECT_PATH}}/doc/godot doc/api
