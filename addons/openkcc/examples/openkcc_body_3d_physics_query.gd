@@ -1,4 +1,4 @@
-class_name OpenKCCBody3DPQ extends Node3D
+class_name OpenKCCBody3DPhysicsQuery extends Node3D
 ## Implementation of the OpenKCC that uses the
 ## the [PhysicsShapeQueryParameters3D] to directly
 ## interact with the physics world.

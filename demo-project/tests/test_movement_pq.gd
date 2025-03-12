@@ -81,11 +81,11 @@ var overlap_params = ParameterFactory.named_parameters(
 		[Vector3( 0.25, 1, -0.00), Vector3(-1.5, 1,  0.0)],
 	])
 
-var _character:OpenKCCBody3DPQ
+var _character:OpenKCCBody3DPhysicsQuery
 var _ground:StaticBody3D
 
 func before_each():
-	_character = OpenKCCBody3DPQ.new()
+	_character = OpenKCCBody3DPhysicsQuery.new()
 	add_child_autofree(_character)
 	_character.setup_shape()
 

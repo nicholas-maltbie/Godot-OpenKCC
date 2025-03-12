@@ -1,4 +1,4 @@
-extends OpenKCCBody3DPQ
+extends OpenKCCBody3DPhysicsQuery
 
 @export var move_speed:float = 5.0
 @export var move_acceleration:float = 15.0
@@ -90,7 +90,7 @@ func _physics_process(_delta) -> void:
 	if grounded() and not is_sliding():
 		move *= Quaternion(_ground_normal, up)
 
-	move_and_slide(move * _delta, grounded() and not moving_up())
+	move_and_slide(move * _delta, grounded() and not moving_up(), true)
 	move_and_slide(world_velocity * _delta, false)
 
 	if grounded() and not is_sliding() and not moving_vertically():

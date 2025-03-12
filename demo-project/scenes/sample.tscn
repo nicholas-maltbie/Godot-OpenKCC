@@ -1,7 +1,7 @@
 [gd_scene load_steps=30 format=4 uid="uid://ibio3sqc8sw4"]
 
+[ext_resource type="PackedScene" uid="uid://co3r425frmur6" path="res://example_character/character_rigidbody.tscn" id="1_bdjb6"]
 [ext_resource type="PackedScene" uid="uid://dj26sacnhty4r" path="res://addons/devblocks/blocks/basic_block.tscn" id="1_qt6ee"]
-[ext_resource type="PackedScene" uid="uid://brsdadxyheo2k" path="res://example/character.tscn" id="2_dr2yj"]
 [ext_resource type="Script" uid="uid://cu0ktkvi47206" path="res://scripts/constant_rotation.gd" id="3_h22et"]
 [ext_resource type="PackedScene" uid="uid://b3yfb8efh4kwb" path="res://scenes/menu.tscn" id="4_rnmvr"]
 [ext_resource type="Script" uid="uid://l0phew8kq61x" path="res://scripts/stairs.gd" id="4_tb0lp"]
@@ -144,6 +144,10 @@ environment = SubResource("Environment_3gy7d")
 
 [node name="Camera3D" type="Camera3D" parent="."]
 
+[node name="Player" parent="." instance=ExtResource("1_bdjb6")]
+vertical_snap_up = 0.35
+step_up_depth = 0.1
+
 [node name="Floor" parent="." instance=ExtResource("1_qt6ee")]
 transform = Transform3D(100, 0, 0, 0, 1, 0, 0, 0, 100, 0, -0.5, 0)
 block_style = 6
@@ -152,9 +156,6 @@ block_style = 6
 transform = Transform3D(0.47938, -0.86878, -0.124161, -0.212969, -0.252408, 0.943893, -0.851375, -0.426041, -0.306022, 0, 0, 0)
 shadow_enabled = true
 directional_shadow_blend_splits = true
-
-[node name="Player" parent="." instance=ExtResource("2_dr2yj")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.90723, 0)
 
 [node name="Spinning Block" type="StaticBody3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0816402, 1.2839, 21.5892)

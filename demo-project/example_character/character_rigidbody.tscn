@@ -1,0 +1,33 @@
+[gd_scene load_steps=5 format=3 uid="uid://co3r425frmur6"]
+
+[ext_resource type="Script" uid="uid://cb4sg3vfeds7u" path="res://scripts/character_rigidbody.gd" id="1_6lbyl"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_6lbyl"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_qge1p"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5kkw2"]
+
+[node name="Player" type="RigidBody3D"]
+axis_lock_linear_x = true
+axis_lock_linear_y = true
+axis_lock_linear_z = true
+axis_lock_angular_x = true
+axis_lock_angular_y = true
+axis_lock_angular_z = true
+script = ExtResource("1_6lbyl")
+
+[node name="Head" type="CameraController" parent="."]
+zoom = 2.0
+min_zoom = 1.0
+max_zoom = 10.0
+damping_factor = 5.0
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("CapsuleShape3D_6lbyl")
+
+[node name="CSGMesh3D" type="CSGMesh3D" parent="CollisionShape3D"]
+mesh = SubResource("CapsuleMesh_qge1p")
+material = SubResource("StandardMaterial3D_5kkw2")

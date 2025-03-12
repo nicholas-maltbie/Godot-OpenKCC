@@ -1,6 +1,6 @@
 extends GutTest
 
-const Player = preload("res://scripts/character.gd")
+const Player = preload("res://scripts/character_physics_query.gd")
 
 var move_params = ParameterFactory.named_parameters(
 	['input_array', 'movement_dir'],
