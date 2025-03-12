@@ -19,7 +19,7 @@ ambient_light_source = 3
 ambient_light_color = Color(1, 1, 1, 1)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_onds5"]
-size = Vector3(5, 3, 1)
+size = Vector3(8, 2, 1)
 
 [sub_resource type="BoxMesh" id="BoxMesh_d7eg0"]
 
@@ -154,16 +154,17 @@ shadow_enabled = true
 directional_shadow_blend_splits = true
 
 [node name="Player" parent="." instance=ExtResource("2_dr2yj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.90723, 0)
 
 [node name="Spinning Block" type="StaticBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0816402, 0.641941, 8.62798)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0816402, 1.2839, 21.5892)
 script = ExtResource("3_h22et")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Spinning Block"]
 shape = SubResource("BoxShape3D_onds5")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Spinning Block"]
-transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 1, 0, 0, 0)
+transform = Transform3D(8, 0, 0, 0, 2, 0, 0, 0, 1, 0, 0, 0)
 gi_mode = 2
 mesh = SubResource("BoxMesh_d7eg0")
 
@@ -175,6 +176,9 @@ transform = Transform3D(-7.99997, 6.03982e-07, 0.00722754, -1.20797e-06, -4, -1.
 
 [node name="BasicBlock3" parent="Basic Ramp" instance=ExtResource("1_qt6ee")]
 transform = Transform3D(-0.0166886, 0.00481677, 2.99999, 4, 3.4641, 0, -6.92818, 1.99999, -0.00722754, -2.27674, 0, -0.123732)
+
+[node name="BasicBlock4" parent="Basic Ramp" instance=ExtResource("1_qt6ee")]
+transform = Transform3D(-0.0545802, 0.058524, -2.99961, 7.25046, 1.69047, -1.11105e-08, 3.3805, -3.62476, -0.0484304, -1.84416, -0.752489, -5.32553)
 
 [node name="Curve" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18.5247, -1.90735e-06, -12.1676)
