@@ -190,12 +190,10 @@ Can be installed format via pip.
 python -m pip install clang-format
 
 # Find formatting via clang-format
-clang-format src/*.cpp --dry-run
-clang-format src/*.h --dry-run
+clang-format src/*.cpp src/*.h --dry-run
 
 # Fix formatting via clang-format
-clang-format src/*.cpp -i
-clang-format src/*.h -i
+clang-format src/*.cpp src/*.h  -i
 ```
 
 GDScript linting via [godot-gdscript-toolkit](https://github.com/Scony/godot-gdscript-toolkit)
@@ -203,7 +201,7 @@ with the `gdlint` command
 
 ```PowerShell
 # Install gdlint via pip
-pip3 install gdtoolkit
+python -m pip install gdtoolkit
 
 # Run gdlint on openkcc files
 gdlint addons/openkcc demo-project/scripts demo-project/tests

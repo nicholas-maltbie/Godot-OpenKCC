@@ -30,7 +30,7 @@ jobs:
       - uses: ./.github/actions/setvars
 
       - name: Setup Package
-        run: ./setup-package.sh -p ${{ env.ADDON_PATH }}
+        run: ./setup-package.sh -p ${{env.ADDON_PATH}}
 
       # Deploy build to release/${version-name} branch
       - name: Push package to git branch ${{ env.BRANCH_PREFIX }}/${{ inputs.version-name }}

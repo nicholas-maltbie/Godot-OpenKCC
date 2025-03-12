@@ -36,7 +36,7 @@ jobs:
           name: gdextension_libs
       
       - run: ls -R ${{env.ADDON_PATH}}
-      - run: ls -R demo-project/${{env.ADDON_PATH}}
+      - run: ls -R ${{env.PROJECT_PATH}}/${{env.ADDON_PATH}}
 
       - name: import assets
         run: godot --editor --headless --path ${{env.PROJECT_PATH}} --quit-after 100 || true

@@ -64,6 +64,7 @@ jobs:
           target: ${{matrix.target}}
           arch: ${{matrix.arch}}
           artifact: openkcc-windows_${{matrix.target}}_${{matrix.arch}}
+          output_libs_path: ${{env.ADDON_LIBS_PATH}}
 
   # ============================================
 
@@ -93,6 +94,7 @@ jobs:
           target: ${{matrix.target}}
           arch: ${{matrix.arch}}
           artifact: openkcc-linux_${{matrix.target}}_${{matrix.arch}}
+          output_libs_path: ${{env.ADDON_LIBS_PATH}}
 
   # ============================================
 
@@ -123,6 +125,7 @@ jobs:
           arch: ${{matrix.arch}}
           artifact: openkcc-macos_${{matrix.target}}_${{matrix.arch}}
           additional: macos_deployment_target=10.14
+          output_libs_path: ${{env.ADDON_LIBS_PATH}}
 
   # ============================================
 
@@ -172,6 +175,7 @@ jobs:
           target: ${{matrix.target}}
           arch: ${{matrix.arch}}
           artifact: openkcc-android_${{matrix.target}}_${{matrix.arch}}
+          output_libs_path: ${{env.ADDON_LIBS_PATH}}
 
   web-gdextension:
     name: 🕸 Web
@@ -203,6 +207,7 @@ jobs:
           target: ${{matrix.target}}
           arch: ${{matrix.arch}}
           artifact: openkcc-web_${{matrix.target}}_${{matrix.arch}}
+          output_libs_path: ${{env.ADDON_LIBS_PATH}}
 
   # ============================================
 

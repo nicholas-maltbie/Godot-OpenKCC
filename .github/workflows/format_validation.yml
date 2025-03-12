@@ -8,36 +8,44 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: RafikFarhad/clang-format-github-action@v3
+      - uses: ./.github/actions/setvars
+      - uses: actions/setup-python@v5
         with:
-          sources: "src/**/*.h,src/**/*.c,test/**/*.cpp"
+          python-version: "3.x"
+          cache: 'pip'
+      - run: pip install clang-format
+      - run: |
+          clang-format src/*.cpp src/*.h --dry-run -Werror
 
   cs-lint:
     name: 🧹 C# lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: ./.github/actions/setvars
       - uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '7.x'
       - run: dotnet tool restore
-      - run: dotnet tool run dotnet-format ./demo-project/GodotOpenKCC.sln --check
+      - run: dotnet tool run dotnet-format ${{env.PROJECT_PATH}}/GodotOpenKCC.sln --check
 
   gd-lint:
     name: 🧹 GDScript lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v4
+      - uses: ./.github/actions/setvars
+      - uses: actions/setup-python@v5
         with:
-          python-version: '3.10' 
+          python-version: "3.x"
           cache: 'pip'
       - run: pip install gdtoolkit
-      - run: gdlint addons/openkcc demo-project/scripts demo-project/tests
+      - run: gdlint ${{env.ADDON_PATH}} ${{env.PROJECT_PATH}}/scripts ${{env.PROJECT_PATH}}/tests
 
   markdown-lint:
     name: 🧹 Markdown lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: ./.github/actions/setvars
       - uses: actionshub/markdownlint@main
