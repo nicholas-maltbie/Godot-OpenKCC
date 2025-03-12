@@ -56,7 +56,9 @@ func test_player_move(params=use_parameters(move_params)):
 		_sender.action_up(dir)
 	var current:Vector3 = _character.global_position
 	var delta:Vector3 = current - start
-	assert_almost_eq(delta.dot(params.movement_dir.normalized()), _character.move_speed, 0.1)
+	
+	# Character will be accelearting from no velocity, so will be slightly less than move speed
+	assert_almost_eq(delta.dot(params.movement_dir.normalized()), _character.move_speed, 1)
 
 ## Test that the player is able to jump when the "Jump" action
 ## is pressed and they are standing on some solid surface.
