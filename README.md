@@ -203,7 +203,7 @@ with the `gdlint` command
 
 ```PowerShell
 # Install gdlint via pip
-pip3 install gdtoolkit
+python -m pip install gdtoolkit
 
 # Run gdlint on openkcc files
 gdlint addons/openkcc demo-project/scripts demo-project/tests
