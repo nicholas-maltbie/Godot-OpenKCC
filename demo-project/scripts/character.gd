@@ -1,11 +1,12 @@
 extends OpenKCCBody3DPQ
 
 @export var move_speed:float = 5.0
+@export var move_acceleration:float = 15.0
 @export var jump_velocity:float = 5.0
 @export var snap_down_speed:float = 2.5
 
 # Has the player snapped down as of the previous frame
-var snapped_down = false
+var snapped_down:bool = false
 
 # Get the gravity from the project settings to be synced with RigidBody nodes.
 var gravity:float = ProjectSettings.get_setting("physics/3d/default_gravity")
@@ -64,7 +65,7 @@ func _physics_process(_delta) -> void:
 		world_velocity -= up * gravity * _delta
 	elif grounded() and !moving_up():
 		# If player is not moving up and hit the ground, stop world velocity
-		world_velocity = Vector3.ZERO
+		world_velocity = world_velocity.move_toward(Vector3.ZERO, move_acceleration * _delta)
 
 	# If we allow input, let the player jump and move.
 	var direction = Vector3(0, 0, 0)
@@ -81,21 +82,19 @@ func _physics_process(_delta) -> void:
 		direction = direction.normalized()
 
 	if direction:
-		move_velocity.x = direction.x * move_speed
-		move_velocity.z = direction.z * move_speed
+		move_velocity = move_velocity.move_toward(direction * move_speed, move_acceleration * _delta)
 	else:
-		move_velocity.x = move_toward(move_velocity.x, 0, move_speed)
-		move_velocity.z = move_toward(move_velocity.z, 0, move_speed)
+		move_velocity = move_velocity.move_toward(Vector3.ZERO, move_acceleration * _delta)
 
 	var move:Vector3 = move_velocity
 	if grounded() and not is_sliding():
 		move *= Quaternion(_ground_normal, up)
 
-	move_and_slide(move * _delta, true, grounded() and not moving_up())
-	move_and_slide(world_velocity * _delta, false, false)
+	move_and_slide(move * _delta, grounded() and not moving_up())
+	move_and_slide(world_velocity * _delta, false)
 
-	if grounded() and not moving_vertically():
-		snapped_down = snap_down(-up, snap_down_speed * _delta)
+	if grounded() and not is_sliding() and not moving_vertically():
+		snapped_down = snap_down(-up, vertical_snap_down)
 	else:
 		snapped_down = false
 

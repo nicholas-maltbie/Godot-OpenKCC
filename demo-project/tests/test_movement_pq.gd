@@ -183,7 +183,7 @@ func test_player_handle_overlap(params=use_parameters(overlap_params)):
 	TestUtils.add_wall(self, Vector3(1, 1, 1), Vector3(0, 0, 0), params.box_position, Vector3(0, 0, 0), "overlap_box")
 
 	# Character should be pushed back to avoid the overlapping object
-	_character.push_out_overlapping()
+	_character.push_out_overlapping(1)
 
 	# Specifically, the player should be pushed out according to expected offset
 	assert_almost_eq(_character.global_position.x, params.expected_position.x, 0.01)
