@@ -1,75 +1,5 @@
 extends GutTest
 
-const MOVE_VECTOR_TESTS = [ \
-	[Vector3.FORWARD], \
-	[Vector3.LEFT], \
-	[Vector3.BACK], \
-	[Vector3.RIGHT], \
-	[Vector3.UP], \
-	[Vector3.DOWN], \
-	[Vector3.FORWARD + Vector3.LEFT], \
-	[Vector3.FORWARD + Vector3.RIGHT], \
-	[Vector3.BACK + Vector3.LEFT], \
-	[Vector3.BACK + Vector3.RIGHT], \
-]
-
-var slide_params = ParameterFactory.named_parameters(
-	['wall_rotation', 'expected_slide_dir', 'forward_bounds', 'slide_bounds'],
-	[
-		[ 30, Vector3.LEFT,  [4.05, 0.1], [0.95, 0.1]],
-		[-30, Vector3.RIGHT, [4.05, 0.1], [0.95, 0.1]],
-		[ 15, Vector3.LEFT,  [3.90, 0.1], [0.25, 0.1]],
-		[-15, Vector3.RIGHT, [3.90, 0.1], [0.25, 0.1]],
-		[  0, Vector3.RIGHT, [4.00, 0.1], [0.00, 0.1]],
-	])
-
-var wall_slide_params = ParameterFactory.named_parameters(
-	["movement", "expected", "error"],
-	[
-		[Vector3.FORWARD * 10 + Vector3.UP *  5, Vector3(0, 2, -4), Vector3(0.0, 0.1, 0.1)],
-		[Vector3.FORWARD * 20 + Vector3.UP * 10, Vector3(0, 2, -4), Vector3(0.0, 0.1, 0.1)],
-		[Vector3.FORWARD * 30 + Vector3.UP * 15, Vector3(0, 2, -4), Vector3(0.0, 0.1, 0.1)],
-		[Vector3.FORWARD * 35 + Vector3.UP * 20, Vector3(0, 2, -4), Vector3(0.0, 0.2, 0.2)],
-		[Vector3.FORWARD * 10 + Vector3.UP *  5 + Vector3.RIGHT * 3, Vector3(1.8, 2, -4), Vector3(0.1, 0.2, 0.2)],
-		[Vector3.FORWARD * 10 + Vector3.UP *  5 + Vector3.RIGHT * 5, Vector3(3.0, 2, -4), Vector3(0.1, 0.2, 0.2)],
-		[Vector3.FORWARD * 10 + Vector3.UP *  5 + Vector3.LEFT * 3, Vector3(-1.8, 2, -4), Vector3(0.1, 0.2, 0.2)],
-		[Vector3.FORWARD * 10 + Vector3.UP *  5 + Vector3.LEFT * 5, Vector3(-3.0, 2, -4), Vector3(0.1, 0.2, 0.2)],
-		[Vector3.FORWARD * 20 + Vector3.UP * 10 + Vector3.RIGHT * 3, Vector3(1.3, 2, -4), Vector3(0.1, 0.2, 0.2)],
-		[Vector3.FORWARD * 20 + Vector3.UP * 10 + Vector3.RIGHT * 5, Vector3(2.2, 2, -4), Vector3(0.1, 0.2, 0.2)],
-		[Vector3.FORWARD * 20 + Vector3.UP * 10 + Vector3.LEFT * 3, Vector3(-1.3, 2, -4), Vector3(0.1, 0.2, 0.2)],
-		[Vector3.FORWARD * 20 + Vector3.UP * 10 + Vector3.LEFT * 5, Vector3(-2.2, 2, -4), Vector3(0.1, 0.2, 0.2)],
-	])
-
-var jitter_parms = ParameterFactory.named_parameters(
-	["movement", "expected"],
-	[
-		[Vector3.FORWARD *   5, Vector3(-0.1, 0.0, 2.0)],
-		[Vector3.FORWARD *  10, Vector3(-0.1, 0.0, 2.0)],
-		[Vector3.FORWARD *  20, Vector3(-0.1, 0.0, 2.0)],
-		[Vector3.FORWARD *  40, Vector3(-0.1, 0.0, 2.0)],
-		[Vector3.FORWARD *  50, Vector3(-0.1, 0.0, 2.0)],
-		[Vector3.FORWARD * 100, Vector3(-0.1, 0.0, 2.0)],
-	])
-
-var ground_params = ParameterFactory.named_parameters(
-	[
-		"invalid_ground_hit",
-		"invalid_ground_angle",
-		"invalid_ground_dist",
-		"expected_is_on_floor",
-		"expected_is_sliding"
-	],
-	[
-		[ true,  true,  true, false, false],
-		[ true,  true, false, false, false],
-		[ true, false,  true, false, false],
-		[ true, false, false, false, false],
-		[false,  true,  true, false, false],
-		[false,  true, false,  true,  true],
-		[false, false,  true, false, false],
-		[false, false, false,  true, false]
-	])
-
 var _character:OpenKCCRigidBody3D
 var _ground:StaticBody3D
 
@@ -106,7 +36,7 @@ func test_player_idle():
 ## Rotate the wall to various rotatinos and have the player
 ## walk into the wall and assert how far the player will
 ## bounce based on their rotation.
-func test_player_slide(params=use_parameters(slide_params)):
+func test_player_slide(params=use_parameters(TestMoveParams.slide_params_rigidbody)):
 	TestUtils.add_wall(self, Vector3(10, 10, 1), Vector3(0, 0, 0), Vector3(0, 0, -5), Vector3(0, params.wall_rotation, 0))
 	var start:Vector3 = _character.global_position
 	_character.move_and_slide(Vector3.FORWARD * 5)
@@ -117,7 +47,7 @@ func test_player_slide(params=use_parameters(slide_params)):
 
 ## Test the player's move and slide function for movement in a 3D space
 ## in various basic directions.
-func test_player_move_and_slide(params=use_parameters(MOVE_VECTOR_TESTS)):
+func test_player_move_and_slide(params=use_parameters(TestMoveParams.MOVE_VECTOR_TESTS)):
 	# Move the floor to allow for up or down movement
 	_ground.free()
 	var start:Vector3 = _character.global_position
@@ -129,7 +59,7 @@ func test_player_move_and_slide(params=use_parameters(MOVE_VECTOR_TESTS)):
 ## Test the various player grounded states based on the player height from
 ## the ground, if there is an object below them, and the angle between
 ## the player and the ground.
-func test_player_grounded(params=use_parameters(ground_params)):
+func test_player_grounded(params=use_parameters(TestMoveParams.ground_params)):
 	# Player should be grounded on the floor
 	_character.check_grounded()
 	assert_true(_character.is_on_floor())
@@ -146,7 +76,7 @@ func test_player_grounded(params=use_parameters(ground_params)):
 
 ## Test if the player moves up a slanted surface towards a wall, that
 ## they will stop before sliding up the wall.
-func test_player_no_slide_up_walls(params=use_parameters(wall_slide_params)):
+func test_player_no_slide_up_walls(params=use_parameters(TestMoveParams.wall_slide_params_rigidbody)):
 	# Add a vertical wall in front of the player
 	TestUtils.add_wall(self, Vector3(10, 10, 1), Vector3(0, 0, 0), Vector3(0, 0, -5), Vector3(0, 0, 0))
 
@@ -161,13 +91,14 @@ func test_player_no_slide_up_walls(params=use_parameters(wall_slide_params)):
 
 ## Validate player won't bounce backwards when they hit a wall
 ## and could slide backwards in the original direction they were moving
-func test_player_no_jitter_backwards(params=use_parameters(jitter_parms)):
+func test_player_no_jitter_backwards(params=use_parameters(TestMoveParams.jitter_parms)):
 	# Add walls for the player to slide off of
 	TestUtils.add_wall(self, Vector3(100, 10, 1), Vector3(-1, 0, 0), Vector3(0, 0, -3), Vector3(0, 30, 0), "wall_1")
 	TestUtils.add_wall(self, Vector3(100, 10, 1), Vector3(-1, 0, 0), Vector3(0, 0, -3), Vector3(0, -30, 0), "wall_2")
 
 	# Assert that when the player moves forward they don't slide backwards
 	_character.move_and_slide(params.movement)
-	assert_almost_eq(_character.global_position.x, params.expected.x, 0.1)
-	assert_almost_eq(_character.global_position.y, params.expected.y, 0.1)
-	assert_almost_eq(_character.global_position.z, params.expected.z, 0.1)
+	var expected := Vector3(0.2, 0.0, 2.2)
+	assert_almost_eq(_character.global_position.x, expected.x, 0.1)
+	assert_almost_eq(_character.global_position.y, expected.y, 0.1)
+	assert_almost_eq(_character.global_position.z, expected.z, 0.1)

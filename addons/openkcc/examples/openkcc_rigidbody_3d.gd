@@ -91,6 +91,7 @@ func is_on_floor() -> bool:
 func is_sliding() -> bool:
 	return is_on_floor() and _ground_angle > deg_to_rad(max_walk_angle)
 
+
 func move_and_slide(movement:Vector3, stop_slide_up_walls:bool=true, can_snap_up:bool=false) -> void:
 	var bounce:int = 0;
 	var remaining:Vector3 = movement;
@@ -99,52 +100,63 @@ func move_and_slide(movement:Vector3, stop_slide_up_walls:bool=true, can_snap_up
 
 	# Compute movement due to each bounce
 	while remaining.length() > EPSILON and bounce < MAX_BOUNCES:
+		# Increment bounce count
+		bounce += 1
+
+		# Helper value
+		var move_dir:Vector3 = remaining.normalized()
+		var move_dist:float = remaining.length()
+
 		# Check if player collides with anything due to bounce
 		var hit := test_move(start, remaining, _collision, EPSILON)
 		if not hit:
-			global_position = start.origin + remaining
-			return
+			start.origin += remaining
+			break
 
-		# Move player by distance traveled if colliding
+		var normal:Vector3 = _collision.get_normal()
+		var dist_remaining:float = _collision.get_remainder().length()
+		remaining = _collision.get_remainder()
+
+		# Otherwise this collided with something
+		# Move the object to the collision position
 		start.origin += _collision.get_travel()
-		var normal = _collision.get_normal()
+		
+		# Push character back by depth on normal
+		start.origin += _collision.get_normal() * _collision.get_depth()
 
 		# Get angle between surface normal and remaining movement
-		var angle_between := normal.angle_to(remaining)
-		var remaining_dist := _collision.get_remainder().length() * get_angle_factor(angle_between)
+		var angle_between:float = normal.angle_to(move_dir)
+		dist_remaining *= get_angle_factor(angle_between)
 
-		# Rotate the remaining movement to be projected along the plane
-		# of the surface hit (emulate 'sliding' against the object)
-		remaining = Plane(normal).project(_collision.get_remainder()).normalized() * remaining_dist
-
-		# Check for snapping up
+		# Check if the player is running into a perpendicular surface
 		var perpendicular_bounce:bool = _check_perpendicular_bounce(_collision, remaining)
 		var allow_snap:bool = can_snap_up and vertical_snap_up > 0
 		var bottom:Vector3 = start.origin
-		var within_snap_height:bool = (_collision.get_position() - bottom).dot(up) <= vertical_snap_up
+		var within_snap_height:bool = (_collision.get_position() - _ground_position).dot(up) <= vertical_snap_up
 		var within_snap_bounds:bool = perpendicular_bounce and allow_snap and within_snap_height
 		if within_snap_bounds and _can_snap_up(vertical_snap_up, remaining, start.origin):
 			# move player up if they can snap up a step
 			snapped_up = true
-			var distance_move:float = min(remaining_dist, vertical_snap_up)
+			var distance_move:float = min(dist_remaining, vertical_snap_up)
 			start.origin += distance_move * up
 
 			# Skip rest of boucne operation
 			continue
 
+		# Rotate the remaining movement to be projected along the plane
+		# of the surface hit (emulate 'sliding' against the object)
+		remaining = Plane(normal).project(remaining).normalized() * dist_remaining
+
 		# Don't let player slide backwards (dot checks if facing same direction
 		# than the player's initial movement).
 		if remaining.dot(movement) < 0:
 			# Cleanly stop movement to avoid backwards jitter
-			break;
+			break
 
 		# If the player is sliding up a wall, stop the player from sliding up or down walls
-		if stop_slide_up_walls and normal.dot(up) <= 0:
+		if stop_slide_up_walls and normal.dot(up) <= EPSILON:
 			# Remove vertical component of remaining movement
-			remaining = Plane(up).project(remaining)
-
-		# Increment bounce count
-		bounce += 1
+			remaining = Plane(up).project(remaining).normalized() * dist_remaining
 
 	if snapped_up:
 		start.origin += _get_snap_down(start.origin, -up, vertical_snap_up)

@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://co3r425frmur6"]
 
-[ext_resource type="Script" uid="uid://cb4sg3vfeds7u" path="res://scripts/character_rigidbody.gd" id="1_6lbyl"]
+[ext_resource type="Script" uid="uid://cb4sg3vfeds7u" path="res://scripts/character_openkcc_rigidbody.gd" id="1_6lbyl"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_6lbyl"]
 
