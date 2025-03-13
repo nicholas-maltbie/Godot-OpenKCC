@@ -11,9 +11,6 @@ const BUFFER_SHOVE_RADIANS:float = PI
 const MAX_SHOVE_RADIANS:float = PI/2
 const EPSILON:float = 0.001
 
-# Direction of up vector
-var up:Vector3 = Vector3.UP
-
 #region Export Parameters
 ## Distance at which player is considered on the ground and no longer falling, defaults to
 ## [constant DEFAULT_GROUNDED_HEIGHT].
@@ -29,6 +26,9 @@ var up:Vector3 = Vector3.UP
 ## Minimum depth required for a stair when moving onto a step.
 @export var step_up_depth:float = 0.3
 #endregion
+
+# Direction of up vector
+var up:Vector3 = Vector3.UP
 
 #region Grounded state
 var _ground_hit:bool = false
@@ -116,7 +116,7 @@ func move_and_slide(movement:Vector3, stop_slide_up_walls:bool=true, can_snap_up
 		# Rotate the remaining movement to be projected along the plane
 		# of the surface hit (emulate 'sliding' against the object)
 		remaining = Plane(normal).project(_collision.get_remainder()).normalized() * remaining_dist
-		
+
 		# Check for snapping up
 		var perpendicular_bounce:bool = _check_perpendicular_bounce(_collision, remaining)
 		var allow_snap:bool = can_snap_up and vertical_snap_up > 0
