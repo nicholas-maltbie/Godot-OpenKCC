@@ -100,6 +100,7 @@ func _verify_single_step(stairs:Stairs, step_idx:int):
 	var faces = _stairs.get_child(0).mesh.get_faces()
 
 	# find the triangles for each face
+	var valid_faces := true
 	for face_idx in faces.size() / 3:
 		var v1 = faces[face_idx * 3]
 		var v2 = faces[face_idx * 3 + 1]
@@ -114,7 +115,7 @@ func _verify_single_step(stairs:Stairs, step_idx:int):
 		var top = _is_almost_eq(v1.y, v2.y, 0.001) and _is_almost_eq(v2.y, v3.y, 0.001)
 
 		if front:
-			assert_false(side or top)
+			valid_faces = valid_faces and not (side or top)
 			if _is_almost_eq(v1.z, front_plane, 0.001):
 				face_count["front"] += 1
 			elif _is_almost_eq(v1.z, back_plane, 0.001):
@@ -126,7 +127,7 @@ func _verify_single_step(stairs:Stairs, step_idx:int):
 				face_count["back"] += 1
 
 		if side:
-			assert_false(front or top)
+			valid_faces = valid_faces and not(front or top)
 			# only include sides that share an edge with this step.
 			if not (_is_almost_eq(v1.z, front_plane, 0.001) or \
 				_is_almost_eq(v2.z, front_plane, 0.001) or \
@@ -146,7 +147,7 @@ func _verify_single_step(stairs:Stairs, step_idx:int):
 				face_count["right"] += 1
 
 		if top:
-			assert_false(front or side)
+			valid_faces = valid_faces and not(front or side)
 			# Top face
 			if _is_almost_eq(v1.y, top_plane, 0.001):
 				face_count["top"] += 1
@@ -155,18 +156,21 @@ func _verify_single_step(stairs:Stairs, step_idx:int):
 				face_count["bottom"] += 1
 
 	# Assert face counts
-	assert_eq(face_count["front"], 2)
-	assert_eq(face_count["top"], 2)
+	var valid_step := true
+	valid_step = valid_step and face_count["front"] == 2
+	valid_step = valid_step and face_count["top"] == 2
 
 	var expected_sides:int = 2 if stairs.include_side_faces else 0;
-	assert_eq(face_count["left"], expected_sides)
-	assert_eq(face_count["right"], expected_sides)
+	valid_step = valid_step and face_count["left"] == expected_sides
+	valid_step = valid_step and face_count["right"] == expected_sides
 
 	if step_idx == stairs.num_step - 1:
 		var expected_bottom:int = 2 if stairs.include_bottom_face else 0;
 		var expected_back:int = 2 if stairs.include_back_face else 0;
-		assert_eq(face_count["back"], expected_back)
-		assert_eq(face_count["bottom"], expected_bottom)
+		valid_step = valid_step and face_count["back"] == expected_back
+		valid_step = valid_step and face_count["bottom"] == expected_bottom
 	else:
-		assert_eq(face_count["back"], 0)
-		assert_eq(face_count["bottom"], 0)
+		valid_step = valid_step and face_count["back"] == 0
+		valid_step = valid_step and face_count["bottom"] == 0
+
+	assert_true(valid_faces and valid_step)
