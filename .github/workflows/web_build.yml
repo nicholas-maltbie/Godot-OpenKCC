@@ -38,7 +38,7 @@ jobs:
           name: gdextension_libs
 
       - name: import assets
-        run: godot --editor --headless --path ${{env.PROJECT_PATH}} --quit-after 100 || true
+        run: godot --headless --path ${{env.PROJECT_PATH}} --import
         continue-on-error: true
 
       - name: 🕸 Web Build

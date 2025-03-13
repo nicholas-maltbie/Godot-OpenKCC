@@ -89,7 +89,7 @@ mkdir -p external
 Invoke-WebRequest -Uri $url -OutFile $out
 
 # Export debug windows-desktop build
-godot -v --editor --path demo-project --headless --quit-after 100
+godot -v --path demo-project --headless --import
 mkdir -p builds/Windows
 godot --path demo-project --headless --export-release windows-desktop
 ```
@@ -114,7 +114,7 @@ scons --directory godot-cpp platform=web -j4
 scons platform=web target=template_release -j4
 
 # Export debug web build
-godot -v --editor --path demo-project --headless --quit-after 100
+godot -v --path demo-project --headless  --import
 mkdir -p builds/WebGL
 godot --path demo-project --headless --export-release web
 cp demo-project/coi-serviceworker.min.js builds/WebGL/coi-serviceworker.min.js
@@ -143,7 +143,7 @@ python3 -m pip install gddoc2yml
 dotnet tool restore
 
 #  Load project in editor at least once
-godot -v --editor --path demo-project --headless --quit-after 100
+godot -v --path demo-project --headless  --import
 
 # Build xml based documentation
 mkdir -p demo-project/doc/godot

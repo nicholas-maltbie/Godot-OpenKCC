@@ -34,18 +34,10 @@ func get_staircase_params():
 			staircase_params_values.append([num_step_val] + step_param)
 	return staircase_params_values
 
-func before_all():
-	pass
-
 func before_each():
 	_stairs = Stairs.new()
+	_stairs.save_mesh = false
 	add_child_autofree(_stairs)
-
-func after_each():
-	pass
-
-func after_all():
-	pass
 
 ## Test generating a single step will result in the expected shape
 ## A box with a front, sides, and top of the expected size.
