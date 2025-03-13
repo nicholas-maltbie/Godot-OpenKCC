@@ -120,7 +120,7 @@ func move_and_slide(movement:Vector3, stop_slide_up_walls:bool=true, can_snap_up
 		# Otherwise this collided with something
 		# Move the object to the collision position
 		start.origin += _collision.get_travel()
-		
+
 		# Push character back by depth on normal
 		start.origin += _collision.get_normal() * _collision.get_depth()
 
