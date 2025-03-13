@@ -86,7 +86,7 @@ func test_player_fall():
 ## are back on the ground
 func test_player_jump_once():
 	# have player stand on flat surface
-	await TestUtils.wait_until_async(self, _character.is_on_floor, _character)
+	await wait_until(_character.is_on_floor, 1.0)
 	assert_true(_character._can_jump)
 
 	# Make surface player is standing on slanted ground and they are sliding down
@@ -94,7 +94,7 @@ func test_player_jump_once():
 	_ground.global_position = Vector3(0, -1.6, 0)
 
 	# Wait until player is back on floor and sliding
-	await TestUtils.wait_until_async(self, _character.is_sliding, _character, 10, 0.1)
+	await wait_until(_character.is_sliding, 1)
 
 	# Once player is sliding, have them attempt a jump
 	assert_true(_character._can_jump)
@@ -103,12 +103,12 @@ func test_player_jump_once():
 	# After sending jump input, player should be moving up
 	_sender.action_down("Jump").wait_frames(1)
 	await _sender.idle
-	await TestUtils.wait_until_async(self, _character.moving_up, _character)
+	await wait_until(_character.moving_up, 1)
 
 	# Player should no longer be able to jump when they are in the air
 	assert_false(_character._can_jump)
 	_sender.action_up("Jump")
 
 	# Wait until they are on the ground again, they should still no longer be able to jump
-	await TestUtils.wait_until_async(self, _character.is_on_floor, _character, 10, 0.1)
+	await wait_until(_character.is_on_floor, 1)
 	assert_false(_character._can_jump)

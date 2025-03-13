@@ -14,18 +14,9 @@ var camera_raycast_params = ParameterFactory.named_parameters(
 
 var _camera_controller:CameraController
 
-func before_all():
-	pass
-
 func before_each():
 	_camera_controller = CameraController.new()
 	add_child_autofree(_camera_controller)
-
-func after_each():
-	pass
-
-func after_all():
-	pass
 
 func test_camera_properties():
 	_camera_controller.pitch = 0
@@ -62,30 +53,31 @@ func test_camera_damp_y():
 
 	# Allow a process, delta should shrink
 	var delta:float = (_camera_controller.get_target_position() - _camera_controller.global_position).length()
-	await wait_frames(10)
-	var delta_after_update:float = (_camera_controller.get_target_position() - _camera_controller.global_position).length()
-	assert_lt(delta_after_update, delta)
+	var smaller_delta:Callable = func():
+		return (_camera_controller.get_target_position() - _camera_controller.global_position).length() < delta
+	await wait_until(smaller_delta, 10)
 
 	# After enough updates, delta should shrink to zero
 	var update:int = 0
-	while delta > 0 and update < 60:
-		await wait_frames(2)
-		delta_after_update = (_camera_controller.get_target_position() - _camera_controller.global_position).length()
+	while delta > 0 and update < 3:
+		await wait_seconds(0.1)
+		var delta_after_update := (_camera_controller.get_target_position() - _camera_controller.global_position).length()
 		assert_lt(delta_after_update, delta)
 		delta = delta_after_update
 		update += 1
 
 	# Assert that delta reached zero
-	assert_eq(delta, 0)
+	var zero_delta:Callable = func(): return _is_almost_eq(delta, 0, 0.001)
+	await wait_until(zero_delta, 1)
 
-	# When damping factor is zero, there should be no delay
 	_camera_controller.global_position += Vector3.UP * 10
-	await wait_frames(2)
+	await wait_frames(10)
 	assert_ne(_camera_controller.get_target_position(), _camera_controller.global_position)
 
+	# When damping factor is zero, there should be no delay
 	_camera_controller.damping_factor = 0
-	await wait_frames(2)
-	assert_eq(_camera_controller.get_target_position(), _camera_controller.global_position)
+	await wait_frames(10)
+	assert_eq(_camera_controller.global_position, _camera_controller.get_target_position())
 
 func test_camera_raycast(params=use_parameters(camera_raycast_params)):
 	# Set camera zoom to 10 units

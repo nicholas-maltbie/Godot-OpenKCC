@@ -50,14 +50,10 @@ func _ready():
 	_config_gui = GutConfigGui.new(_ctrls.settings_vbox)
 
 	_ctrls.test_tree.hide_root = true
-	# Stop tests from kicking off when the runner is "ready" and prevents it
-	# from writing results file that is used by the panel.
-	_gut_runner.ran_from_editor = false
 	add_child(_gut_runner)
 
-	# Becuase of the janky _utils psuedo-global script, we cannot do all this
-	# in _ready.  If we do this in _ready, it generates a bunch of errors.
-	# The errors don't matter, but it looks bad.
+	# TODO This might not need to be called deferred after changing GutUtils to
+	# an all static class.
 	call_deferred('_post_ready')
 
 
@@ -303,7 +299,7 @@ func load_config_file(path):
 # The MIT License (MIT)
 # =====================
 #
-# Copyright (c) 2023 Tom "Butch" Wesley
+# Copyright (c) 2025 Tom "Butch" Wesley
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
