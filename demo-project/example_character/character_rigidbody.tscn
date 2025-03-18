@@ -1,12 +1,11 @@
-[gd_scene load_steps=5 format=3 uid="uid://co3r425frmur6"]
+[gd_scene load_steps=4 format=3 uid="uid://co3r425frmur6"]
 
 [ext_resource type="Script" uid="uid://cb4sg3vfeds7u" path="res://scripts/character_openkcc_rigidbody.gd" id="1_6lbyl"]
+[ext_resource type="PackedScene" uid="uid://b25sbx2c3ohm" path="res://example_character/michelle/Michelle.glb" id="2_iu3so"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_6lbyl"]
-
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_qge1p"]
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5kkw2"]
+radius = 0.35
+height = 1.6
 
 [node name="Player" type="RigidBody3D"]
 axis_lock_linear_x = true
@@ -25,9 +24,8 @@ damping_factor = 5.0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
 shape = SubResource("CapsuleShape3D_6lbyl")
 
-[node name="CSGMesh3D" type="CSGMesh3D" parent="CollisionShape3D"]
-mesh = SubResource("CapsuleMesh_qge1p")
-material = SubResource("StandardMaterial3D_5kkw2")
+[node name="Michelle" parent="." instance=ExtResource("2_iu3so")]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0)
