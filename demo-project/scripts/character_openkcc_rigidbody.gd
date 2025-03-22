@@ -1,9 +1,19 @@
 extends OpenKCCRigidBody3D
 
+## Speed of character movement (in meters per second).
 @export var move_speed:float = 5.0
+
+## Speed of cahracter acceleration (in meters per second squared).
 @export var move_acceleration:float = 15.0
+
+## Velocity of player when jumping (in meters per second).
 @export var jump_velocity:float = 5.0
+
+## Speed at which the player can snap down (in meters per second).
 @export var snap_down_speed:float = 2.5
+
+## Speed at which the player rotates towards the direction of motion (in degrees per second).
+@export var rotation_speed:float = 720.0
 
 # Has the player snapped down as of the previous frame
 var snapped_down:bool = false
@@ -36,13 +46,17 @@ var _input_component_right:float
 var _input_jump:bool = false
 var _can_jump:bool = false
 
-@onready var camera_controller = $Head as CameraController
+@onready var _camera_controller = $Head as CameraController
+@onready var _body = $Body as Node3D
 
 func _ready() -> void:
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	MenuBus.menu_opened.connect(_on_menu_opened)
 	MenuBus.menu_closed.connect(_on_menu_closed)
 	allow_movement = true
+
+	# rotate player body in direction of camera
+	_body.rotation = _get_desired_yaw().get_euler()
 
 func _exit_tree():
 	MenuBus.menu_opened.disconnect(_on_menu_opened)
@@ -51,8 +65,19 @@ func _exit_tree():
 func _process(_delta) -> void:
 	# Have camera follow camera controller
 	var cam = get_viewport().get_camera_3d()
-	cam.position = camera_controller.get_target_position()
-	cam.rotation = camera_controller.get_target_rotation()
+	cam.position = _camera_controller.get_target_position()
+	cam.rotation = _camera_controller.get_target_rotation()
+
+	# rotate player towards direction of movement (this is just visual, so complete
+	# update with each frame instead of physics update).
+	var input_dir = _input_direction()
+	if input_dir.length() >= EPSILON:
+		# rotate player to face in direction of camera.
+		var desired:Quaternion = _get_desired_yaw()
+		var body_rotation:Quaternion = Quaternion(_body.basis)
+		var delta_to_target:float = body_rotation.angle_to(desired)
+		var weight:float = min(1.0, deg_to_rad(_delta * rotation_speed) / delta_to_target)
+		_body.basis = Basis(body_rotation.slerp(desired, weight))
 
 func _physics_process(_delta) -> void:
 	# Add the gravity.
@@ -72,9 +97,8 @@ func _physics_process(_delta) -> void:
 		# Get the input direction and handle the movement/deceleration.
 		# As good practice, you should replace UI actions with custom
 		# gameplay actions.
-		var input_x := _input_component_right - _input_component_left
-		var input_y := _input_component_back - _input_component_forward
-		direction = Quaternion.from_euler(Vector3(0, camera_controller.yaw, 0)) * Vector3(input_x, 0, input_y)
+		var input_dir = _input_direction()
+		direction = Quaternion.from_euler(Vector3(0, _camera_controller.yaw, 0)) * Vector3(input_dir.x, 0, input_dir.y)
 		direction = direction.normalized()
 
 	if direction:
@@ -88,6 +112,14 @@ func _physics_process(_delta) -> void:
 
 	move_and_slide(move * _delta, grounded() and not moving_up(), true)
 	move_and_slide(world_velocity * _delta, grounded() and not moving_up())
+
+func _get_desired_yaw() -> Quaternion:
+	return Quaternion.from_euler(Vector3(0, deg_to_rad(180) + _camera_controller.yaw, 0))
+
+func _input_direction() -> Vector2:
+	var input_x := _input_component_right - _input_component_left
+	var input_y := _input_component_back - _input_component_forward
+	return Vector2(input_x, input_y)
 
 func grounded() -> bool:
 	return is_on_floor() or snapped_down
@@ -122,16 +154,16 @@ func _input(event:InputEvent) -> void:
 		# Only rotate player if input is allowed
 		# Adjust rotation based on player input
 		if allow_movement:
-			camera_controller.yaw -= event.relative.x / mouse_sensibility
-			camera_controller.pitch -= event.relative.y / mouse_sensibility
+			_camera_controller.yaw -= event.relative.x / mouse_sensibility
+			_camera_controller.pitch -= event.relative.y / mouse_sensibility
 	elif event is InputEventMouseButton:
 		if event.is_pressed():
 			# zoom in
 			if event.button_index == MOUSE_BUTTON_WHEEL_UP:
-				camera_controller.zoom -= mouse_zoom_speed
+				_camera_controller.zoom -= mouse_zoom_speed
 			# zoom out
 			if event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
-				camera_controller.zoom += mouse_zoom_speed
+				_camera_controller.zoom += mouse_zoom_speed
 
 func _attempt_jump():
 	# If the player is on ground and not sliding, allow to jump again
