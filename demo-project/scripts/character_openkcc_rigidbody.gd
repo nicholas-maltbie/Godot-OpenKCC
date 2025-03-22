@@ -47,7 +47,15 @@ var _input_jump:bool = false
 var _can_jump:bool = false
 
 @onready var _camera_controller = $Head as CameraController
-@onready var _body = $Body as Node3D
+@onready var _body:Node3D = $Body as Node3D
+@onready var _animation_tree:AnimationTree = $AnimationTree as AnimationTree
+
+## Current player animation state
+var _anim_state:AnimState = AnimState.Idle
+var _anim_state_machine:AnimationNodeStateMachinePlayback
+
+## Various goal states for player animation.
+enum AnimState { Idle, Walking, Falling, Jumping }
 
 func _ready() -> void:
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
@@ -57,6 +65,9 @@ func _ready() -> void:
 
 	# rotate player body in direction of camera
 	_body.rotation = _get_desired_yaw().get_euler()
+
+	# Animation state machine
+	_anim_state_machine = _animation_tree["parameters/playback"]
 
 func _exit_tree():
 	MenuBus.menu_opened.disconnect(_on_menu_opened)
@@ -70,14 +81,33 @@ func _process(_delta) -> void:
 
 	# rotate player towards direction of movement (this is just visual, so complete
 	# update with each frame instead of physics update).
-	var input_dir = _input_direction()
+	var target_anim_state:AnimState = AnimState.Idle
+	var input_dir:Vector2 = _input_direction()
+	var blend_position:Vector2 = _animation_tree.get("parameters/Walking/blend_position")
 	if input_dir.length() >= EPSILON:
 		# rotate player to face in direction of camera.
+		blend_position = blend_position.move_toward(Vector2(input_dir.x, -input_dir.y), _delta)
 		var desired:Quaternion = _get_desired_yaw()
 		var body_rotation:Quaternion = Quaternion(_body.basis)
 		var delta_to_target:float = body_rotation.angle_to(desired)
 		var weight:float = min(1.0, deg_to_rad(_delta * rotation_speed) / delta_to_target)
 		_body.basis = Basis(body_rotation.slerp(desired, weight))
+		target_anim_state = AnimState.Walking
+	else:
+		blend_position = blend_position.move_toward(Vector2.ZERO, _delta)
+
+	_animation_tree.set("parameters/Walking/blend_position", blend_position)
+
+	# If player is not on ground, set target state to falling
+	if grounded() and _input_jump:
+		target_anim_state = AnimState.Jumping
+	elif grounded() == false:
+		target_anim_state = AnimState.Falling
+
+	# Update anim state if needed
+	if _anim_state != target_anim_state:
+		_anim_state = target_anim_state
+		_anim_state_machine.travel(AnimState.keys()[_anim_state])
 
 func _physics_process(_delta) -> void:
 	# Add the gravity.
@@ -120,9 +150,6 @@ func _input_direction() -> Vector2:
 	var input_x := _input_component_right - _input_component_left
 	var input_y := _input_component_back - _input_component_forward
 	return Vector2(input_x, input_y)
-
-func grounded() -> bool:
-	return is_on_floor() or snapped_down
 
 func _on_menu_opened() -> void:
 	allow_movement = false
@@ -177,6 +204,13 @@ func _attempt_jump():
 
 func _apply_jump():
 	world_velocity = up * jump_velocity
+
+	# Update animation
+	_anim_state = AnimState.Jumping
+	_anim_state_machine.travel(AnimState.keys()[_anim_state])
+
+func grounded() -> bool:
+	return is_on_floor() or snapped_down
 
 func moving_up() -> bool:
 	return world_velocity.dot(up) > EPSILON
