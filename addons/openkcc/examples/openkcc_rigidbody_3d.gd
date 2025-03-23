@@ -3,7 +3,6 @@ class_name OpenKCCRigidBody3D extends RigidBody3D
 ## the [RigidBody3D] to directly
 ## interact with the physics world.
 
-## Implementation of basic bounce and grounded movement
 const DEFAULT_GROUNDED_HEIGHT = 0.01
 const DEFAULT_MAX_WALK_ANGLE = 60
 const MAX_BOUNCES:int = 5
@@ -71,7 +70,7 @@ func _check_perpendicular_bounce(hit:KinematicCollision3D, momentum:Vector3) -> 
 	return hit_normal.dot(up) <= EPSILON
 
 func check_grounded():
-	_ground_hit = test_move(global_transform, Vector3.DOWN * (grounded_dist + EPSILON), _collision, EPSILON, true)
+	_ground_hit = test_move(global_transform, -up * (grounded_dist + EPSILON), _collision, EPSILON, true)
 	if _ground_hit:
 		_ground_object = _collision.get_collider()
 		_ground_dist = _collision.get_travel().length()
@@ -90,7 +89,6 @@ func is_on_floor() -> bool:
 
 func is_sliding() -> bool:
 	return is_on_floor() and _ground_angle > deg_to_rad(max_walk_angle)
-
 
 func move_and_slide(movement:Vector3, stop_slide_up_walls:bool=true, can_snap_up:bool=false) -> void:
 	var bounce:int = 0;
