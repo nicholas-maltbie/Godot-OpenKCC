@@ -1,4 +1,4 @@
-extends OpenKCCRigidBody3D
+extends OpenKCCBody3D
 
 ## Speed of character movement (in meters per second).
 @export var move_speed:float = 5.0
@@ -74,8 +74,6 @@ func _process(_delta) -> void:
 	_character_animator.process(_input_direction(), _get_desired_yaw(), jumping, is_on_floor(), _delta)
 
 func _physics_process(_delta: float) -> void:
-	check_grounded()
-
 	# Add the gravity.
 	if not grounded() or is_sliding():
 		world_velocity -= up * gravity * _delta
@@ -105,8 +103,10 @@ func _physics_process(_delta: float) -> void:
 	if grounded() and not is_sliding():
 		move *= Quaternion(_ground_normal, up)
 
-	move_and_slide(move * _delta, grounded() and not moving_up(), true)
-	move_and_slide(world_velocity * _delta, grounded() and not moving_up())
+	move_and_slide((move + world_velocity) * _delta, false, true)
+
+	if is_on_floor() and not moving_up():
+		snap_to_ground()
 
 func _get_desired_yaw() -> Quaternion:
 	return Quaternion.from_euler(Vector3(0, deg_to_rad(180) + _camera_controller.yaw, 0))

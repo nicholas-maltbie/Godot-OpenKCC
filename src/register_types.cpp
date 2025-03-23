@@ -1,7 +1,6 @@
 #include "register_types.h"
 
 #include "camera_controller.h"
-#include "openkcc_body_3d.h"
 
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/core/defs.hpp>
@@ -16,7 +15,6 @@ void initialize_openkcc_module(ModuleInitializationLevel p_level) {
 	}
 
 	ClassDB::register_class<CameraController>();
-	ClassDB::register_class<OpenKCCBody3D>();
 }
 
 void uninitialize_openkcc_module(ModuleInitializationLevel p_level) {

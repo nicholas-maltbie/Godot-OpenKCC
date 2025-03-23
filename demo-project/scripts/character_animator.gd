@@ -14,6 +14,12 @@ var _anim_state:String = IDLE
 ## Character body rotation speed
 var _rotation_speed:float
 
+## time spent falling
+var _falling_time:float
+
+## Threshold time before starting falling animation
+var _falling_threshold_time:float = 0.1
+
 var _body:Node3D
 var _anim_state_machine:AnimationNodeStateMachinePlayback
 
@@ -55,8 +61,13 @@ func process(_input_dir:Vector2, _desired_attitude:Quaternion, _jumping:bool, _o
 	# If player is not on ground, set target state to falling
 	if _jumping:
 		target_anim_state = JUMPING
+		_falling_time = _falling_threshold_time
 	elif _on_floor == false:
-		target_anim_state = FALLING
+		_falling_time += _delta
+		if _falling_time > _falling_threshold_time:
+			target_anim_state = FALLING
+	else:
+		_falling_time = 0
 
 	# Update anim state if needed
 	if _anim_state != target_anim_state:

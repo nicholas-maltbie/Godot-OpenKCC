@@ -1,9 +1,9 @@
-class_name OpenKCCRigidBody3D extends RigidBody3D
+class_name OpenKCCBody3D extends RigidBody3D
 ## Implementation of the OpenKCC that uses the
 ## the [RigidBody3D] to directly
 ## interact with the physics world.
 
-const DEFAULT_GROUNDED_HEIGHT = 0.01
+const DEFAULT_GROUNDED_HEIGHT = 0.1
 const DEFAULT_MAX_WALK_ANGLE = 60
 const MAX_BOUNCES:int = 5
 const BUFFER_SHOVE_RADIANS:float = PI
@@ -24,6 +24,10 @@ const EPSILON:float = 0.001
 
 ## Minimum depth required for a stair when moving onto a step.
 @export var step_up_depth:float = 0.3
+
+## Margin of distance for player to maintain between objects.
+## Will attempt to be at minimum this distance from any other objects during movement.
+@export var margin:float = 0.04
 #endregion
 
 # Direction of up vector
@@ -45,16 +49,18 @@ func _can_snap_up(distance_to_snap:float, momentum:Vector3, position:Vector3) ->
 	# If the character were to snap up and move forward, would they hit something?
 	var snap_pos:Vector3 = position + distance_to_snap * up;
 	var snap_transform:Transform3D = Transform3D(global_transform.basis, snap_pos)
-	var hit := test_move(snap_transform, momentum, _collision, EPSILON)
+	var hit := test_move(snap_transform, momentum, _collision, margin)
 
 	# If they can move without instantly hitting something, then snap them up
 	return !hit or _collision.get_travel().length() > step_up_depth
 
 func _get_snap_down(position:Vector3, dir:Vector3, dist:float) -> Vector3:
 	var snap_transform:Transform3D = Transform3D(global_transform.basis, position)
-	var hit := test_move(snap_transform, dir * dist, _collision, EPSILON)
+	var hit := test_move(snap_transform, dir * dist, _collision, EPSILON, true)
+	
+	# Move player to snapped down
 	if hit:
-		return dir * _collision.get_travel()
+		return _collision.get_travel().limit_length(max(0, _collision.get_travel().length() - margin))
 
 	return Vector3.ZERO
 
@@ -90,7 +96,17 @@ func is_on_floor() -> bool:
 func is_sliding() -> bool:
 	return is_on_floor() and _ground_angle > deg_to_rad(max_walk_angle)
 
+func snap_to_ground() -> void:
+	global_transform.origin += _get_snap_down(global_transform.origin, -up, vertical_snap_up)
+
 func move_and_slide(movement:Vector3, stop_slide_up_walls:bool=true, can_snap_up:bool=false) -> void:
+	# Check to push out of overlapping objects
+	var overlap = test_move(global_transform, up * EPSILON, _collision, margin / 2, true)
+	if overlap:
+		# Remove original "up" movement from collision check
+		global_position += _collision.get_travel() - up * EPSILON
+
+	# Setup some variables
 	var bounce:int = 0;
 	var remaining:Vector3 = movement;
 	var start:Transform3D = global_transform
@@ -106,7 +122,7 @@ func move_and_slide(movement:Vector3, stop_slide_up_walls:bool=true, can_snap_up
 		var move_dist:float = remaining.length()
 
 		# Check if player collides with anything due to bounce
-		var hit := test_move(start, remaining, _collision, EPSILON)
+		var hit := test_move(start, remaining, _collision, margin, true)
 		if not hit:
 			start.origin += remaining
 			break
@@ -160,6 +176,7 @@ func move_and_slide(movement:Vector3, stop_slide_up_walls:bool=true, can_snap_up
 		start.origin += _get_snap_down(start.origin, -up, vertical_snap_up)
 
 	global_position = start.origin
+	check_grounded()
 
 func get_angle_factor(angle_between:float) -> float:
 	# Normalize angle between to be between 0 and 1

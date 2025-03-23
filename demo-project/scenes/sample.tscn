@@ -1,7 +1,7 @@
 [gd_scene load_steps=30 format=4 uid="uid://ibio3sqc8sw4"]
 
 [ext_resource type="PackedScene" uid="uid://dj26sacnhty4r" path="res://addons/devblocks/blocks/basic_block.tscn" id="1_qt6ee"]
-[ext_resource type="PackedScene" uid="uid://3o31vox8w7ag" path="res://example_character/character_builtin.tscn" id="2_bdjb6"]
+[ext_resource type="PackedScene" uid="uid://co3r425frmur6" path="res://example_character/character_openkcc_body.tscn" id="2_bdjb6"]
 [ext_resource type="Script" uid="uid://cu0ktkvi47206" path="res://scripts/constant_rotation.gd" id="3_h22et"]
 [ext_resource type="PackedScene" uid="uid://b3yfb8efh4kwb" path="res://scenes/menu.tscn" id="4_rnmvr"]
 [ext_resource type="Script" uid="uid://l0phew8kq61x" path="res://scripts/stairs.gd" id="4_tb0lp"]
@@ -155,8 +155,15 @@ directional_shadow_blend_splits = true
 
 [node name="Player" parent="." instance=ExtResource("2_bdjb6")]
 
-[node name="Spinning Block" type="StaticBody3D" parent="."]
+[node name="Spinning Block" type="RigidBody3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0816402, 1.2839, 21.5892)
+axis_lock_linear_x = true
+axis_lock_linear_y = true
+axis_lock_linear_z = true
+axis_lock_angular_x = true
+axis_lock_angular_y = true
+axis_lock_angular_z = true
+angular_velocity = Vector3(0, 0.523599, 0)
 script = ExtResource("3_h22et")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Spinning Block"]
