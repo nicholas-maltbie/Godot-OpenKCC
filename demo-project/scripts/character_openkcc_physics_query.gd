@@ -14,7 +14,7 @@ var gravity:float = ProjectSettings.get_setting("physics/3d/default_gravity")
 # Velocity due to world forces (like gravity)
 var world_velocity:Vector3 = Vector3.ZERO
 
-# Velocity due to plaeyr input (movement)
+# Velocity due to player input (movement)
 var move_velocity:Vector3 = Vector3.ZERO
 
 # Mouse sensitivity

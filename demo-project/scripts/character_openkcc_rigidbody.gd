@@ -3,7 +3,7 @@ extends OpenKCCRigidBody3D
 ## Speed of character movement (in meters per second).
 @export var move_speed:float = 5.0
 
-## Speed of cahracter acceleration (in meters per second squared).
+## Speed of character acceleration (in meters per second squared).
 @export var move_acceleration:float = 15.0
 
 ## Velocity of player when jumping (in meters per second).
@@ -24,7 +24,7 @@ var gravity:float = ProjectSettings.get_setting("physics/3d/default_gravity")
 # Velocity due to world forces (like gravity)
 var world_velocity:Vector3 = Vector3.ZERO
 
-# Velocity due to plaeyr input (movement)
+# Velocity due to player input (movement)
 var move_velocity:Vector3 = Vector3.ZERO
 
 # Mouse sensitivity
@@ -46,16 +46,10 @@ var _input_component_right:float
 var _input_jump:bool = false
 var _can_jump:bool = false
 
+# Character animator object
+var _character_animator:CharacterAnimator
+
 @onready var _camera_controller = $Head as CameraController
-@onready var _body:Node3D = $Body as Node3D
-@onready var _animation_tree:AnimationTree = $AnimationTree as AnimationTree
-
-## Current player animation state
-var _anim_state:AnimState = AnimState.Idle
-var _anim_state_machine:AnimationNodeStateMachinePlayback
-
-## Various goal states for player animation.
-enum AnimState { Idle, Walking, Falling, Jumping }
 
 func _ready() -> void:
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
@@ -63,11 +57,8 @@ func _ready() -> void:
 	MenuBus.menu_closed.connect(_on_menu_closed)
 	allow_movement = true
 
-	# rotate player body in direction of camera
-	_body.rotation = _get_desired_yaw().get_euler()
-
-	# Animation state machine
-	_anim_state_machine = _animation_tree["parameters/playback"]
+	_character_animator = CharacterAnimator.create( \
+		$AnimationTree as AnimationTree, $Body as Node3D, rotation_speed, _get_desired_yaw())
 
 func _exit_tree():
 	MenuBus.menu_opened.disconnect(_on_menu_opened)
@@ -79,39 +70,11 @@ func _process(_delta) -> void:
 	cam.position = _camera_controller.get_target_position()
 	cam.rotation = _camera_controller.get_target_rotation()
 
-	# rotate player towards direction of movement (this is just visual, so complete
-	# update with each frame instead of physics update).
-	var target_anim_state:AnimState = AnimState.Idle
-	var input_dir:Vector2 = _input_direction()
-	var blend_position:Vector2 = _animation_tree.get("parameters/Walking/blend_position")
-	if input_dir.length() >= EPSILON:
-		# rotate player to face in direction of camera.
-		blend_position = blend_position.move_toward(Vector2(input_dir.x, -input_dir.y), _delta)
-		var desired:Quaternion = _get_desired_yaw()
-		var body_rotation:Quaternion = Quaternion(_body.basis)
-		var delta_to_target:float = body_rotation.angle_to(desired)
-		var weight:float = min(1.0, deg_to_rad(_delta * rotation_speed) / delta_to_target)
-		_body.basis = Basis(body_rotation.slerp(desired, weight))
-		target_anim_state = AnimState.Walking
-	else:
-		blend_position = blend_position.move_toward(Vector2.ZERO, _delta)
+	var jumping:bool = _can_jump and _input_jump
+	_character_animator.process(_input_direction(), _get_desired_yaw(), jumping, is_on_floor(), _delta)
 
-	_animation_tree.set("parameters/Walking/blend_position", blend_position)
-
-	# If player is not on ground, set target state to falling
-	if grounded() and _input_jump:
-		target_anim_state = AnimState.Jumping
-	elif grounded() == false:
-		target_anim_state = AnimState.Falling
-
-	# Update anim state if needed
-	if _anim_state != target_anim_state:
-		_anim_state = target_anim_state
-		_anim_state_machine.travel(AnimState.keys()[_anim_state])
-
-func _physics_process(_delta) -> void:
+func _physics_process(_delta: float) -> void:
 	# Add the gravity.
-	check_grounded()
 	if not grounded() or is_sliding():
 		world_velocity -= up * gravity * _delta
 	elif grounded() and !moving_up():
@@ -135,6 +98,9 @@ func _physics_process(_delta) -> void:
 		move_velocity = move_velocity.move_toward(direction * move_speed, move_acceleration * _delta)
 	else:
 		move_velocity = move_velocity.move_toward(Vector3.ZERO, move_acceleration * _delta)
+
+func _integrate_forces(state: PhysicsDirectBodyState3D) -> void:
+	check_grounded()
 
 	var move:Vector3 = move_velocity
 	if grounded() and not is_sliding():
@@ -204,10 +170,7 @@ func _attempt_jump():
 
 func _apply_jump():
 	world_velocity = up * jump_velocity
-
-	# Update animation
-	_anim_state = AnimState.Jumping
-	_anim_state_machine.travel(AnimState.keys()[_anim_state])
+	_character_animator.jump()
 
 func grounded() -> bool:
 	return is_on_floor() or snapped_down
