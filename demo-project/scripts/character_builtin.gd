@@ -46,10 +46,10 @@ var _input_component_right:float
 var _input_jump:bool = false
 var _can_jump:bool = false
 
-@onready var _camera_controller = $Head as CameraController
-
 # Character animator object
 var _character_animator:CharacterAnimator
+
+@onready var _camera_controller = $Head as CameraController
 
 func _ready() -> void:
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)

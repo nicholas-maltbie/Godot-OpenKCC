@@ -70,7 +70,7 @@ func _check_perpendicular_bounce(hit:KinematicCollision3D, momentum:Vector3) -> 
 	return hit_normal.dot(up) <= EPSILON
 
 func check_grounded():
-	_ground_hit = test_move(global_transform, Vector3.DOWN * (grounded_dist + EPSILON), _collision, EPSILON, true)
+	_ground_hit = test_move(global_transform, -up * (grounded_dist + EPSILON), _collision, EPSILON, true)
 	if _ground_hit:
 		_ground_object = _collision.get_collider()
 		_ground_dist = _collision.get_travel().length()

@@ -17,7 +17,11 @@ var _rotation_speed:float
 var _body:Node3D
 var _anim_state_machine:AnimationNodeStateMachinePlayback
 
-static func create(animation_tree:AnimationTree, body:Node3D, rotation_speed:float, desired_attitude:Quaternion) -> CharacterAnimator:
+static func create(\
+	animation_tree:AnimationTree, \
+	body:Node3D, \
+	rotation_speed:float, \
+	desired_attitude:Quaternion) -> CharacterAnimator:
 	var instance = CharacterAnimator.new()
 
 	# Setup animation state machine
@@ -29,7 +33,6 @@ static func create(animation_tree:AnimationTree, body:Node3D, rotation_speed:flo
 	# rotate player body in direction of camera
 	instance._body.basis = desired_attitude
 	return instance
-	
 
 func process(_input_dir:Vector2, _desired_attitude:Quaternion, _jumping:bool, _on_floor:bool, _delta:float) -> void:
 	# rotate player towards direction of movement (this is just visual, so complete

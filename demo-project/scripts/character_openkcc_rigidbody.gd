@@ -74,6 +74,8 @@ func _process(_delta) -> void:
 	_character_animator.process(_input_direction(), _get_desired_yaw(), jumping, is_on_floor(), _delta)
 
 func _physics_process(_delta: float) -> void:
+	check_grounded()
+
 	# Add the gravity.
 	if not grounded() or is_sliding():
 		world_velocity -= up * gravity * _delta
@@ -98,9 +100,6 @@ func _physics_process(_delta: float) -> void:
 		move_velocity = move_velocity.move_toward(direction * move_speed, move_acceleration * _delta)
 	else:
 		move_velocity = move_velocity.move_toward(Vector3.ZERO, move_acceleration * _delta)
-
-func _integrate_forces(state: PhysicsDirectBodyState3D) -> void:
-	check_grounded()
 
 	var move:Vector3 = move_velocity
 	if grounded() and not is_sliding():
