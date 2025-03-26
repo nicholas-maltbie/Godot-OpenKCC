@@ -1,13 +1,13 @@
 extends GutTest
 
-var _character:OpenKCCRigidBody3D
+var _character:OpenKCCBody3D
 var _ground:StaticBody3D
 
 func before_all():
 	pass
 
 func before_each():
-	_character = OpenKCCRigidBody3D.new()
+	_character = OpenKCCBody3D.new()
 	var collision_body:CollisionShape3D = CollisionShape3D.new()
 	var capsule_shape:CapsuleShape3D = CapsuleShape3D.new()
 	collision_body.set_shape(capsule_shape)
@@ -98,7 +98,7 @@ func test_player_no_jitter_backwards(params=use_parameters(TestMoveParams.jitter
 
 	# Assert that when the player moves forward they don't slide backwards
 	_character.move_and_slide(params.movement)
-	var expected := Vector3(0.2, 0.0, 2.2)
+	var expected := Vector3(0.2, 0.0, 2.6)
 	assert_almost_eq(_character.global_position.x, expected.x, 0.1)
 	assert_almost_eq(_character.global_position.y, expected.y, 0.1)
 	assert_almost_eq(_character.global_position.z, expected.z, 0.1)

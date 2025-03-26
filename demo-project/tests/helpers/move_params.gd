@@ -55,7 +55,7 @@ static var wall_slide_params_rigidbody = GutUtils.ParameterFactory.named_paramet
 	[
 		[Vector3.FORWARD * 10 + Vector3.UP *  5, Vector3(0, 2.0, -4.0), Vector3.ONE * 0.1],
 		[Vector3.FORWARD * 20 + Vector3.UP * 10, Vector3(0, 2.0, -3.9), Vector3.ONE * 0.1],
-		[Vector3.FORWARD * 30 + Vector3.UP * 15, Vector3(0, 2.0, -3.9), Vector3.ONE * 0.1],
+		[Vector3.FORWARD * 30 + Vector3.UP * 15, Vector3(0, 2.0, -3.8), Vector3.ONE * 0.1],
 		[Vector3.FORWARD * 35 + Vector3.UP * 20, Vector3(0, 2.2, -3.8), Vector3.ONE * 0.1],
 		[Vector3.FORWARD * 10 + Vector3.UP *  5 + Vector3.RIGHT * 3, Vector3( 2.3, 2.0, -4.0), Vector3.ONE * 0.1],
 		[Vector3.FORWARD * 10 + Vector3.UP *  5 + Vector3.RIGHT * 5, Vector3( 3.5, 2.0, -4.0), Vector3.ONE * 0.1],
