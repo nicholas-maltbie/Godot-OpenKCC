@@ -57,7 +57,7 @@ func _can_snap_up(distance_to_snap:float, momentum:Vector3, position:Vector3) ->
 func _get_snap_down(position:Vector3, dir:Vector3, dist:float) -> Vector3:
 	var snap_transform:Transform3D = Transform3D(global_transform.basis, position)
 	var hit := test_move(snap_transform, dir * dist, _collision, EPSILON, true)
-	
+
 	# Move player to snapped down
 	if hit:
 		return _collision.get_travel().limit_length(max(0, _collision.get_travel().length() - margin))
