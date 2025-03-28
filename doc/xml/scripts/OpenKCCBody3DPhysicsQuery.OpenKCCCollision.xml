@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="OpenKCCBody3DPhysicsQuery.OpenKCCCollision" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<members>
+		<member name="dist_traveled" type="float" setter="" getter="">
+		</member>
+		<member name="dist_remaining" type="float" setter="" getter="">
+		</member>
+		<member name="normal" type="Vector3" setter="" getter="">
+		</member>
+		<member name="point" type="Vector3" setter="" getter="">
+		</member>
+	</members>
+</class>

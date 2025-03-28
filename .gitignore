@@ -23,6 +23,7 @@ extension_api.json
 .sconsign.dblite
 src/*.obj
 src/*.bc
+src/gen
 
 # Ignore generated extension files
 # Windows generated files
@@ -74,9 +75,9 @@ test_results/
 *.tmp
 
 # Generated documentation files
-demo-project/doc
+doc/tmp
+doc/gen
 doc/_site
-doc/api
 
 # Blender backup files
 *.blend[0-9]

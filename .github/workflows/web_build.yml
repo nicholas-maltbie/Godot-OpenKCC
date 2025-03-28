@@ -49,13 +49,20 @@ jobs:
 
       - name: Build Docs with doctool
         run: |
-          mkdir -p ${{env.PROJECT_PATH}}/doc/godot
-          godot --path ${{env.PROJECT_PATH}} --doctool doc/godot --quit
-          godot --path ${{env.PROJECT_PATH}} --doctool doc/classes --gdscript-docs res://scripts --quit
-          godot --path ${{env.PROJECT_PATH}} --doctool doc/classes --gdscript-docs res://${{env.ADDON_PATH}}/examples --quit
+          mkdir -p doc/tmp/godot
+          godot --path ${{env.PROJECT_PATH}} --doctool ../doc/tmp/godot
 
-      - name: Convert Docs to YML
-        run: gdxml2yml --filter ${{env.PROJECT_PATH}}/doc/classes ${{env.PROJECT_PATH}}/doc/classes ${{env.PROJECT_PATH}}/doc/godot doc/api
+      - name: Build yml Docs for API
+        run: |
+          gdxml2yml --filter doc/xml/scripts doc/xml/doc_classes \
+              --path doc/xml/scripts doc/xml/example doc/xml/doc_classes doc/tmp/godot \
+              --output doc/gen/api
+
+      - name: Build yml Docs for Example
+        run: |
+          gdxml2yml --filter doc/xml/example \
+              --path doc/xml/scripts doc/xml/example doc/xml/doc_classes doc/tmp/godot \
+              --output doc/gen/example
 
       - name: Build site with DocFx
         run: |

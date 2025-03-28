@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="&quot;scripts/experimental/character_openkcc_physics_query.gd&quot;" inherits="OpenKCCBody3DPhysicsQuery" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="_ready">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="_exit_tree">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="_process">
+			<return type="void" />
+			<param index="0" name="_delta" type="Variant" />
+			<description>
+			</description>
+		</method>
+		<method name="_physics_process">
+			<return type="void" />
+			<param index="0" name="_delta" type="Variant" />
+			<description>
+			</description>
+		</method>
+		<method name="grounded">
+			<return type="bool" />
+			<description>
+			</description>
+		</method>
+		<method name="_on_menu_opened">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="_on_menu_closed">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="_input">
+			<return type="void" />
+			<param index="0" name="event" type="InputEvent" />
+			<description>
+			</description>
+		</method>
+		<method name="_attempt_jump">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="_apply_jump">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="moving_up">
+			<return type="bool" />
+			<description>
+			</description>
+		</method>
+		<method name="moving_vertically">
+			<return type="bool" />
+			<description>
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="move_speed" type="float" setter="" getter="" default="5.0">
+		</member>
+		<member name="move_acceleration" type="float" setter="" getter="" default="15.0">
+		</member>
+		<member name="jump_velocity" type="float" setter="" getter="" default="5.0">
+		</member>
+		<member name="snap_down_speed" type="float" setter="" getter="" default="2.5">
+		</member>
+		<member name="snapped_down" type="bool" setter="" getter="" default="false">
+		</member>
+		<member name="gravity" type="float" setter="" getter="" default="get_setting(...)">
+		</member>
+		<member name="world_velocity" type="Vector3" setter="" getter="" default="Vector3(0, 0, 0)">
+		</member>
+		<member name="move_velocity" type="Vector3" setter="" getter="" default="Vector3(0, 0, 0)">
+		</member>
+		<member name="mouse_sensibility" type="Variant" setter="" getter="" default="1200">
+		</member>
+		<member name="mouse_zoom_speed" type="Variant" setter="" getter="" default="0.25">
+		</member>
+		<member name="allow_movement" type="bool" setter="" getter="" default="true">
+		</member>
+		<member name="_input_component_forward" type="float" setter="" getter="">
+		</member>
+		<member name="_input_component_back" type="float" setter="" getter="">
+		</member>
+		<member name="_input_component_left" type="float" setter="" getter="">
+		</member>
+		<member name="_input_component_right" type="float" setter="" getter="">
+		</member>
+		<member name="_input_jump" type="bool" setter="" getter="" default="false">
+		</member>
+		<member name="_can_jump" type="bool" setter="" getter="" default="false">
+		</member>
+		<member name="camera_controller" type="Variant" setter="" getter="" default="&lt;unknown&gt;">
+		</member>
+	</members>
+</class>

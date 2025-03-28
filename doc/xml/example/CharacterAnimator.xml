@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="CharacterAnimator" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="create" qualifiers="static">
+			<return type="CharacterAnimator" />
+			<param index="0" name="animation_tree" type="AnimationTree" />
+			<param index="1" name="body" type="Node3D" />
+			<param index="2" name="rotation_speed" type="float" />
+			<param index="3" name="desired_attitude" type="Quaternion" />
+			<description>
+			</description>
+		</method>
+		<method name="process">
+			<return type="void" />
+			<param index="0" name="_input_dir" type="Vector2" />
+			<param index="1" name="_desired_attitude" type="Quaternion" />
+			<param index="2" name="_jumping" type="bool" />
+			<param index="3" name="_on_floor" type="bool" />
+			<param index="4" name="_delta" type="float" />
+			<description>
+			</description>
+		</method>
+		<method name="jump">
+			<return type="void" />
+			<description>
+				Update animation for jumping action
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="_animation_tree" type="AnimationTree" setter="" getter="">
+			Animation tree with various states
+		</member>
+		<member name="_anim_state" type="String" setter="" getter="" default="&quot;Idle&quot;">
+			Current player animation state
+		</member>
+		<member name="_rotation_speed" type="float" setter="" getter="">
+			Character body rotation speed
+		</member>
+		<member name="_falling_time" type="float" setter="" getter="">
+			time spent falling
+		</member>
+		<member name="_falling_threshold_time" type="float" setter="" getter="" default="0.1">
+			Threshold time before starting falling animation
+		</member>
+		<member name="_body" type="Node3D" setter="" getter="">
+		</member>
+		<member name="_anim_state_machine" type="AnimationNodeStateMachinePlayback" setter="" getter="">
+		</member>
+	</members>
+	<constants>
+		<constant name="IDLE" value="&quot;Idle&quot;">
+		</constant>
+		<constant name="WALKING" value="&quot;Walking&quot;">
+		</constant>
+		<constant name="JUMPING" value="&quot;Jumping&quot;">
+		</constant>
+		<constant name="FALLING" value="&quot;Falling&quot;">
+		</constant>
+	</constants>
+</class>

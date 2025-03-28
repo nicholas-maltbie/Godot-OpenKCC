@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="&quot;scripts/menu_manager.gd&quot;" inherits="Node" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="_ready">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="_exit_tree">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="_input">
+			<return type="void" />
+			<param index="0" name="event" type="InputEvent" />
+			<description>
+			</description>
+		</method>
+		<method name="_toggle_menu">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="_quit_game">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="_capture_mouse">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="actions" type="CanvasItem" setter="" getter="">
+		</member>
+		<member name="quit_button" type="Button" setter="" getter="">
+		</member>
+		<member name="resume_button" type="Button" setter="" getter="">
+		</member>
+		<member name="menu_open" type="bool" setter="" getter="" default="false">
+		</member>
+		<member name="mouse_mode" type="Variant" setter="" getter="">
+		</member>
+	</members>
+</class>

@@ -1,5 +1,5 @@
-#ifndef CAMERA_CONTROLLER_H
-#define CAMERA_CONTROLLER_H
+#ifndef OPENKCC_CAMERA_CONTROLLER_H
+#define OPENKCC_CAMERA_CONTROLLER_H
 
 #include <godot_cpp/classes/node3d.hpp>
 
@@ -7,8 +7,8 @@ using namespace godot;
 
 namespace openkcc {
 
-class CameraController : public Node3D {
-	GDCLASS(CameraController, Node3D)
+class OpenKCCCameraController : public Node3D {
+	GDCLASS(OpenKCCCameraController, Node3D)
 
 private:
 	/// @brief Pitch of camera (in degrees).
@@ -41,8 +41,8 @@ protected:
 	static void _bind_methods();
 
 public:
-	CameraController();
-	~CameraController();
+	OpenKCCCameraController();
+	~OpenKCCCameraController();
 
 	/// @brief Compute active position and rotation.
 	/// @param delta Delta time in seconds.
@@ -105,4 +105,4 @@ public:
 
 } //namespace openkcc
 
-#endif // CAMERA_CONTROLLER_H
+#endif // OPENKCC_CAMERA_CONTROLLER_H

@@ -13,7 +13,6 @@ jobs:
           - version: 4.4.0
           - version: 4.3.0
           - version: 4.2.2
-          # - version: 4.1.4
 
     steps:
       - uses: actions/checkout@v4
@@ -39,7 +38,7 @@ jobs:
       - run: ls -R ${{env.PROJECT_PATH}}/${{env.ADDON_PATH}}
 
       - name: import assets
-        run: godot --headless --path ${{env.PROJECT_PATH}}  --import
+        run: godot --headless --path ${{env.PROJECT_PATH}} --import
         continue-on-error: true
 
       - name: Run Tests
