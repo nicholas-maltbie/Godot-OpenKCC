@@ -48,4 +48,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setvars
-      - uses: actionshub/markdownlint@main
+      - uses: actions/setup-node@v4
+      - run: npm install -g markdownlint-cli
+      - run: markdownlint .

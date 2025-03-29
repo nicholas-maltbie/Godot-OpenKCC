@@ -32,7 +32,7 @@ from Godot's docs for more details.
 
 ```PowerShell
 # Setup godot-cpp
-git -C godot-cpp submodule update --init
+git submodule update --init
 
 # Setup build platform tools for windows and web environment
 scons --directory godot-cpp -j4
@@ -114,7 +114,7 @@ scons --directory godot-cpp platform=web -j4
 scons platform=web target=template_release -j4
 
 # Export debug web build
-godot -v --path demo-project --headless  --import
+godot -v --path demo-project --headless --import
 mkdir -p builds/WebGL
 godot --path demo-project --headless --export-release web
 cp demo-project/coi-serviceworker.min.js builds/WebGL/coi-serviceworker.min.js
@@ -140,27 +140,46 @@ generating docfx docs.
 python3 -m pip install gddoc2yml
 
 # Install docfx if needed
+# Note, you may need to add nuget as a source like so:
+#   dotnet nuget add source "https://api.nuget.org/v3/index.json" --name "nuget.org"   
 dotnet tool restore
 
 #  Load project in editor at least once
-godot -v --path demo-project --headless  --import
+godot -v --path demo-project --headless --import
+
+# Cleanup previous temporary folders
+rm -r doc/tmp
+rm -r doc/gen
 
 # Build xml based documentation
-mkdir -p demo-project/doc/godot
-godot --path demo-project --doctool doc/godot
+mkdir -p doc/tmp/godot
+godot --path demo-project --doctool ../doc/tmp/godot
 
-# Build documentation for my scripts
-godot --path demo-project --doctool doc/classes --gdscript-docs res://scripts --quit
-godot --path demo-project --doctool doc/classes `
-    --gdscript-docs res://addons/openkcc/examples --quit
-
-# Convert docs to yml
-gdxml2yml --filter demo-project/doc/classes `
-    demo-project/doc/classes demo-project/doc/godot `
-    doc/api
+# Convert docs to yml for api and examples
+gdxml2yml --filter doc/xml/doc_classes doc/xml/scripts `
+    --path doc/xml/doc_classes doc/xml/scripts doc/xml/example doc/tmp/godot `
+    --output doc/gen/api
+gdxml2yml --filter doc/xml/example `
+    --path doc/xml/doc_classes doc/xml/scripts doc/xml/example doc/tmp/godot `
+    --output doc/gen/example
 
 # Create site with docfx
 dotnet tool run docfx doc/docfx.json --serve
+```
+
+### Generate Docs from Source
+
+See [GDExtension documentation system](https://docs.godotengine.org/en/stable/tutorials/scripting/gdextension/gdextension_docs_system.html)
+from godot docs for details
+
+```PowerShell
+# Build documentation for addon and gdextensions
+mkdir -p doc/xml/scripts
+godot --path demo-project --doctool ../doc/xml/scripts --gdscript-docs res://addons/openkcc/examples --quit
+godot --path demo-project --doctool ../doc/xml --gdextension-docs ../ --quit
+
+# Generate some docs for example project
+godot --path demo-project --doctool ../doc/xml/example --gdscript-docs res://scripts --quit
 ```
 
 ## Style Guide
@@ -212,6 +231,8 @@ can be installed via dotnet in repo.
 
 ```PowerShell
 # Install via dotnet, uses .config/dotnet-tools.json
+# Note, you may need to add nuget as a source like so:
+#   dotnet nuget add source "https://api.nuget.org/v3/index.json" --name "nuget.org"    
 dotnet tool restore
 
 # Run dotnet-format command via dotnet tool run

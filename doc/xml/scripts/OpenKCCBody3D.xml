@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="OpenKCCBody3D" inherits="RigidBody3D" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		Implementation of the OpenKCC that uses the the [RigidBody3D] to directly interact with the physics world.
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="_can_snap_up">
+			<return type="bool" />
+			<param index="0" name="distance_to_snap" type="float" />
+			<param index="1" name="momentum" type="Vector3" />
+			<param index="2" name="position" type="Vector3" />
+			<description>
+			</description>
+		</method>
+		<method name="_get_snap_down">
+			<return type="Vector3" />
+			<param index="0" name="position" type="Vector3" />
+			<param index="1" name="dir" type="Vector3" />
+			<param index="2" name="dist" type="float" />
+			<description>
+			</description>
+		</method>
+		<method name="_check_perpendicular_bounce">
+			<return type="bool" />
+			<param index="0" name="hit" type="KinematicCollision3D" />
+			<param index="1" name="momentum" type="Vector3" />
+			<description>
+			</description>
+		</method>
+		<method name="check_grounded">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="is_on_floor">
+			<return type="bool" />
+			<description>
+			</description>
+		</method>
+		<method name="is_sliding">
+			<return type="bool" />
+			<description>
+			</description>
+		</method>
+		<method name="snap_to_ground">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="move_and_slide">
+			<return type="void" />
+			<param index="0" name="movement" type="Vector3" />
+			<param index="1" name="stop_slide_up_walls" type="bool" default="true" />
+			<param index="2" name="can_snap_up" type="bool" default="false" />
+			<description>
+			</description>
+		</method>
+		<method name="get_angle_factor">
+			<return type="float" />
+			<param index="0" name="angle_between" type="float" />
+			<description>
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="grounded_dist" type="Variant" setter="" getter="" default="0.1">
+			Distance at which player is considered on the ground and no longer falling, defaults to [constant DEFAULT_GROUNDED_HEIGHT].
+		</member>
+		<member name="max_walk_angle" type="Variant" setter="" getter="" default="60">
+			Maximum angle at which the player can walk up slopes in degrees, defaults to [constant DEFAULT_MAX_WALK_ANGLE].
+		</member>
+		<member name="vertical_snap_up" type="float" setter="" getter="" default="0.3">
+			Vertical snap up distance the player can snap up.
+		</member>
+		<member name="step_up_depth" type="float" setter="" getter="" default="0.3">
+			Minimum depth required for a stair when moving onto a step.
+		</member>
+		<member name="margin" type="float" setter="" getter="" default="0.04">
+			Margin of distance for player to maintain between objects. Will attempt to be at minimum this distance from any other objects during movement.
+		</member>
+		<member name="up" type="Vector3" setter="" getter="" default="Vector3(0, 1, 0)">
+		</member>
+		<member name="_ground_hit" type="bool" setter="" getter="" default="false">
+		</member>
+		<member name="_ground_object" type="Object" setter="" getter="" default="null">
+		</member>
+		<member name="_ground_dist" type="float" setter="" getter="" default="0.0">
+		</member>
+		<member name="_ground_angle" type="float" setter="" getter="" default="0.0">
+		</member>
+		<member name="_ground_normal" type="Vector3" setter="" getter="" default="Vector3(0, 0, 0)">
+		</member>
+		<member name="_ground_position" type="Vector3" setter="" getter="" default="Vector3(0, 0, 0)">
+		</member>
+		<member name="_collision" type="KinematicCollision3D" setter="" getter="" default="new()">
+		</member>
+	</members>
+	<constants>
+		<constant name="DEFAULT_GROUNDED_HEIGHT" value="0.1">
+		</constant>
+		<constant name="DEFAULT_MAX_WALK_ANGLE" value="60">
+		</constant>
+		<constant name="MAX_BOUNCES" value="5">
+		</constant>
+		<constant name="BUFFER_SHOVE_RADIANS" value="3.14159">
+		</constant>
+		<constant name="MAX_SHOVE_RADIANS" value="1.5708">
+		</constant>
+		<constant name="EPSILON" value="0.001">
+		</constant>
+	</constants>
+</class>

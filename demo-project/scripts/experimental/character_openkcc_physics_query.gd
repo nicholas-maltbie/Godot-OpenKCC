@@ -36,7 +36,7 @@ var _input_component_right:float
 var _input_jump:bool = false
 var _can_jump:bool = false
 
-@onready var camera_controller = $Head as CameraController
+@onready var camera_controller = $Head as OpenKCCCameraController
 
 func _ready() -> void:
 	setup_shape()

@@ -1,4 +1,4 @@
 [
-    "camera_controller.cpp",
+    "openkcc_camera_controller.cpp",
     "register_types.cpp"
 ]

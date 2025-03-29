@@ -12,10 +12,10 @@ var camera_raycast_params = ParameterFactory.named_parameters(
 		[ 5,  0],
 	])
 
-var _camera_controller:CameraController
+var _camera_controller:OpenKCCCameraController
 
 func before_each():
-	_camera_controller = CameraController.new()
+	_camera_controller = OpenKCCCameraController.new()
 	add_child_autofree(_camera_controller)
 
 func test_camera_properties():

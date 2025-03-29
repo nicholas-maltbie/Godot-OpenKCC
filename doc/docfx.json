@@ -8,8 +8,13 @@
       "content": [
         {
           "files": ["*.yml"],
-          "src": "api",
+          "src": "gen/api",
           "dest": "api"
+        },
+        {
+          "files": ["*.yml"],
+          "src": "gen/example",
+          "dest": "example"
         },
         {
           "files": ["*.yml", "*.md"],

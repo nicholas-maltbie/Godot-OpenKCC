@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="OpenKCCBody3DPhysicsQuery" inherits="Node3D" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		Implementation of the OpenKCC that uses the the [PhysicsShapeQueryParameters3D] to directly interact with the physics world.
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="_can_snap_up">
+			<return type="bool" />
+			<param index="0" name="distance_to_snap" type="float" />
+			<param index="1" name="momentum" type="Vector3" />
+			<param index="2" name="position" type="Vector3" />
+			<description>
+			</description>
+		</method>
+		<method name="_check_perpendicular_bounce">
+			<return type="bool" />
+			<param index="0" name="hit" type="OpenKCCBody3DPhysicsQuery.OpenKCCCollision" />
+			<param index="1" name="momentum" type="Vector3" />
+			<description>
+			</description>
+		</method>
+		<method name="_get_collision">
+			<return type="bool" />
+			<param index="0" name="start" type="Transform3D" />
+			<param index="1" name="dir" type="Vector3" />
+			<param index="2" name="dist" type="float" />
+			<param index="3" name="collision" type="OpenKCCBody3DPhysicsQuery.OpenKCCCollision" />
+			<description>
+			</description>
+		</method>
+		<method name="_get_snap_down">
+			<return type="Vector3" />
+			<param index="0" name="position" type="Vector3" />
+			<param index="1" name="dir" type="Vector3" />
+			<param index="2" name="dist" type="float" />
+			<description>
+			</description>
+		</method>
+		<method name="push_out_overlapping">
+			<return type="void" />
+			<description>
+				Push the character out of overlapping objects
+			</description>
+		</method>
+		<method name="snap_down">
+			<return type="bool" />
+			<param index="0" name="dir" type="Vector3" />
+			<param index="1" name="max_move" type="float" />
+			<description>
+			</description>
+		</method>
+		<method name="setup_shape">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="move_and_slide">
+			<return type="void" />
+			<param index="0" name="movement" type="Vector3" />
+			<param index="1" name="stop_slide_up_walls" type="bool" default="true" />
+			<param index="2" name="can_snap_up" type="bool" default="true" />
+			<description>
+			</description>
+		</method>
+		<method name="check_grounded">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="is_on_floor">
+			<return type="bool" />
+			<description>
+			</description>
+		</method>
+		<method name="is_sliding">
+			<return type="bool" />
+			<description>
+			</description>
+		</method>
+		<method name="get_angle_factor">
+			<return type="float" />
+			<param index="0" name="angle_between" type="float" />
+			<description>
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="height" type="float" setter="" getter="" default="2.0">
+			Height of player's capsule collider.
+		</member>
+		<member name="radius" type="float" setter="" getter="" default="0.5">
+			Radius of player's capsule collider.
+		</member>
+		<member name="skin_width" type="float" setter="" getter="" default="0.01">
+			Skin width of player's collision shape. Player is allowed to overlap with other objects by this amount, good to keep this a small, non-zero value to allow for some overlap with surronding objects.
+		</member>
+		<member name="grounded_dist" type="float" setter="" getter="" default="0.15">
+			Distance at which player is considered on the ground and no longer falling, defaults to [constant DEFAULT_GROUNDED_HEIGHT].
+		</member>
+		<member name="max_walk_angle" type="float" setter="" getter="" default="60.0">
+			Maximum angle at which the player can walk up slopes in degrees, defaults to [constant DEFAULT_MAX_WALK_ANGLE].
+		</member>
+		<member name="vertical_snap_up" type="float" setter="" getter="" default="0.3">
+			Vertical snap up distance the player can snap up.
+		</member>
+		<member name="step_up_depth" type="float" setter="" getter="" default="0.3">
+			Minimum depth required for a stair when moving onto a step.
+		</member>
+		<member name="vertical_snap_down" type="float" setter="" getter="" default="0.35">
+			Vertical snap down distance the player snap down while walking.
+		</member>
+		<member name="up" type="Vector3" setter="" getter="" default="Vector3(0, 1, 0)">
+			Direction of up vector for player movement.
+		</member>
+		<member name="_ground_hit" type="bool" setter="" getter="" default="false">
+			A value indicating whether the ground hit check hit an object within the grounded dist.
+		</member>
+		<member name="_ground_dist" type="float" setter="" getter="" default="0.0">
+			Distance player is standing off the ground.
+		</member>
+		<member name="_ground_angle" type="float" setter="" getter="" default="0.0">
+			Angle between the surface normal of the player and the up vector.
+		</member>
+		<member name="_ground_normal" type="Vector3" setter="" getter="" default="Vector3(0, 0, 0)">
+			Normal vector of the player's standing.
+		</member>
+		<member name="_ground_position" type="Vector3" setter="" getter="" default="Vector3(0, 0, 0)">
+			Position in which player's collider is hitting the ground.
+		</member>
+		<member name="_collision" type="OpenKCCBody3DPhysicsQuery.OpenKCCCollision" setter="" getter="" default="new()">
+			Collision placeholder for player movement to avoid dynamic memory allocation.
+		</member>
+		<member name="_physics_query_params" type="PhysicsShapeQueryParameters3D" setter="" getter="" default="new()">
+			Physics query for player movement to avoid dynamic memory allocation.
+		</member>
+		<member name="_physics_raycast_query_params" type="PhysicsRayQueryParameters3D" setter="" getter="" default="new()">
+			Physics query for raycast to avoid dynamic memory allocation.
+		</member>
+		<member name="_capsule" type="Shape3D" setter="" getter="">
+			Capsule shape of the player with the skin width removed.
+		</member>
+		<member name="_overlap_capsule" type="Shape3D" setter="" getter="">
+			Capsule shape of the player including the overlap.
+		</member>
+	</members>
+	<constants>
+		<constant name="DEFAULT_GROUNDED_HEIGHT" value="0.15">
+			Default grounded height value for player.
+		</constant>
+		<constant name="DEFAULT_MAX_WALK_ANGLE" value="60.0">
+			Default maximum walk angle in degrees.
+		</constant>
+		<constant name="MAX_BOUNCES" value="5">
+			Max bounces when computing player movement.
+		</constant>
+		<constant name="BUFFER_SHOVE_RADIANS" value="3.14159">
+			Buffer value when computing angle falloff (90 degrees)
+		</constant>
+		<constant name="MAX_SHOVE_RADIANS" value="1.5708">
+			Max angle that a player can reflect off of (180 degrees)
+		</constant>
+		<constant name="EPSILON" value="0.001">
+			Small epsilon value for handling error ranges.
+		</constant>
+	</constants>
+</class>

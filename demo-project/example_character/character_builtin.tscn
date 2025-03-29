@@ -15,7 +15,7 @@ script = ExtResource("1_ge4xx")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.849988, 0)
 shape = SubResource("CapsuleShape3D_p2ho7")
 
-[node name="Head" type="CameraController" parent="."]
+[node name="Head" type="OpenKCCCameraController" parent="."]
 zoom = 2.0
 min_zoom = 1.0
 max_zoom = 10.0

@@ -24,7 +24,7 @@ func before_all():
 
 func before_each():
 	_character = Player.new()
-	var head:CameraController = CameraController.new()
+	var head:OpenKCCCameraController = OpenKCCCameraController.new()
 	var main_camera:Camera3D = Camera3D.new()
 
 	_character.set_name("Character")

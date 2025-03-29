@@ -49,7 +49,7 @@ var _can_jump:bool = false
 # Character animator object
 var _character_animator:CharacterAnimator
 
-@onready var _camera_controller = $Head as CameraController
+@onready var _camera_controller = $Head as OpenKCCCameraController
 
 func _ready() -> void:
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)

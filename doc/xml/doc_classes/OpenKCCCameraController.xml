@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="OpenKCCCameraController" inherits="Node3D" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		Camera controller for OpenKCC character.
+	</brief_description>
+	<description>
+		Camera controller for OpenKCC character that can manage pitch, yaw, zoom, and vertical damping.
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="get_target_position" qualifiers="const">
+			<return type="Vector3" />
+			<description>
+			</description>
+		</method>
+		<method name="get_target_rotation" qualifiers="const">
+			<return type="Vector3" />
+			<description>
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="damping_factor" type="float" setter="set_damping_factor" getter="get_damping_factor" default="1.0">
+		</member>
+		<member name="max_pitch" type="float" setter="set_max_pitch" getter="get_max_pitch" default="90.0">
+		</member>
+		<member name="max_zoom" type="float" setter="set_max_zoom" getter="get_max_zoom" default="5.0">
+		</member>
+		<member name="min_pitch" type="float" setter="set_min_pitch" getter="get_min_pitch" default="-90.0">
+		</member>
+		<member name="min_zoom" type="float" setter="set_min_zoom" getter="get_min_zoom" default="0.0">
+		</member>
+		<member name="pitch" type="float" setter="set_pitch" getter="get_pitch" default="0.0">
+		</member>
+		<member name="yaw" type="float" setter="set_yaw" getter="get_yaw" default="0.0">
+		</member>
+		<member name="zoom" type="float" setter="set_zoom" getter="get_zoom" default="0.0">
+		</member>
+	</members>
+</class>

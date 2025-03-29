@@ -16,6 +16,10 @@ env = SConscript("godot-cpp/SConstruct")
 env.Append(CPPPATH=["src/"])
 sources = Glob("src/*.cpp")
 
+if env["target"] in ["editor", "template_debug"]:
+    doc_data = env.GodotCPPDocData("src/gen/doc_data.gen.cpp", source=Glob("doc/xml/doc_classes/*.xml"))
+    sources.append(doc_data)
+
 if env["platform"] == "macos":
     library = env.SharedLibrary(
         "addons/openkcc/libs/libopenkcc.{}.{}.framework/libopenkcc.{}.{}".format(

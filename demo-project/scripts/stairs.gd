@@ -260,16 +260,3 @@ func _add_square_uv(uvs:PackedVector2Array, v1:Vector2, v2:Vector2, v3:Vector2, 
 ## Create mesh if node is ready, cancel otherwise.
 func _build_mesh() -> void:
 	force_update_mesh()
-
-## Helper class for managing a line in 3D space.
-class Line3D:
-	## Starting point of line.
-	var v1:Vector3
-
-	## Ending point of line.
-	var v2:Vector3
-
-	## Creates a new instance of Line3D with a given start and ending point.
-	func _init(start:Vector3, end:Vector3):
-		self.v1 = start
-		self.v2 = end

@@ -13,7 +13,7 @@ freeze_mode = 1
 custom_integrator = true
 script = ExtResource("1_6lbyl")
 
-[node name="Head" type="CameraController" parent="."]
+[node name="Head" type="OpenKCCCameraController" parent="."]
 zoom = 2.0
 min_zoom = 1.0
 max_zoom = 10.0
