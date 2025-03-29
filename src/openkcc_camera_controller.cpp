@@ -43,6 +43,8 @@ void OpenKCCCameraController::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_damping_factor"), &OpenKCCCameraController::get_damping_factor);
 	ClassDB::bind_method(D_METHOD("set_damping_factor", "p_damping_factor"), &OpenKCCCameraController::set_damping_factor);
 
+	ClassDB::bind_method(D_METHOD("get_bounded_zoom_distance"), &OpenKCCCameraController::get_bounded_zoom_distance);
+
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "pitch"), "set_pitch", "get_pitch");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "yaw"), "set_yaw", "get_yaw");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "zoom"), "set_zoom", "get_zoom");
@@ -51,6 +53,7 @@ void OpenKCCCameraController::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "min_zoom"), "set_min_zoom", "get_min_zoom");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "max_zoom"), "set_max_zoom", "get_max_zoom");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "damping_factor"), "set_damping_factor", "get_damping_factor");
+	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "bounded_zoom_distance"), "", "get_bounded_zoom_distance");
 }
 
 OpenKCCCameraController::OpenKCCCameraController() :
@@ -86,6 +89,8 @@ void OpenKCCCameraController::_process(double delta) {
 	if (!result.is_empty()) {
 		target_position = result["position"];
 	}
+
+	bounded_zoom_distance = (target_position - camera_source).length();
 }
 
 Vector3 OpenKCCCameraController::get_target_position() const {
@@ -158,4 +163,8 @@ void OpenKCCCameraController::set_damping_factor(const float p_damping_factor) {
 
 float OpenKCCCameraController::get_damping_factor() const {
 	return damping_factor;
+}
+
+float OpenKCCCameraController::get_bounded_zoom_distance() const {
+	return bounded_zoom_distance;
 }

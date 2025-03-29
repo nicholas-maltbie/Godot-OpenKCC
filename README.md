@@ -137,7 +137,7 @@ generating docfx docs.
 
 ```PowerShell
 # install gddoc2yml
-python3 -m pip install gddoc2yml
+python -m pip install gddoc2yml
 
 # Install docfx if needed
 # Note, you may need to add nuget as a source like so:
@@ -156,7 +156,7 @@ mkdir -p doc/tmp/godot
 godot --path demo-project --doctool ../doc/tmp/godot
 
 # Convert docs to yml for api and examples
-gdxml2yml --filter doc/xml/doc_classes doc/xml/scripts `
+gdxml2yml --filter doc/xml/doc_classes doc/xml/scripts OpenKCCCameraController `
     --path doc/xml/doc_classes doc/xml/scripts doc/xml/example doc/tmp/godot `
     --output doc/gen/api
 gdxml2yml --filter doc/xml/example `
@@ -173,8 +173,10 @@ See [GDExtension documentation system](https://docs.godotengine.org/en/stable/tu
 from godot docs for details
 
 ```PowerShell
+#  Load project in editor at least once
+godot -v --path demo-project --headless --import
+
 # Build documentation for addon and gdextensions
-mkdir -p doc/xml/scripts
 godot --path demo-project --doctool ../doc/xml/scripts --gdscript-docs res://addons/openkcc/examples --quit
 godot --path demo-project --doctool ../doc/xml --gdextension-docs ../ --quit
 
