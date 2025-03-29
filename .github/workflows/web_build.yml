@@ -41,12 +41,6 @@ jobs:
         run: godot --headless --path ${{env.PROJECT_PATH}} --import
         continue-on-error: true
 
-      - name: 🕸 Web Build
-        run: |
-          mkdir -p ${GITHUB_WORKSPACE}/_site
-          godot -v --headless --path ${{env.PROJECT_PATH}} --export-release web ${GITHUB_WORKSPACE}/_site/index.html
-          cp ${{env.PROJECT_PATH}}/coi-serviceworker.min.js ${GITHUB_WORKSPACE}/_site/coi-serviceworker.min.js
-
       - name: Build Docs with doctool
         run: |
           mkdir -p doc/tmp/godot
@@ -54,7 +48,7 @@ jobs:
 
       - name: Build yml Docs for API
         run: |
-          gdxml2yml --filter doc/xml/scripts doc/xml/doc_classes \
+          gdxml2yml --filter doc/xml/scripts doc/xml/doc_classes OpenKCCCameraController \
               --path doc/xml/scripts doc/xml/example doc/xml/doc_classes doc/tmp/godot \
               --output doc/gen/api
 
@@ -63,6 +57,12 @@ jobs:
           gdxml2yml --filter doc/xml/example \
               --path doc/xml/scripts doc/xml/example doc/xml/doc_classes doc/tmp/godot \
               --output doc/gen/example
+
+      - name: 🕸 Web Build
+        run: |
+          mkdir -p ${GITHUB_WORKSPACE}/_site
+          godot -v --headless --path ${{env.PROJECT_PATH}} --export-release web ${GITHUB_WORKSPACE}/_site/index.html
+          cp ${{env.PROJECT_PATH}}/coi-serviceworker.min.js ${GITHUB_WORKSPACE}/_site/coi-serviceworker.min.js
 
       - name: Build site with DocFx
         run: |
