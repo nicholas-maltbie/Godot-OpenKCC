@@ -98,26 +98,37 @@
 			Speed at which the player rotates towards the direction of motion (in degrees per second).
 		</member>
 		<member name="snapped_down" type="bool" setter="" getter="" default="false">
+			Has the player snapped down as of the previous frame
 		</member>
 		<member name="gravity" type="float" setter="" getter="" default="get_setting(...)">
+			Get the gravity from the project settings to be synced with RigidBody nodes.
 		</member>
 		<member name="world_velocity" type="Vector3" setter="" getter="" default="Vector3(0, 0, 0)">
+			Velocity due to world forces (like gravity)
 		</member>
 		<member name="move_velocity" type="Vector3" setter="" getter="" default="Vector3(0, 0, 0)">
+			Velocity due to player input (movement)
 		</member>
 		<member name="mouse_sensibility" type="Variant" setter="" getter="" default="1200">
+			Mouse sensitivity
 		</member>
 		<member name="mouse_zoom_speed" type="Variant" setter="" getter="" default="0.25">
+			Mouse zoom speed
 		</member>
 		<member name="allow_movement" type="bool" setter="" getter="" default="true">
+			Allow player movement
 		</member>
 		<member name="_input_component_forward" type="float" setter="" getter="">
+			Player's move input for forward (up) direction.
 		</member>
 		<member name="_input_component_back" type="float" setter="" getter="">
+			Player's move input for backward (down) direction.
 		</member>
 		<member name="_input_component_left" type="float" setter="" getter="">
+			Player's move input for left direction.
 		</member>
 		<member name="_input_component_right" type="float" setter="" getter="">
+			Player's move input for right direction.
 		</member>
 		<member name="_input_jump" type="bool" setter="" getter="" default="false">
 		</member>

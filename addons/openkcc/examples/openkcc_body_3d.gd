@@ -3,11 +3,18 @@ class_name OpenKCCBody3D extends RigidBody3D
 ## the [RigidBody3D] to directly
 ## interact with the physics world.
 
+## Default grounded height for the character.
 const DEFAULT_GROUNDED_HEIGHT = 0.1
+## Default max walking angle in degrees.
 const DEFAULT_MAX_WALK_ANGLE = 60
+## Maximum number of bounces when player computes sliding.
 const MAX_BOUNCES:int = 5
+## Buffer for shoving angle when normalizing bounce in radians.
 const BUFFER_SHOVE_RADIANS:float = PI
+## Maximum shove angle when normalizing bounce in radians.
 const MAX_SHOVE_RADIANS:float = PI/2
+
+## Small value for buffer values.
 const EPSILON:float = 0.001
 
 #region Export Parameters
@@ -30,23 +37,36 @@ const EPSILON:float = 0.001
 @export var margin:float = 0.04
 #endregion
 
-# Direction of up vector
+## Direction of up for the character
 var up:Vector3 = Vector3.UP
 
 #region Grounded state
+## Did the player hit the ground within [member OpenKCCBody3D.grounded_dist] distance.
 var _ground_hit:bool = false
+## What object did the player hit on the ground (if any).
 var _ground_object:Object = null
+## Distance player is from the ground.
 var _ground_dist:float = 0
+## Angle player is making between ground normal and vertical.
 var _ground_angle:float = 0
+## Ground normal vector from collision.
 var _ground_normal:Vector3 = Vector3.ZERO
+## Position in which player collider hit the ground.
 var _ground_position:Vector3 = Vector3.ZERO
 #endregion
 
-# Internal variable for computing collisions
+## Internal variable for computing collisions
 var _collision:KinematicCollision3D = KinematicCollision3D.new();
 
+## Check if a player's final position after snapping up would be valid.
+## Returns true if valid, false if the player hits an object or the step is too narrow.
+## See [member OpenKCCBody3D.step_up_depth] for step depth requirements.
+##
+## [br] [param distance_to_snap] - How far should the player be snapped up.
+## [br] [param momentum] - Remaining momentum of player after snapping up.
+## [br] [param position] - position of player before snapping up.
 func _can_snap_up(distance_to_snap:float, momentum:Vector3, position:Vector3) -> bool:
-	# If the character were to snap up and move forward, would they hit something?
+	## If the character were to snap up and move forward, would they hit something?
 	var snap_pos:Vector3 = position + distance_to_snap * up;
 	var snap_transform:Transform3D = Transform3D(global_transform.basis, snap_pos)
 	var hit := test_move(snap_transform, momentum, _collision, margin)
@@ -54,6 +74,12 @@ func _can_snap_up(distance_to_snap:float, momentum:Vector3, position:Vector3) ->
 	# If they can move without instantly hitting something, then snap them up
 	return !hit or _collision.get_travel().length() > step_up_depth
 
+## Get the distance a place is from the ground and returns the movement
+## in order to place the player on the ground.
+##
+## [br] [param position] - Position to start player from.
+## [br] [param dir] - Direction to snap the player.
+## [br] [param dist] - Maximum distance to check for snapping.
 func _get_snap_down(position:Vector3, dir:Vector3, dist:float) -> Vector3:
 	var snap_transform:Transform3D = Transform3D(global_transform.basis, position)
 	var hit := test_move(snap_transform, dir * dist, _collision, EPSILON, true)
@@ -64,6 +90,13 @@ func _get_snap_down(position:Vector3, dir:Vector3, dist:float) -> Vector3:
 
 	return Vector3.ZERO
 
+## Check if a bounce is perpendicular by computing a raycast from slightly behind
+## the [param hit] in the direction of [param momentum]. Will return true if the
+## bounce is mostly perpendicular, aka, hit a vertical surface, false otherwise.
+## This is used to check if the player is able to snap up a step.
+##
+## [br] [param hit] - Hit information from player collision.
+## [br] [param momentum] = Player direction of movement.
 func _check_perpendicular_bounce(hit:KinematicCollision3D, momentum:Vector3) -> bool:
 	var space_state = get_world_3d().direct_space_state
 	var from := hit.get_position() - up.normalized() * EPSILON + hit.get_normal() * EPSILON
@@ -75,6 +108,11 @@ func _check_perpendicular_bounce(hit:KinematicCollision3D, momentum:Vector3) -> 
 	var hit_normal:Vector3 = result["normal"]
 	return hit_normal.dot(up) <= EPSILON
 
+## Check the current grounded state of the player, will update the grounded
+## state variables based on the result of the check.
+## Checks by invoking [method PhysicsBody3D.test_move] in the down
+## direction for [member OpenKCCBody3D.grounded_dist]. If something is hit,
+## the player's grounded state will be updated with the collision result.
 func check_grounded():
 	_ground_hit = test_move(global_transform, -up * (grounded_dist + EPSILON), _collision, EPSILON, true)
 	if _ground_hit:
@@ -90,15 +128,46 @@ func check_grounded():
 		_ground_normal = Vector3.ZERO
 		_ground_position = Vector3.ZERO
 
+## Is the player currently on the floor.
+## Grounded state is updated by [method OpenKCCBody3D.check_grounded]
+## which is called after each [method OpenKCCBody3D.move_and_slide]
 func is_on_floor() -> bool:
 	return _ground_hit and _ground_dist <= grounded_dist
 
+## Is the player sliding. Player will be considered sliding
+## if the player is both [method OpenKCCBody3D.is_on_floor]
+## and the [member OpenKCCBody3D._ground_angle] is greater than
+## the [member OpenKCCBody3D.max_walk_angle].
 func is_sliding() -> bool:
 	return is_on_floor() and _ground_angle > deg_to_rad(max_walk_angle)
 
+## Snap the player to the ground, will check if the player is within
+## [member OpenKCCBody3D.vertical_snap_up] from the floor.
+## If so, the player will snap up to the position.
 func snap_to_ground() -> void:
 	global_transform.origin += _get_snap_down(global_transform.origin, -up, vertical_snap_up)
 
+## Move and slide the player by some movement vector.
+## Will start off by checking if the player is overlapping with any objects
+## and push out before attempting any movement.
+##
+## Then, the movement will be computed, the player will bounce off of any surfaces and slide along the plane.
+## This movement is limited to a maximum of [constant MAX_BOUNCES] bounces at most.
+## Remaining momentum will be decreased after each bounce depending on how sharp
+## the bounce was. For example, walking directly into a wall will result in no
+## sliding. While glancing off a surface at a 30 degree angle will result in
+## retaining most of the momentum.
+##
+## Once the player has finished movement, the grounded state will be updated
+## by invoking [method OpenKCCBody3D.check_grounded]
+##
+## [i]This is expected to be called within a physics update, otherwise the behavior
+## may not behave as expected.[/i]
+##
+## [br] [param movement] - Player movement in world space.
+## [br] [param stop_slide_up_walls] - Should sliding up vertical surfaces be prevented.
+## [br] [param can_snap_up] - If vertical snapping is enabled, should the player be able to snap up
+##   as part of this movement command.
 func move_and_slide(movement:Vector3, stop_slide_up_walls:bool=true, can_snap_up:bool=false) -> void:
 	# Check to push out of overlapping objects
 	var overlap = test_move(global_transform, up * EPSILON, _collision, margin / 2, true)
@@ -154,7 +223,7 @@ func move_and_slide(movement:Vector3, stop_slide_up_walls:bool=true, can_snap_up
 			var distance_move:float = min(dist_remaining, vertical_snap_up)
 			start.origin += distance_move * up
 
-			# Skip rest of boucne operation
+			# Skip rest of bounce operation
 			continue
 
 		# Rotate the remaining movement to be projected along the plane
@@ -178,10 +247,16 @@ func move_and_slide(movement:Vector3, stop_slide_up_walls:bool=true, can_snap_up
 	global_position = start.origin
 	check_grounded()
 
+## Get the angle factor, how much momentum should be kept after
+## a bounce at a given angle. Will return a value between 0 and 1
+## with 1 representing keeping all the momentum, and zero means
+## the player should stop.
+##
+## [br] [param angle_between] - Angle between player and collision surface.
 func get_angle_factor(angle_between:float) -> float:
 	# Normalize angle between to be between 0 and 1
 	var normalized_angle:float = clamp( \
 		abs(angle_between - BUFFER_SHOVE_RADIANS) / MAX_SHOVE_RADIANS, 0, 1)
 
-	# Reduce the remaining movement by the remaining movement that ocurred
+	# Reduce the remaining movement by the remaining movement that occurred
 	return pow(0.1 + normalized_angle * 0.9, 2)

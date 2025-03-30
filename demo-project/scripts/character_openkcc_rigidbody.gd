@@ -15,31 +15,34 @@ extends OpenKCCBody3D
 ## Speed at which the player rotates towards the direction of motion (in degrees per second).
 @export var rotation_speed:float = 720.0
 
-# Has the player snapped down as of the previous frame
+## Has the player snapped down as of the previous frame
 var snapped_down:bool = false
 
-# Get the gravity from the project settings to be synced with RigidBody nodes.
+## Get the gravity from the project settings to be synced with RigidBody nodes.
 var gravity:float = ProjectSettings.get_setting("physics/3d/default_gravity")
 
-# Velocity due to world forces (like gravity)
+## Velocity due to world forces (like gravity)
 var world_velocity:Vector3 = Vector3.ZERO
 
-# Velocity due to player input (movement)
+## Velocity due to player input (movement)
 var move_velocity:Vector3 = Vector3.ZERO
 
-# Mouse sensitivity
+## Mouse sensitivity
 var mouse_sensibility = 1200
 
-# Mouse zoom speed
+## Mouse zoom speed
 var mouse_zoom_speed = 0.25
 
-# Allow player movement
+## Allow player movement
 var allow_movement:bool = true
 
-# Player's move input
+## Player's move input for forward (up) direction.
 var _input_component_forward:float
+## Player's move input for backward (down) direction.
 var _input_component_back:float
+## Player's move input for left direction.
 var _input_component_left:float
+## Player's move input for right direction.
 var _input_component_right:float
 
 # Only allow the player to jump once until they land on solid ground
