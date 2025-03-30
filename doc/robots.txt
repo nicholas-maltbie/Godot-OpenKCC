@@ -1,0 +1,3 @@
+user-agent: *
+
+sitemap: https://openkcc.nickmaltbie.com/docs/sitemap.xml

@@ -1,0 +1,2 @@
+make_rst.py - https://raw.githubusercontent.com/godotengine/godot/master/doc/tools/make_rst.py
+color.py - https://raw.githubusercontent.com/godotengine/godot/master/misc/utility/color.py

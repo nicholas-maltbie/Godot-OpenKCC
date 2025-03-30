@@ -132,39 +132,24 @@ Documentation for the project is stored in the `doc` directory
 and built using [DocFx](https://github.com/dotnet/docfx).
 
 Generate documentation using godot cli tool `--doctool` and `--gdscript-docs`.
-Use [gddoc2yml](https://github.com/nicholas-maltbie/gddoc2yml) tool for
-generating docfx docs.
 
 ```PowerShell
-# install gddoc2yml
-python -m pip install gddoc2yml
-
-# Install docfx if needed
-# Note, you may need to add nuget as a source like so:
-#   dotnet nuget add source "https://api.nuget.org/v3/index.json" --name "nuget.org"   
-dotnet tool restore
-
 #  Load project in editor at least once
 godot -v --path demo-project --headless --import
 
 # Cleanup previous temporary folders
 rm -r doc/tmp
-rm -r doc/gen
+rm -r doc/classes
 
 # Build xml based documentation
 mkdir -p doc/tmp/godot
 godot --path demo-project --doctool ../doc/tmp/godot
 
-# Convert docs to yml for api and examples
-gdxml2yml --filter doc/xml/doc_classes doc/xml/scripts OpenKCCCameraController `
-    --path doc/xml/doc_classes doc/xml/scripts doc/xml/example doc/tmp/godot `
-    --output doc/gen/api
-gdxml2yml --filter doc/xml/example `
-    --path doc/xml/doc_classes doc/xml/scripts doc/xml/example doc/tmp/godot `
-    --output doc/gen/example
-
-# Create site with docfx
-dotnet tool run docfx doc/docfx.json --serve
+# Convert docs to rst
+python .\doc\tools\make_rst.py --filter "doc/xml/(doc_classes|scripts)" `
+    -o "doc/classes/api" -l "en" "doc/xml/doc_classes" "doc/xml/scripts" "doc/xml/example" "doc/tmp/godot/doc/classes"
+python .\doc\tools\make_rst.py --filter "doc/xml/example" `
+    -o "doc/classes/example" -l "en" "doc/xml/doc_classes" "doc/xml/scripts" "doc/xml/example" "doc/tmp/godot/doc/classes"
 ```
 
 ### Generate Docs from Source
@@ -204,12 +189,9 @@ godot -d -s --path demo-project addons/gut/gut_cmdln.gd
 ## Linting
 
 C++ formatting via [clang-format](https://clang.llvm.org/docs/ClangFormat.html).
-Can be installed format via pip.
+Can be installed via pip. `python -m pip install clang-format`
 
 ```PowerShell
-# Install
-python -m pip install clang-format
-
 # Find formatting via clang-format
 clang-format src/*.cpp src/*.h --dry-run
 
@@ -218,30 +200,14 @@ clang-format src/*.cpp src/*.h  -i
 ```
 
 GDScript linting via [godot-gdscript-toolkit](https://github.com/Scony/godot-gdscript-toolkit)
-with the `gdlint` command
+with the `gdlint` command which can be installed via pip. `python -m pip install gdtoolkit`
 
 ```PowerShell
-# Install gdlint via pip
-python -m pip install gdtoolkit
-
 # Run gdlint on openkcc files
 gdlint addons/openkcc demo-project/scripts demo-project/tests
 ```
 
-_Note: still in progress_ C# linting via [dotnet format](https://github.com/dotnet/format)
-can be installed via dotnet in repo.
-
-```PowerShell
-# Install via dotnet, uses .config/dotnet-tools.json
-# Note, you may need to add nuget as a source like so:
-#   dotnet nuget add source "https://api.nuget.org/v3/index.json" --name "nuget.org"    
-dotnet tool restore
-
-# Run dotnet-format command via dotnet tool run
-dotnet tool run dotnet-format .\demo-project\GodotOpenKCC.sln --check
-```
-
-_Note: still in progress_ Markdown linting via [markdownlint](https://github.com/DavidAnson/markdownlint)
+Markdown linting via [markdownlint](https://github.com/DavidAnson/markdownlint)
 can be installed via npm.
 
 ```PowerShell

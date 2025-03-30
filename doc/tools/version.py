@@ -1,0 +1,9 @@
+short_name = "openkcc"
+name = "Open Kinematic Character Controller"
+major = 0
+minor = 0
+patch = 0
+status = "dev"
+module_config = ""
+website = "https://openkcc.nickmaltbie/com/docs"
+docs = "latest"
