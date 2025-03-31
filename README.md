@@ -150,6 +150,11 @@ python .\doc\tools\make_rst.py --filter "doc/xml/(doc_classes|scripts)" `
     -o "doc/classes/api" -l "en" "doc/xml/doc_classes" "doc/xml/scripts" "doc/xml/example" "doc/tmp/godot/doc/classes"
 python .\doc\tools\make_rst.py --filter "doc/xml/example" `
     -o "doc/classes/example" -l "en" "doc/xml/doc_classes" "doc/xml/scripts" "doc/xml/example" "doc/tmp/godot/doc/classes"
+
+# Create sphinx site
+# Make sure to install required packages
+#  python -m pip install -r doc/requirements.txt
+sphinx-build -M html doc doc/_site
 ```
 
 ### Generate Docs from Source

@@ -12,7 +12,7 @@ import os
 needs_sphinx = "8.1"
 
 # Sphinx extension module names and templates location
-sys.path.append(os.path.abspath("_extensions"))
+sys.path.append(os.path.abspath("godot-docs/_extensions"))
 extensions = [
     "sphinx_tabs.tabs",
     "notfound.extension",
@@ -127,7 +127,7 @@ if not language in supported_languages.keys():
 is_i18n = tags.has("i18n")  # noqa: F821
 print("Build language: {}, i18n tag: {}".format(language, is_i18n))
 
-exclude_patterns = [".*", "**/.*", "_build", "_tools"]
+exclude_patterns = [".*", "**/.*", "_site", "godot-docs"]
 
 # fmt: off
 # These imports should *not* be moved to the start of the file,
@@ -260,19 +260,6 @@ def godot_get_image_filename_for_language(filename, env):
     return path
 
 sphinx.util.i18n.get_image_filename_for_language = godot_get_image_filename_for_language
-
-# Similar story for the localized class reference, it's out of tree and there doesn't
-# seem to be an easy way for us to tweak the toctree to take this into account.
-# So we're deleting the existing class reference and adding a symlink instead...
-if is_i18n and os.path.exists("../classes/" + language):
-    import shutil
-
-    if os.path.islink("classes"):  # Previously made symlink.
-        os.unlink("classes")
-    else:
-        shutil.rmtree("classes")
-
-    os.symlink("../classes/" + language, "classes")
 
 # Couldn't find a way to retrieve variables nor do advanced string
 # concat from reST, so had to hardcode this in the "epilog" added to
