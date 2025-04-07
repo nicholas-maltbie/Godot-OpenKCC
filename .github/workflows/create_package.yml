@@ -55,6 +55,13 @@ jobs:
         run: git lfs pull
         shell: bash
 
+      # Download binaries for release archive
+      - name: Download Binaries
+        uses: actions/download-artifact@v4
+        with:
+          path: libs
+          name: gdextension_libs
+
       # Upload package as zip
       - name: Upload Package
         uses: actions/upload-artifact@v4
@@ -64,7 +71,7 @@ jobs:
           path: |
             .
             !.git
-      
+
       # Restore back to original branch
       - uses: actions/checkout@v4
         if: always()

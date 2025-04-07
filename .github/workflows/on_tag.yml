@@ -4,6 +4,8 @@ on:
   push:
     tags:
       - '*'
+  release:
+    types: [created]
 
 # Sets permissions of the GITHUB_TOKEN
 permissions:
@@ -11,11 +13,36 @@ permissions:
   id-token: write
 
 jobs:
+  compile:
+    uses: ./.github/workflows/gdextension_build.yml
+
   create-release-package:
     uses: ./.github/workflows/create_package.yml
+    needs: [ compile ]
     secrets:
       token: ${{ secrets.GITHUB_TOKEN }}
     with:
       latest-publish: false
       release-publish: true
       version-name: ${{ github.ref_name }}
+
+  add-binary:
+    needs: [ create-release-package ]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'release'
+    steps:
+      # Download release package
+      - name: Download Archive
+        uses: actions/download-artifact@v4
+        with:
+          path: build
+          name: godot-openkcc
+
+      - name: Compress Build
+        run: tar -czvf openkcc.tar.gz build
+
+      # Add binary to release
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: openkcc.tar.gz

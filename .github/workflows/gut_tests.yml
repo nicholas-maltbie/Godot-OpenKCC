@@ -33,9 +33,6 @@ jobs:
         with:
           path: ${{env.ADDON_LIBS_PATH}}
           name: gdextension_libs
-      
-      - run: ls -R ${{env.ADDON_PATH}}
-      - run: ls -R ${{env.PROJECT_PATH}}/${{env.ADDON_PATH}}
 
       - name: import assets
         run: godot --headless --path ${{env.PROJECT_PATH}} --import
