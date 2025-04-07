@@ -5,8 +5,8 @@ written in C++ via [GDExtensions](https://docs.godotengine.org/en/stable/tutoria
 
 In order to use the project, the code must be compiled to binaries and exported
 to the `lib` directory within the addon.
-See [Project Setup](..\..\README.md#project-setup) for details on project setup
-and compiling the binaries.
+See [Project Setup](..\..\README.md#project-setup) and [Build](..\..\README.md#build)
+for details on project setup and compiling the binaries.
 
 The binaries are not included within the version controlled project and are only
 included in the releases.
