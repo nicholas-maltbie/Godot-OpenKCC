@@ -34,9 +34,8 @@ runs:
       uses: actions/cache/restore@v4
       with:
         path: ${{env.SCONS_CACHE}}
-        key: ${{github.job}}-${{inputs.artifact}}-${{steps.get_godot_cpp_sha.outputs.sha}}-${{github.ref}}-${{github.sha}}
+        key: ${{github.job}}-${{inputs.artifact}}-${{steps.get_godot_cpp_sha.outputs.sha}}-${{github.sha}}
         restore-keys: |
-          ${{github.job}}-${{inputs.arch}}_${{inputs.target}}-${{steps.get_godot_cpp_sha.outputs.sha}}-${{github.ref}}
           ${{github.job}}-${{inputs.arch}}_${{inputs.target}}-${{steps.get_godot_cpp_sha.outputs.sha}}
 
     - name: Set up Python 3.x
