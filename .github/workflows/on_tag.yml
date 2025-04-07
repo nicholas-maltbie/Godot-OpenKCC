@@ -35,8 +35,12 @@ jobs:
           path: build
           name: godot-openkcc
 
+      - name: Compress Build
+        run: tar -czvf build.tar.gz build
+
       # Add binary to release
       - name: Release
         uses: softprops/action-gh-release@v2
+        if: github.event_name == 'release'
         with:
-          files: build
+          files: build.tar.gz
