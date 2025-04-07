@@ -12,6 +12,11 @@ permissions:
   contents: write
   id-token: write
 
+# Allow one flow per tag
+concurrency:
+  group: on-tag-${{ github.ref_name }}
+  cancel-in-progress: true
+
 jobs:
   compile:
     uses: ./.github/workflows/gdextension_build.yml
@@ -39,10 +44,10 @@ jobs:
           name: godot-openkcc
 
       - name: Compress Build
-        run: tar -czvf build.tar.gz build
+        run: tar -czvf openkcc.tar.gz build
 
       # Add binary to release
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
-          files: build.tar.gz
+          files: openkcc.tar.gz
