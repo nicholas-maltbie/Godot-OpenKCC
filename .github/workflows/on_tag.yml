@@ -23,3 +23,20 @@ jobs:
       latest-publish: false
       release-publish: true
       version-name: ${{ github.ref_name }}
+
+  add-binary:
+    needs: [ create-release-package ]
+    runs-on: ubuntu-latest
+    steps:
+      # Download release package
+      - name: Download Archive
+        uses: actions/download-artifact@v4
+        with:
+          path: build
+          name: godot-openkcc
+
+      # Add binary to release
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: build
