@@ -12,11 +12,6 @@ permissions:
   contents: write
   id-token: write
 
-# Allow one flow per tag
-concurrency:
-  group: on-tag-${{ github.ref_name }}
-  cancel-in-progress: true
-
 jobs:
   compile:
     uses: ./.github/workflows/gdextension_build.yml
