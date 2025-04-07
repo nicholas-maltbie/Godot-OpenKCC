@@ -11,8 +11,12 @@ permissions:
   id-token: write
 
 jobs:
+  compile:
+    uses: ./.github/workflows/gdextension_build.yml
+
   create-release-package:
     uses: ./.github/workflows/create_package.yml
+    needs: [ compile ]
     secrets:
       token: ${{ secrets.GITHUB_TOKEN }}
     with:

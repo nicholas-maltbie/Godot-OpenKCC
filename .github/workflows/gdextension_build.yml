@@ -5,27 +5,27 @@ on:
       buildWindows:
         description: 'Build extensions for windows'
         required: false
-        default: false
+        default: true
         type: boolean
       buildLinux:
         description: 'Build extensions for linux'
         required: false
-        default: false
+        default: true
         type: boolean
       buildMacos:
         description: 'Build extensions for macos'
         required: false
-        default: false
+        default: true
         type: boolean
       buildAndroid:
         description: 'Build extensions for android'
         required: false
-        default: false
+        default: true
         type: boolean
       buildWeb:
         description: 'Build extensions for web'
         required: false
-        default: false
+        default: true
         type: boolean
   workflow_dispatch:
 
