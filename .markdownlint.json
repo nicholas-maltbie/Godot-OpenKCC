@@ -1,8 +1,0 @@
-{
-    "default": true,
-    "MD007": { "indent": 4 },
-    "MD013": {
-        "code_block_line_length": 120,
-        "line_length": 80
-    }
-}

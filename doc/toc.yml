@@ -1,6 +1,0 @@
-- name: OpenKCC API
-  href: gen/api/
-- name: Example
-  href: gen/example/
-- name: Design
-  href: design/toc.yml
